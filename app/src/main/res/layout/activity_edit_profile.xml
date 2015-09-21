@@ -1,0 +1,103 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="mobi.kolibri.messager.activity.EditProfileActivity">
+
+    <include layout="@layout/tollbar"
+        android:id="@+id/toolbar" />
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView"
+        android:layout_below="@+id/toolbar">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="300dp"
+                android:id="@+id/imgEditProfile"
+                android:layout_centerHorizontal="true"
+                android:src="@mipmap/profile_max"
+                android:layout_marginTop="10dp" />
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/edtEditFirstname"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/imgEditProfile"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="10dp"
+                android:textColor="#000"
+                android:hint="Firstname" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/edtEditLastname"
+                android:layout_below="@+id/edtEditFirstname"
+                android:layout_alignLeft="@+id/edtEditFirstname"
+                android:layout_alignStart="@+id/edtEditFirstname"
+                android:layout_alignRight="@+id/edtEditFirstname"
+                android:layout_alignEnd="@+id/edtEditFirstname"
+                android:layout_marginTop="10dp"
+                android:textColor="#000"
+                android:hint="Lastname" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="phone"
+                android:ems="10"
+                android:id="@+id/edtEditPhone"
+                android:layout_below="@+id/edtEditLastname"
+                android:layout_alignLeft="@+id/edtEditLastname"
+                android:layout_alignStart="@+id/edtEditLastname"
+                android:layout_alignRight="@+id/edtEditLastname"
+                android:layout_alignEnd="@+id/edtEditLastname"
+                android:layout_marginTop="10dp"
+                android:textColor="#000"
+                android:hint="Phone"
+                android:editable="false"
+                android:enabled="false"
+                android:focusable="@bool/abc_action_bar_embed_tabs_pre_jb"
+                android:focusableInTouchMode="@bool/abc_action_bar_embed_tabs_pre_jb" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/edtEditSummary"
+                android:layout_below="@+id/edtEditPhone"
+                android:layout_alignLeft="@+id/edtEditPhone"
+                android:layout_alignStart="@+id/edtEditPhone"
+                android:layout_alignRight="@+id/edtEditPhone"
+                android:layout_alignEnd="@+id/edtEditPhone"
+                android:layout_marginTop="10dp"
+                android:textColor="#000"
+                android:hint="Summary" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Save"
+                android:id="@+id/btnEditSave"
+                android:layout_below="@+id/edtEditSummary"
+                android:layout_alignLeft="@+id/edtEditSummary"
+                android:layout_alignStart="@+id/edtEditSummary"
+                android:layout_alignRight="@+id/edtEditSummary"
+                android:layout_alignEnd="@+id/edtEditSummary"
+                android:layout_marginTop="10dp"
+                android:textAppearance="@android:style/TextAppearance" />
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>

@@ -1,0 +1,75 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context=".LoginActivity"
+    android:paddingTop="100dp">
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/edtLoginEmail"
+        android:hint="Email"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:textColor="#000"
+        android:text="andrey.cherkavskiy@kolibri.mobi" />
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/edtLoginPass"
+        android:layout_below="@+id/edtLoginEmail"
+        android:layout_alignParentLeft="true"
+        android:hint="Password"
+        android:layout_marginLeft="16dp"
+        android:layout_alignRight="@+id/edtLoginEmail"
+        android:layout_alignEnd="@+id/edtLoginEmail"
+        android:textColor="#000"
+        android:text="qwerty" />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Log in"
+        android:id="@+id/btnLogin"
+        android:textAppearance="@android:style/TextAppearance"
+        android:layout_below="@+id/edtLoginPass"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="16dp"
+        android:layout_alignRight="@+id/edtLoginEmail"
+        android:layout_alignEnd="@+id/edtLoginEmail" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Sing up"
+        android:id="@+id/singup"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="16dp"
+        android:textColor="#000" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Remember password"
+        android:id="@+id/textView2"
+        android:layout_alignBaseline="@+id/singup"
+        android:layout_alignBottom="@+id/singup"
+        android:layout_alignRight="@+id/btnLogin"
+        android:layout_alignEnd="@+id/btnLogin"
+        android:textColor="#000" />
+
+</RelativeLayout>

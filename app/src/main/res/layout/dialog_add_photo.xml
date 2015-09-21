@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" android:background="#fff" android:padding="50dp">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:id="@+id/btnCancel" android:layout_below="@+id/btnSecChat" android:layout_centerHorizontal="true"
+        android:textAppearance="?android:attr/textAppearanceMedium" android:textColor="#3c4248"
+        android:layout_marginTop="10dp" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choose existing"
+        android:id="@+id/btnSecChat"
+        android:layout_below="@+id/btnRegChat" android:layout_centerHorizontal="true"
+        android:textAppearance="?android:attr/textAppearanceMedium" android:textColor="#3c4248"
+        android:layout_marginTop="10dp" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Take photo"
+        android:id="@+id/btnRegChat" android:layout_alignParentTop="false" android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp" android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#3c4248"
+        android:layout_below="@+id/textView54" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Photo"
+        android:id="@+id/textView54"
+        android:layout_centerHorizontal="true" android:textSize="18dp" android:textColor="#ff565555"/>
+</RelativeLayout>
