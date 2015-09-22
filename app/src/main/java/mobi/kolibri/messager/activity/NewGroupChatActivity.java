@@ -110,6 +110,13 @@ public class NewGroupChatActivity extends AppCompatActivity {
                     }
                     arrayUser.put(itemJs);
                 }
+                JSONObject itemJsUs = new JSONObject();
+                try {
+                    itemJsUs.put("user_id", HttpConnectRecive.getUserId(NewGroupChatActivity.this));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                arrayUser.put(itemJsUs);
                 if (arrayUser.length() > 0) {
                     DialogNameGroupChat(arrayUser.toString());
                 }
@@ -237,7 +244,7 @@ public class NewGroupChatActivity extends AppCompatActivity {
                 chat_id_db = db.insert(SQLMessager.TABLE_CHAT, null, cv);
                 if (chat_id_db > 0) {
                     Intent i = new Intent(NewGroupChatActivity.this, GroupChatItemActivity.class);
-                    i.putExtra("id_chat", Integer.parseInt(chat_id_db + ""));
+                    i.putExtra("chat_id", Integer.parseInt(chat_id_db + ""));
                     startActivity(i);
                     dialog.dismiss();
                     finish();

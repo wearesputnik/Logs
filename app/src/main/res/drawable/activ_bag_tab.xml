@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item>
+        <shape >
+            <solid android:color="#ff1951a1" />
+        </shape>
+    </item>
+
+    <!-- main color -->
+    <item android:bottom="4dp">
+        <shape >
+            <solid android:color="@color/background_splech" />
+            <padding android:left="0dp"
+                android:right="0dp"
+                android:top="10dp"
+                android:bottom="10dp" />
+        </shape>
+    </item>
+</layer-list>

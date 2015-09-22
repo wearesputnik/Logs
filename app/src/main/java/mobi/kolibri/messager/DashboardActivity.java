@@ -15,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import net.yanzm.mth.MaterialTabHost;
 
@@ -43,6 +45,11 @@ public class DashboardActivity extends AppCompatActivity {
     List<ContactInfo> listContacts;
     SQLiteDatabase db;
     private PrefManager pref;
+    private CirclesFragment mCirclesFragment = null;
+    private ChatFragment mChatFragment = null;
+
+    private TextView btnCircles;
+    private TextView btnChats;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +59,16 @@ public class DashboardActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.app_name);
+
+        initButtons();
+
+        if(mCirclesFragment == null){
+            mCirclesFragment = new CirclesFragment();
+            btnCircles.setBackgroundResource(R.drawable.activ_bag_tab);
+        }
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content_frame, mCirclesFragment)
+                .commit();
 
 
         listContacts = new ArrayList<>();
@@ -78,25 +95,6 @@ public class DashboardActivity extends AppCompatActivity {
             ParseUtils.subscribeWithEmail(pref.getEmail());
         }
 
-        MaterialTabHost tabHost = (MaterialTabHost) findViewById(android.R.id.tabhost);
-        tabHost.setType(MaterialTabHost.Type.FullScreenWidth);
-
-        SectionsPagerAdapter pagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        for (int i = 0; i < pagerAdapter.getCount(); i++) {
-            tabHost.addTab(pagerAdapter.getPageTitle(i));
-        }
-
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        viewPager.setAdapter(pagerAdapter);
-        viewPager.setOnPageChangeListener(tabHost);
-
-        tabHost.setOnTabChangeListener(new MaterialTabHost.OnTabChangeListener() {
-            @Override
-            public void onTabSelected(int position) {
-                viewPager.setCurrentItem(position);
-            }
-        });
-
         Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS, null);
         if (!c.moveToFirst()) {
             Cursor cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER}, null, null, null);
@@ -117,6 +115,50 @@ public class DashboardActivity extends AppCompatActivity {
         new NewAppKeyTask().execute();
 
     }
+
+    private void initButtons() {
+        btnCircles = (TextView) findViewById(R.id.btnCircles);
+        btnChats = (TextView) findViewById(R.id.btnChats);
+
+        btnCircles.setOnClickListener(btnCirclesListener);
+        btnChats.setOnClickListener(btnChatsListener);
+    }
+
+    private final View.OnClickListener btnCirclesListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            btnCircles.setBackgroundResource(R.drawable.activ_bag_tab);
+            btnChats.setBackgroundResource(R.drawable.pasiv_bac_tab);
+            FragmentManager fManager = getSupportFragmentManager();
+            if(!(fManager.findFragmentById(R.id.content_frame) instanceof CirclesFragment)){
+                if(mCirclesFragment == null){
+                    mCirclesFragment = new CirclesFragment();
+                }
+                fManager.beginTransaction()
+                        .replace(R.id.content_frame, mCirclesFragment)
+                        .commit();
+            }
+        }
+    };
+
+    private final View.OnClickListener btnChatsListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            btnCircles.setBackgroundResource(R.drawable.pasiv_bac_tab);
+            btnChats.setBackgroundResource(R.drawable.activ_bag_tab);
+            FragmentManager fManager = getSupportFragmentManager();
+            if(!(fManager.findFragmentById(R.id.content_frame) instanceof ChatFragment)){
+                if(mChatFragment == null){
+                    mChatFragment = new ChatFragment();
+                }
+                fManager.beginTransaction()
+                        .replace(R.id.content_frame, mChatFragment)
+                        .commit();
+            }
+        }
+    };
 
     class NewAppKeyTask extends AsyncTask<String, String, String> {
 

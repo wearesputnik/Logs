@@ -195,7 +195,7 @@ public class ChatItemActivity extends AppCompatActivity {
         protected void onPostExecute(MessagInfo result) {
             MessagInfo result_sql = new MessagInfo();
             result_sql.id_from = user_id_from.toString();
-            result_sql.id_to = user_id_from.toString();
+            result_sql.id_to = HttpConnectRecive.getUserId(ChatItemActivity.this);
             result_sql.message = textMessages.getText().toString();
             adapter.add(result_sql);
             textMessages.setText("");

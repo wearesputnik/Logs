@@ -50,6 +50,7 @@ public class HttpConnectRecive {
     public static final String CONTACT_SERVER = "contacts_server";
     public static final String SET_MESSAGER = "set_messager";
     public static final String GET_MESSAGER = "get_messager";
+    public static final String SET_GROUP_MESSAGER = "set_group_messeger";
     public static HttpClient http;
     public static String api_key = null;
 
@@ -394,6 +395,38 @@ public class HttpConnectRecive {
             else {
                 return null;
             }
+
+            return result;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String setGroupMessage(Context c, String json_user, String message, String type_chat, String chat_name) {
+        String result = null;
+
+        http = new DefaultHttpClient();
+        ClientConnectionManager mgr = http.getConnectionManager();
+        HttpParams params = http.getParams();
+        http = new DefaultHttpClient(new ThreadSafeClientConnManager(params, mgr.getSchemeRegistry()), params);
+        HttpPost request = new HttpPost(URL + SET_GROUP_MESSAGER + "?app_key=" + getApiKey(c));
+
+        List<BasicNameValuePair> parameters = Arrays.asList(
+                new BasicNameValuePair("json_users", json_user),
+                new BasicNameValuePair("message", message),
+                new BasicNameValuePair("chat_name", chat_name),
+                new BasicNameValuePair("type_chat", type_chat));
+
+        try {
+            UrlEncodedFormEntity form = new UrlEncodedFormEntity(parameters,
+                    "UTF-8");
+            request.setEntity(form);
+            HttpResponse response = http.execute(request);
+            String jsonStr = Utils.streamToString(response
+                    .getEntity().getContent());
+            Log.e("SET_GROUP_MESSAGER", jsonStr);
 
             return result;
         }
