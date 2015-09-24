@@ -17,7 +17,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:textColor="#000"
-        android:text="andrey.cherkavskiy@kolibri.mobi" />
+        android:text="igor.shabanov54@gmail.com" />
 
     <EditText
         android:layout_width="fill_parent"

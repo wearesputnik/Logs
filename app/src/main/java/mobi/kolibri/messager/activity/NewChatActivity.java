@@ -47,6 +47,7 @@ public class NewChatActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.mipmap.back_from_chats);
 
         Bundle b = getIntent().getExtras();
         if (b != null) {

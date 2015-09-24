@@ -24,6 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -35,6 +36,7 @@ import mobi.kolibri.messager.helper.ParseUtils;
 import mobi.kolibri.messager.helper.PrefManager;
 import mobi.kolibri.messager.http.HttpConnectRecive;
 import mobi.kolibri.messager.object.ContactInfo;
+import mobi.kolibri.messager.object.GroupMessagerInfo;
 import mobi.kolibri.messager.object.MessagInfo;
 import mobi.kolibri.messager.object.SQLMessager;
 
@@ -206,6 +208,7 @@ public class DashboardActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     new getMessegAllTask().execute();
+                                    new getGroupMessegAllTask().execute();
                                 }
                             }
                     );
@@ -279,6 +282,58 @@ public class DashboardActivity extends AppCompatActivity {
                         long chat_id_db = 0;
                         ContentValues cv_ch = new ContentValues();
                         cv_ch.put(SQLMessager.CHAT_JSON_INTERLOCUTOR, arrayUser.toString());
+                        cv_ch.put(SQLMessager.CHAT_TYPE, item.type_chat);
+                        chat_id_db = db.insert(SQLMessager.TABLE_CHAT, null, cv_ch);
+                        if (chat_id_db > 0) {
+                            ContentValues cv_ms = new ContentValues();
+                            cv_ms.put(SQLMessager.MESSAGER_CHAT_ID, chat_id_db);
+                            cv_ms.put(SQLMessager.MESSAGER_FROM_ID, user_id);
+                            cv_ms.put(SQLMessager.MESSAGER_TO_ID, item.id_to);
+                            cv_ms.put(SQLMessager.MESSAGER_MESSAG, item.message);
+                            cv_ms.put(SQLMessager.MESSAGER_SERVER, "0");
+                            db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
+                        }
+                    }
+                }
+            }
+            super.onPostExecute(result);
+
+        }
+    }
+
+    class getGroupMessegAllTask extends AsyncTask<String, String, List<GroupMessagerInfo>> {
+
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @SuppressWarnings("static-access")
+        protected List<GroupMessagerInfo> doInBackground(String... params) {
+            List<GroupMessagerInfo> result = HttpConnectRecive.getGroupMessager(DashboardActivity.this);
+            return result;
+        }
+
+        protected void onPostExecute(List<GroupMessagerInfo> result) {
+            if (result != null) {
+                for (GroupMessagerInfo item : result) {
+
+                    Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CHAT + " WHERE " + SQLMessager.CHAT_JSON_INTERLOCUTOR + "='" + item.json_users + "' and " + SQLMessager.CHAT_TYPE + "='" + item.type_chat + "'", null);
+                    if (c.moveToFirst()) {
+                        int idCollumn = c.getColumnIndex("id");
+                        ContentValues cv_ms = new ContentValues();
+                        cv_ms.put(SQLMessager.MESSAGER_CHAT_ID, c.getString(idCollumn));
+                        cv_ms.put(SQLMessager.MESSAGER_FROM_ID, user_id);
+                        cv_ms.put(SQLMessager.MESSAGER_TO_ID, item.id_to);
+                        cv_ms.put(SQLMessager.MESSAGER_MESSAG, item.message);
+                        cv_ms.put(SQLMessager.MESSAGER_SERVER, "0");
+                        db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
+                    }
+                    else {
+                        long chat_id_db = 0;
+                        ContentValues cv_ch = new ContentValues();
+                        cv_ch.put(SQLMessager.CHAT_JSON_INTERLOCUTOR, item.json_users);
+                        cv_ch.put(SQLMessager.CHAT_NAME, item.chat_name);
                         cv_ch.put(SQLMessager.CHAT_TYPE, item.type_chat);
                         chat_id_db = db.insert(SQLMessager.TABLE_CHAT, null, cv_ch);
                         if (chat_id_db > 0) {

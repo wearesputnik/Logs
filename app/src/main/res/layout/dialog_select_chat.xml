@@ -1,48 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" android:background="#fff" android:padding="50dp">
+    android:layout_height="wrap_content" android:background="#fff"
+    android:padding="20dp">
 
-    <Button
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cancel"
         android:id="@+id/btnCancel"
-        android:textAppearance="?android:attr/textAppearanceMedium" android:textColor="#3c4248"
-        android:layout_below="@+id/btnGroupChat"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp" />
-    <Button
+        android:src="@mipmap/cross"
+        android:background="@mipmap/cross"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Secret Chat"
         android:id="@+id/btnSecChat"
-        android:layout_below="@+id/btnRegChat" android:layout_centerHorizontal="true"
-        android:textAppearance="?android:attr/textAppearanceMedium" android:textColor="#3c4248"
-        android:layout_marginTop="10dp" />
-    <Button
+        android:background="@mipmap/chat_button_secret"
+        android:src="@mipmap/chat_button_secret"
+        android:layout_below="@+id/textView54"
+        android:layout_toRightOf="@+id/btnRegChat"
+        android:layout_toEndOf="@+id/btnRegChat"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="6dp" />
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Regular Chat "
-        android:id="@+id/btnRegChat" android:layout_alignParentTop="false" android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp" android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/btnRegChat"
         android:textColor="#3c4248"
-        android:layout_below="@+id/textView54" />
+        android:background="@mipmap/chat_button_regular"
+        android:src="@mipmap/chat_button_regular"
+        android:layout_below="@+id/textView54"
+        android:layout_alignLeft="@+id/textView54"
+        android:layout_alignStart="@+id/textView54"
+        android:layout_marginTop="10dp" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Select Chat"
         android:id="@+id/textView54"
-        android:layout_centerHorizontal="true" android:textSize="18dp" android:textColor="#ff565555"/>
+        android:textSize="18dp" android:textColor="#ff565555"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/btnCancel"
+        android:layout_toEndOf="@+id/btnCancel"
+        android:layout_marginTop="20dp" />
 
-    <Button
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Group Chat"
         android:id="@+id/btnGroupChat"
-        android:layout_below="@+id/btnSecChat"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:textColor="#3c4248"
-        android:textAppearance="@android:style/TextAppearance" />
+        android:src="@mipmap/chat_button_group"
+        android:background="@mipmap/chat_button_group"
+        android:layout_alignTop="@+id/btnSecChat"
+        android:layout_alignRight="@+id/textView54"
+        android:layout_alignEnd="@+id/textView54" />
 </RelativeLayout>

@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import org.json.JSONArray;
@@ -32,7 +33,7 @@ public class ChatItemActivity extends AppCompatActivity {
     SQLMessager sqlMessager;
     ListView listMeseges;
     EditText textMessages;
-    Button sendMessages;
+    ImageButton sendMessages;
     SQLiteDatabase db;
     MessagerAdapter adapter;
     String type_chat;
@@ -46,6 +47,7 @@ public class ChatItemActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.mipmap.back_from_chats);
 
         Bundle b = getIntent().getExtras();
         if (b != null) {
@@ -63,7 +65,7 @@ public class ChatItemActivity extends AppCompatActivity {
         adapter = new MessagerAdapter(ChatItemActivity.this, HttpConnectRecive.getUserId(ChatItemActivity.this));
         listMeseges.setAdapter(adapter);
         textMessages = (EditText) findViewById(R.id.edtChatMessages);
-        sendMessages = (Button) findViewById(R.id.btnChatSend);
+        sendMessages = (ImageButton) findViewById(R.id.btnChatSend);
 
         sqlMessager = new SQLMessager(ChatItemActivity.this);
 

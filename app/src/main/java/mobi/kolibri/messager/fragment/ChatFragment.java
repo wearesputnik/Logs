@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -145,10 +146,10 @@ public class ChatFragment extends Fragment {
         final Dialog dialog = new Dialog(getActivity());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_select_chat);
-        Button btnRegChat = (Button) dialog.findViewById(R.id.btnRegChat);
-        Button btnSecChat = (Button) dialog.findViewById(R.id.btnSecChat);
-        Button btnGroupChat = (Button) dialog.findViewById(R.id.btnGroupChat);
-        Button btnCancel = (Button) dialog.findViewById(R.id.btnCancel);
+        ImageButton btnRegChat = (ImageButton) dialog.findViewById(R.id.btnRegChat);
+        ImageButton btnSecChat = (ImageButton) dialog.findViewById(R.id.btnSecChat);
+        ImageButton btnGroupChat = (ImageButton) dialog.findViewById(R.id.btnGroupChat);
+        ImageButton btnCancel = (ImageButton) dialog.findViewById(R.id.btnCancel);
 
         btnRegChat.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -92,7 +92,7 @@ public class ChatAdapter extends ArrayAdapter<ChatInfo>{
 
         if (item.type_chat.trim().equals("group")) {
             holder.name.setText(item.name);
-            holder.image.setImageResource(R.mipmap.profile_min);
+            holder.image.setImageResource(R.mipmap.group_4);
             holder.clickLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -34,6 +34,7 @@ import java.util.List;
 
 import mobi.kolibri.messager.Utils;
 import mobi.kolibri.messager.object.ContactInfo;
+import mobi.kolibri.messager.object.GroupMessagerInfo;
 import mobi.kolibri.messager.object.MessagInfo;
 import mobi.kolibri.messager.object.ProfileInfo;
 import mobi.kolibri.messager.object.SQLMessager;
@@ -51,6 +52,7 @@ public class HttpConnectRecive {
     public static final String SET_MESSAGER = "set_messager";
     public static final String GET_MESSAGER = "get_messager";
     public static final String SET_GROUP_MESSAGER = "set_group_messeger";
+    public static final String GET_GROUP_MESSAGER = "get_group_messager";
     public static HttpClient http;
     public static String api_key = null;
 
@@ -427,6 +429,92 @@ public class HttpConnectRecive {
             String jsonStr = Utils.streamToString(response
                     .getEntity().getContent());
             Log.e("SET_GROUP_MESSAGER", jsonStr);
+
+            return result;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static List<GroupMessagerInfo> getGroupMessager(Context c) {
+        List<GroupMessagerInfo> result = new ArrayList<>();
+
+        ServiceHandler sh = new ServiceHandler();
+        String jsonStr = "";
+        String urlStr = "";
+
+        urlStr = URL + GET_GROUP_MESSAGER + "?app_key=" + getApiKey(c);
+
+        jsonStr = sh.makeServiceCall(urlStr, ServiceHandler.GET);
+        Log.e("GET_GROUP_MESSAGER", urlStr);
+        Log.e("GET_GROUP_MESSAGER", jsonStr);
+
+        try {
+            if (!jsonStr.equals("")) {
+                JSONObject jsonObject = new JSONObject(jsonStr);
+                JSONArray jsonArray = jsonObject.getJSONArray("result");
+                if (jsonArray.length() > 0) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        GroupMessagerInfo item = GroupMessagerInfo.parseJson(jsonArray.getJSONObject(i));
+                        if (item != null) {
+                            result.add(item);
+                        }
+                    }
+                } else {
+                    return null;
+                }
+            }
+            else {
+                return null;
+            }
+
+            return result;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static List<GroupMessagerInfo> postGroupMessager(Context c, String json_user) {
+        List<GroupMessagerInfo> result = new ArrayList<>();
+
+        http = new DefaultHttpClient();
+        ClientConnectionManager mgr = http.getConnectionManager();
+        HttpParams params = http.getParams();
+        http = new DefaultHttpClient(new ThreadSafeClientConnManager(params, mgr.getSchemeRegistry()), params);
+        HttpPost request = new HttpPost(URL + GET_GROUP_MESSAGER + "?app_key=" + getApiKey(c));
+
+        List<BasicNameValuePair> parameters = Arrays.asList(
+                new BasicNameValuePair("json_users", json_user));
+
+        try {
+            UrlEncodedFormEntity form = new UrlEncodedFormEntity(parameters,
+                    "UTF-8");
+            request.setEntity(form);
+            HttpResponse response = http.execute(request);
+            String jsonStr = Utils.streamToString(response
+                    .getEntity().getContent());
+            Log.e("GET_GROUP_MESSAGER", jsonStr);
+            if (!jsonStr.equals("")) {
+                JSONObject jsonObject = new JSONObject(jsonStr);
+                JSONArray jsonArray = jsonObject.getJSONArray("result");
+                if (jsonArray.length() > 0) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        GroupMessagerInfo item = GroupMessagerInfo.parseJson(jsonArray.getJSONObject(i));
+                        if (item != null) {
+                            result.add(item);
+                        }
+                    }
+                } else {
+                    return null;
+                }
+            }
+            else {
+                return null;
+            }
 
             return result;
         }
