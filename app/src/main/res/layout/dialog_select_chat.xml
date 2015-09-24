@@ -7,15 +7,6 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btnCancel"
-        android:src="@mipmap/cross"
-        android:background="@mipmap/cross"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/btnSecChat"
         android:background="@mipmap/chat_button_secret"
         android:src="@mipmap/chat_button_secret"
@@ -41,10 +32,7 @@
         android:text="Select Chat"
         android:id="@+id/textView54"
         android:textSize="18dp" android:textColor="#ff565555"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/btnCancel"
-        android:layout_toEndOf="@+id/btnCancel"
-        android:layout_marginTop="20dp" />
+        android:layout_alignParentTop="true" />
 
     <ImageButton
         android:layout_width="wrap_content"

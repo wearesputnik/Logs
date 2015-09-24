@@ -47,7 +47,9 @@ public class CirclesFragment extends Fragment {
         adapter = new ContactAdapter(getActivity());
         circlesAdapter = new CirclesAdapter(getActivity());
         listContact.setAdapter(adapter);
+        listContact.setDividerHeight(0);
         listCircles.setAdapter(circlesAdapter);
+        listCircles.setDividerHeight(0);
 
         sqlMessager = new SQLMessager(getActivity());
 
@@ -183,13 +185,13 @@ public class CirclesFragment extends Fragment {
                 LayoutInflater vi = LayoutInflater.from(getContext());
                 v = vi.inflate(R.layout.circle_item, null);
                 ViewHolder holder = new ViewHolder();
-                holder.image = (ImageView) v.findViewById(R.id.imageView3);
+               /// holder.image = (ImageView) v.findViewById(R.id.imageView3);
                 v.setTag(holder);
             }
 
             final ViewHolder holder = (ViewHolder) v.getTag();
 
-            holder.image.setImageResource(R.mipmap.profile_min);
+           // holder.image.setImageResource(R.mipmap.profile_min);
 
             return v;
         }

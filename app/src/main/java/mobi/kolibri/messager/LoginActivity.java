@@ -19,7 +19,7 @@ import mobi.kolibri.messager.http.HttpConnectRecive;
 
 
 public class LoginActivity extends AppCompatActivity {
-    TextView singup;
+    Button singup;
     Button btnLogin;
     EditText edtLoginEmail, edtLoginPass;
     private PrefManager pref;
@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        singup = (TextView) findViewById(R.id.singup);
+        singup = (Button) findViewById(R.id.singup);
         btnLogin = (Button) findViewById(R.id.btnLogin);
         edtLoginEmail = (EditText) findViewById(R.id.edtLoginEmail);
         edtLoginPass = (EditText) findViewById(R.id.edtLoginPass);

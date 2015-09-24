@@ -3,34 +3,13 @@
     android:layout_height="match_parent"
     tools:context="mobi.kolibri.messager.ActivationActivity">
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/relativeLayout3"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp"
-        android:background="@color/background_splech"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageView4"
-            android:src="@mipmap/logo"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
-    </RelativeLayout>
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Your email send key activation"
         android:id="@+id/textView"
-        android:layout_below="@+id/relativeLayout3"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="49dp"
+        android:layout_marginTop="100dp"
         android:textColor="#000"
         android:textSize="18dp" />
 
@@ -58,5 +37,6 @@
         android:layout_alignRight="@+id/edtKeyActivete"
         android:layout_alignEnd="@+id/edtKeyActivete"
         android:layout_marginTop="10dp"
-        android:textAppearance="@android:style/TextAppearance" />
+        android:textAppearance="@android:style/TextAppearance"
+        android:background="@drawable/bg_send_chat_item" />
 </RelativeLayout>

@@ -16,8 +16,7 @@
         android:layout_alignParentStart="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:textColor="#000"
-        android:text="igor.shabanov54@gmail.com" />
+        android:textColor="#000" />
 
     <EditText
         android:layout_width="fill_parent"
@@ -32,7 +31,7 @@
         android:layout_alignRight="@+id/edtLoginEmail"
         android:layout_alignEnd="@+id/edtLoginEmail"
         android:textColor="#000"
-        android:text="qwerty" />
+        android:layout_marginTop="10dp" />
 
     <Button
         android:layout_width="fill_parent"
@@ -45,9 +44,11 @@
         android:layout_alignParentStart="true"
         android:layout_marginLeft="16dp"
         android:layout_alignRight="@+id/edtLoginEmail"
-        android:layout_alignEnd="@+id/edtLoginEmail" />
+        android:layout_alignEnd="@+id/edtLoginEmail"
+        android:background="@drawable/bg_send_chat_item"
+        android:layout_marginTop="10dp" />
 
-    <TextView
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -58,18 +59,21 @@
         android:layout_alignParentStart="true"
         android:layout_marginLeft="16dp"
         android:layout_marginBottom="16dp"
-        android:textColor="#000" />
+        android:textColor="#000"
+        android:background="@drawable/bg_send_chat_item" />
 
-    <TextView
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Remember password"
-        android:id="@+id/textView2"
-        android:layout_alignBaseline="@+id/singup"
-        android:layout_alignBottom="@+id/singup"
-        android:layout_alignRight="@+id/btnLogin"
-        android:layout_alignEnd="@+id/btnLogin"
-        android:textColor="#000" />
+        android:text="Forgot password"
+        android:id="@+id/button"
+        android:layout_alignTop="@+id/singup"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/bg_send_chat_item"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp" />
 
 </RelativeLayout>

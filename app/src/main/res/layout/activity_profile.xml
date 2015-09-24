@@ -64,7 +64,8 @@
                 android:layout_alignLeft="@+id/txtSummary"
                 android:layout_alignStart="@+id/txtSummary"
                 android:layout_marginTop="10dp"
-                android:textAppearance="@android:style/TextAppearance" />
+                android:textAppearance="@android:style/TextAppearance"
+                android:background="@drawable/bg_send_chat_item" />
         </RelativeLayout>
     </ScrollView>
 

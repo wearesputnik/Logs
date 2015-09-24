@@ -2,7 +2,7 @@
     <string name="app_name">Logs Messager</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Log Out</string>
     <string name="action_profile">Profile</string>
     <string name="new_chat">New Chat</string>
     <string name="title_activity_singup">SingupActivity</string>

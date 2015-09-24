@@ -5,7 +5,7 @@
         <item name="android:windowActionBar">false</item>
         <item name="colorPrimaryDark">@color/background_status_bar</item>
         <item name="colorPrimary">@color/background_splech</item>
-        <item name="android:textColorPrimary">#ffffff</item>
+        <item name="android:textColorPrimary">#000</item>
         <item name="colorAccent">#ff1951a1</item>
     </style>
 
@@ -21,6 +21,10 @@
         <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
         <item name="android:backgroundDimEnabled">true</item>
         <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="bacground_item_chat">
+        <item name="android:background">@drawable/backlogs</item>
     </style>
 
 </resources>

@@ -96,7 +96,8 @@
                 android:layout_alignRight="@+id/edtEditSummary"
                 android:layout_alignEnd="@+id/edtEditSummary"
                 android:layout_marginTop="10dp"
-                android:textAppearance="@android:style/TextAppearance" />
+                android:textAppearance="@android:style/TextAppearance"
+                android:background="@drawable/bg_send_chat_item" />
         </RelativeLayout>
     </ScrollView>
 
