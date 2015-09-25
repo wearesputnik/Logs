@@ -13,8 +13,7 @@
         android:src="@mipmap/profile_min_4"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/circle_baground"
-        android:visibility="invisible" />
+        android:background="@drawable/circle_baground" />
 
     <RelativeLayout
         android:layout_width="fill_parent"

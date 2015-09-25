@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -163,14 +164,21 @@ public class HttpConnectRecive {
                     .getEntity().getContent());
             Log.e("LOGIN_ACCAUNT", jsonStr);
             JSONObject json = new JSONObject(jsonStr);
-            JSONObject result_json = json.getJSONObject("result");
-            result = result_json.getString("user_id");
+            Integer status = json.getInt("status");
+            if (status == 0) {
+                JSONObject result_json = json.getJSONObject("result");
+                result = result_json.getString("user_id");
 
-            ContentValues cv = new ContentValues();
-            SQLiteDatabase db = sqlMessager.getWritableDatabase();
-            cv.put(SQLMessager.APP_ID, result_json.getString("app_key"));
-            cv.put(SQLMessager.USER_ID, result_json.getString("user_id"));
-            db.insert(SQLMessager.TABLE_APP_ID, null, cv);
+                ContentValues cv = new ContentValues();
+                SQLiteDatabase db = sqlMessager.getWritableDatabase();
+                cv.put(SQLMessager.APP_ID, result_json.getString("app_key"));
+                cv.put(SQLMessager.USER_ID, result_json.getString("user_id"));
+                db.insert(SQLMessager.TABLE_APP_ID, null, cv);
+
+            }
+            else {
+                return null;
+            }
 
             return result;
         }

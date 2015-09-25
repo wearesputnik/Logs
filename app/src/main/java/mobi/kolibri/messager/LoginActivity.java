@@ -65,9 +65,11 @@ public class LoginActivity extends AppCompatActivity {
 
     private Boolean validation() {
         if (!isValidEmail(edtLoginEmail.getText())) {
+            Toast.makeText(LoginActivity.this, "No validation email", Toast.LENGTH_LONG).show();
             return false;
         }
         if (edtLoginPass.getText().equals("")) {
+            Toast.makeText(LoginActivity.this, "Empty password", Toast.LENGTH_LONG).show();
             return false;
         }
         return true;
@@ -94,13 +96,18 @@ public class LoginActivity extends AppCompatActivity {
 
         protected void onPostExecute(String result) {
             dialog.dismiss();
+            if (result != null) {
 
-            pref.createLoginSession(edtLoginEmail.getText().toString());
+                pref.createLoginSession(edtLoginEmail.getText().toString());
 
-            Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
-            i.putExtra("user_id", Integer.parseInt(result));
-            startActivity(i);
-            finish();
+                Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
+                i.putExtra("user_id", Integer.parseInt(result));
+                startActivity(i);
+                finish();
+            }
+            else  {
+                Toast.makeText(LoginActivity.this, "Wrong username or password", Toast.LENGTH_LONG).show();
+            }
 
             super.onPostExecute(result);
 

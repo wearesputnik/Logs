@@ -1,14 +1,22 @@
 package mobi.kolibri.messager.fragment;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -36,6 +44,7 @@ public class CirclesFragment extends Fragment {
     ContactAdapter adapter;
     CirclesAdapter circlesAdapter;
     SQLMessager sqlMessager;
+    int resumeColor;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,6 +57,7 @@ public class CirclesFragment extends Fragment {
         circlesAdapter = new CirclesAdapter(getActivity());
         listContact.setAdapter(adapter);
         listContact.setDividerHeight(0);
+        listContact.setOnItemLongClickListener(myOnItemLongClickListener);
         listCircles.setAdapter(circlesAdapter);
         listCircles.setDividerHeight(0);
 
@@ -66,6 +76,7 @@ public class CirclesFragment extends Fragment {
                 result_sql.phone = c.getString(phoneCollumn);
                 result_sql.photo = c.getString(photoCollumn);
                 adapter.add(result_sql);
+                contactInfoList.add(result_sql);
                 if (i < 10) {
                     i++;
                     circlesAdapter.add(result_sql);
@@ -76,7 +87,55 @@ public class CirclesFragment extends Fragment {
         adapter.notifyDataSetChanged();
         circlesAdapter.notifyDataSetChanged();
 
+        resumeColor  = getResources().getColor(android.R.color.background_light);
+
         return rootView;
+    }
+
+    AdapterView.OnItemLongClickListener myOnItemLongClickListener = new AdapterView.OnItemLongClickListener(){
+
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view,
+                                       int position, long id) {
+            ContactInfo selectedItem = (ContactInfo)(parent.getItemAtPosition(position));
+
+            ContactAdapter associatedAdapter = (ContactAdapter)(parent.getAdapter());
+            List<ContactInfo> associatedList = associatedAdapter.getList();
+
+            PassObject passObj = new PassObject(view, selectedItem, associatedList);
+
+            ClipData data = ClipData.newPlainText("", "");
+            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+            view.startDrag(data, shadowBuilder, passObj, 0);
+
+            return true;
+        }
+
+    };
+
+    private static class MyDragShadowBuilder extends View.DragShadowBuilder {
+        private static Drawable shadow;
+
+        public MyDragShadowBuilder(View v) {
+            super(v);
+            shadow = new ColorDrawable(Color.LTGRAY);
+        }
+
+        @Override
+        public void onProvideShadowMetrics (Point size, Point touch){
+            int width = getView().getWidth();
+            int height = getView().getHeight();
+
+            shadow.setBounds(0, 0, width, height);
+            size.set(width, height);
+            touch.set(width / 2, height / 2);
+        }
+
+        @Override
+        public void onDrawShadow(Canvas canvas) {
+            shadow.draw(canvas);
+        }
+
     }
 
     private class ContactAdapter extends ArrayAdapter<ContactInfo> {
@@ -146,6 +205,8 @@ public class CirclesFragment extends Fragment {
                 holder.image.setImageResource(R.mipmap.profile_min);
             }
 
+            v.setOnDragListener(new ItemOnDragListener(item));
+
             return v;
         }
 
@@ -153,6 +214,10 @@ public class CirclesFragment extends Fragment {
             TextView name;
             TextView phone;
             ImageView image;
+        }
+
+        public List<ContactInfo> getList(){
+            return listItem;
         }
 
     }
@@ -201,4 +266,83 @@ public class CirclesFragment extends Fragment {
         }
 
     }
+
+    class PassObject{
+        View view;
+        ContactInfo item;
+        List<ContactInfo> srcList;
+
+        PassObject(View v, ContactInfo i, List<ContactInfo> s){
+            view = v;
+            item = i;
+            srcList = s;
+        }
+    }
+
+    class ItemOnDragListener implements View.OnDragListener {
+
+        ContactInfo  me;
+
+        ItemOnDragListener(ContactInfo i){
+            me = i;
+        }
+
+        @Override
+        public boolean onDrag(View v, DragEvent event) {
+            switch (event.getAction()) {
+                case DragEvent.ACTION_DRAG_STARTED:
+                   // prompt.append("Item ACTION_DRAG_STARTED: " + "\n");
+                    break;
+                case DragEvent.ACTION_DRAG_ENTERED:
+                   // prompt.append("Item ACTION_DRAG_ENTERED: " + "\n");
+                    v.setBackgroundColor(0x30000000);
+                    break;
+                case DragEvent.ACTION_DRAG_EXITED:
+                  //  prompt.append("Item ACTION_DRAG_EXITED: " + "\n");
+                    v.setBackgroundColor(resumeColor);
+                    break;
+                case DragEvent.ACTION_DROP:
+                 ///   prompt.append("Item ACTION_DROP: " + "\n");
+
+                    PassObject passObj = (PassObject)event.getLocalState();
+                    View view = passObj.view;
+                    ContactInfo passedItem = passObj.item;
+                    List<ContactInfo> srcList = passObj.srcList;
+                    ListView oldParent = (ListView)view.getParent();
+                    ContactAdapter srcAdapter = (ContactAdapter)(oldParent.getAdapter());
+
+                    ListView newParent = (ListView)v.getParent();
+                    ContactAdapter destAdapter = (ContactAdapter)(newParent.getAdapter());
+                    List<ContactInfo> destList = destAdapter.getList();
+
+                    int removeLocation = srcList.indexOf(passedItem);
+                    int insertLocation = destList.indexOf(me);
+    /*
+     * If drag and drop on the same list, same position,
+     * ignore
+     */
+                    if(srcList != destList || removeLocation != insertLocation){
+                        /*if(removeItemToList(srcList, passedItem)){
+                            destList.add(insertLocation, passedItem);
+                        }*/
+
+                        srcAdapter.notifyDataSetChanged();
+                        destAdapter.notifyDataSetChanged();
+                    }
+
+                  //  v.setBackgroundColor(resumeColor);
+
+                    break;
+                case DragEvent.ACTION_DRAG_ENDED:
+                   // prompt.append("Item ACTION_DRAG_ENDED: "  + "\n");
+                    v.setBackgroundColor(resumeColor);
+                default:
+                    break;
+            }
+
+            return true;
+        }
+
+    }
+
 }

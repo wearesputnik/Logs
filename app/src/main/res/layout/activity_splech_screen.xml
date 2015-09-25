@@ -14,5 +14,5 @@
         android:src="@mipmap/logo_scr"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:paddingBottom="30dp" />
+        android:paddingBottom="90dp" />
 </RelativeLayout>
