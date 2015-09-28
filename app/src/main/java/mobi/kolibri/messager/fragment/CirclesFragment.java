@@ -12,6 +12,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -58,8 +60,10 @@ public class CirclesFragment extends Fragment {
         listContact.setAdapter(adapter);
         listContact.setDividerHeight(0);
         listContact.setOnItemLongClickListener(myOnItemLongClickListener);
+        listContact.setOnItemClickListener(listOnItemClickListener);
         listCircles.setAdapter(circlesAdapter);
         listCircles.setDividerHeight(0);
+        listCircles.setOnItemClickListener(listOnItemClickListener);
 
         sqlMessager = new SQLMessager(getActivity());
 
@@ -77,7 +81,7 @@ public class CirclesFragment extends Fragment {
                 result_sql.photo = c.getString(photoCollumn);
                 adapter.add(result_sql);
                 contactInfoList.add(result_sql);
-                if (i < 10) {
+                if (i < 4) {
                     i++;
                     circlesAdapter.add(result_sql);
                 }
@@ -112,31 +116,6 @@ public class CirclesFragment extends Fragment {
         }
 
     };
-
-    private static class MyDragShadowBuilder extends View.DragShadowBuilder {
-        private static Drawable shadow;
-
-        public MyDragShadowBuilder(View v) {
-            super(v);
-            shadow = new ColorDrawable(Color.LTGRAY);
-        }
-
-        @Override
-        public void onProvideShadowMetrics (Point size, Point touch){
-            int width = getView().getWidth();
-            int height = getView().getHeight();
-
-            shadow.setBounds(0, 0, width, height);
-            size.set(width, height);
-            touch.set(width / 2, height / 2);
-        }
-
-        @Override
-        public void onDrawShadow(Canvas canvas) {
-            shadow.draw(canvas);
-        }
-
-    }
 
     private class ContactAdapter extends ArrayAdapter<ContactInfo> {
         List<ContactInfo> listItem;
@@ -257,12 +236,16 @@ public class CirclesFragment extends Fragment {
             final ViewHolder holder = (ViewHolder) v.getTag();
 
            // holder.image.setImageResource(R.mipmap.profile_min);
-
+            v.setOnDragListener(new ItemOnDragListener(item));
             return v;
         }
 
         class ViewHolder {
             ImageView image;
+        }
+
+        public List<ContactInfo> getList(){
+            return listItem;
         }
 
     }
@@ -291,18 +274,18 @@ public class CirclesFragment extends Fragment {
         public boolean onDrag(View v, DragEvent event) {
             switch (event.getAction()) {
                 case DragEvent.ACTION_DRAG_STARTED:
-                   // prompt.append("Item ACTION_DRAG_STARTED: " + "\n");
+                    //Log.e("DRAG and DROP", "Item ACTION_DRAG_STARTED: " + me.name + "\n");
                     break;
                 case DragEvent.ACTION_DRAG_ENTERED:
-                   // prompt.append("Item ACTION_DRAG_ENTERED: " + "\n");
-                    v.setBackgroundColor(0x30000000);
+                   // Log.e("DRAG and DROP", "Item ACTION_DRAG_ENTERED: " + me.name + "\n");
+                    //v.setBackgroundColor(0x30000000);
                     break;
                 case DragEvent.ACTION_DRAG_EXITED:
-                  //  prompt.append("Item ACTION_DRAG_EXITED: " + "\n");
-                    v.setBackgroundColor(resumeColor);
+                  //  Log.e("DRAG and DROP", "Item ACTION_DRAG_EXITED: " + me.name + "\n");
+                   // v.setBackgroundColor(resumeColor);
                     break;
                 case DragEvent.ACTION_DROP:
-                 ///   prompt.append("Item ACTION_DROP: " + "\n");
+
 
                     PassObject passObj = (PassObject)event.getLocalState();
                     View view = passObj.view;
@@ -312,30 +295,29 @@ public class CirclesFragment extends Fragment {
                     ContactAdapter srcAdapter = (ContactAdapter)(oldParent.getAdapter());
 
                     ListView newParent = (ListView)v.getParent();
-                    ContactAdapter destAdapter = (ContactAdapter)(newParent.getAdapter());
+                    CirclesAdapter destAdapter = (CirclesAdapter)(newParent.getAdapter());
                     List<ContactInfo> destList = destAdapter.getList();
 
                     int removeLocation = srcList.indexOf(passedItem);
                     int insertLocation = destList.indexOf(me);
+                    Log.e("DRAG and DROP", "Item ACTION_DROP: " + me.name + " " + passedItem.name + "\n");
     /*
-     * If drag and drop on the same list, same position,
-     * ignore
+     * costomise circles and contacts object for drag and drop
      */
                     if(srcList != destList || removeLocation != insertLocation){
-                        /*if(removeItemToList(srcList, passedItem)){
+                        if(removeItemToList(srcList, passedItem)){
                             destList.add(insertLocation, passedItem);
-                        }*/
+                        }
 
                         srcAdapter.notifyDataSetChanged();
                         destAdapter.notifyDataSetChanged();
                     }
 
-                  //  v.setBackgroundColor(resumeColor);
+                    v.setBackgroundColor(resumeColor);
 
                     break;
                 case DragEvent.ACTION_DRAG_ENDED:
-                   // prompt.append("Item ACTION_DRAG_ENDED: "  + "\n");
-                    v.setBackgroundColor(resumeColor);
+                   // Log.e("DRAG and DROP", "Item ACTION_DRAG_ENDED: " + me.name + "\n");
                 default:
                     break;
             }
@@ -344,5 +326,22 @@ public class CirclesFragment extends Fragment {
         }
 
     }
+
+    private boolean removeItemToList(List<ContactInfo> l, ContactInfo it){
+        boolean result = l.remove(it);
+        return result;
+    }
+
+    AdapterView.OnItemClickListener listOnItemClickListener = new AdapterView.OnItemClickListener(){
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position,
+                                long id) {
+            Toast.makeText(getActivity(),
+                    ((ContactInfo) (parent.getItemAtPosition(position))).name,
+                    Toast.LENGTH_SHORT).show();
+        }
+
+    };
 
 }
