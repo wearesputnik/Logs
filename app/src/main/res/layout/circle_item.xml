@@ -13,7 +13,8 @@
         android:src="@mipmap/profile_min_4"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/circle_baground" />
+        android:background="@drawable/circle_baground"
+        android:visibility="invisible" />
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -25,6 +26,17 @@
         android:layout_alignRight="@+id/imageView3"
         android:layout_alignEnd="@+id/imageView3"
         android:layout_alignLeft="@+id/imageView3"
-        android:layout_alignStart="@+id/imageView3"></RelativeLayout>
+        android:layout_alignStart="@+id/imageView3">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Frends"
+            android:id="@+id/textView2"
+            android:layout_centerVertical="true"
+            android:gravity="center_horizontal"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+    </RelativeLayout>
 
 </RelativeLayout>

@@ -149,6 +149,7 @@ public class ChatFragment extends Fragment {
         ImageButton btnRegChat = (ImageButton) dialog.findViewById(R.id.btnRegChat);
         ImageButton btnSecChat = (ImageButton) dialog.findViewById(R.id.btnSecChat);
         ImageButton btnGroupChat = (ImageButton) dialog.findViewById(R.id.btnGroupChat);
+        ImageButton btnCancel = (ImageButton) dialog.findViewById(R.id.btnCancel);
 
         btnRegChat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,6 +177,13 @@ public class ChatFragment extends Fragment {
                 Intent i = new Intent(getActivity(), NewGroupChatActivity.class);
                 i.putExtra("type", "group");
                 startActivity(i);
+                dialog.dismiss();
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 dialog.dismiss();
             }
         });

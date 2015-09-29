@@ -35,12 +35,13 @@ import java.util.List;
 
 import mobi.kolibri.messager.R;
 import mobi.kolibri.messager.http.HttpConnectRecive;
+import mobi.kolibri.messager.object.CiclesInfo;
 import mobi.kolibri.messager.object.ContactInfo;
 import mobi.kolibri.messager.object.SQLMessager;
 
 public class CirclesFragment extends Fragment {
-    List<ContactInfo> contactInfoList;
-    List<ContactInfo> contactInfoListCircle;
+    List<CiclesInfo> contactInfoList;
+    List<CiclesInfo> contactInfoListCircle;
     ListView listContact;
     ListView listCircles;
     ContactAdapter adapter;
@@ -71,11 +72,13 @@ public class CirclesFragment extends Fragment {
         Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS, null);
         if (c.moveToFirst()) {
             int i = 0;
+            int ideCollumn = c.getColumnIndex("id");
             int nameCollumn = c.getColumnIndex(SQLMessager.CONTACTS_NAME);
             int phoneCollumn = c.getColumnIndex(SQLMessager.CONTACTS_PHONE);
             int photoCollumn = c.getColumnIndex(SQLMessager.CONTACTS_PHOTO);
             do {
-                ContactInfo result_sql = new ContactInfo();
+                CiclesInfo result_sql = new CiclesInfo();
+                result_sql.id_db = c.getInt(ideCollumn);
                 result_sql.name = c.getString(nameCollumn);
                 result_sql.phone = c.getString(phoneCollumn);
                 result_sql.photo = c.getString(photoCollumn);
@@ -101,10 +104,10 @@ public class CirclesFragment extends Fragment {
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view,
                                        int position, long id) {
-            ContactInfo selectedItem = (ContactInfo)(parent.getItemAtPosition(position));
+            CiclesInfo selectedItem = (CiclesInfo)(parent.getItemAtPosition(position));
 
             ContactAdapter associatedAdapter = (ContactAdapter)(parent.getAdapter());
-            List<ContactInfo> associatedList = associatedAdapter.getList();
+            List<CiclesInfo> associatedList = associatedAdapter.getList();
 
             PassObject passObj = new PassObject(view, selectedItem, associatedList);
 
@@ -117,14 +120,14 @@ public class CirclesFragment extends Fragment {
 
     };
 
-    private class ContactAdapter extends ArrayAdapter<ContactInfo> {
-        List<ContactInfo> listItem;
+    private class ContactAdapter extends ArrayAdapter<CiclesInfo> {
+        List<CiclesInfo> listItem;
         private DisplayImageOptions options;
 
 
         public ContactAdapter (Context context) {
             super(context, 0);
-            listItem = new ArrayList<ContactInfo>();
+            listItem = new ArrayList<CiclesInfo>();
             options = new DisplayImageOptions.Builder()
                     .showImageOnLoading(R.mipmap.profile_min)
                     .showImageForEmptyUri(R.mipmap.profile_min)
@@ -137,7 +140,7 @@ public class CirclesFragment extends Fragment {
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
-            final ContactInfo item = getItem(position);
+            final CiclesInfo item = getItem(position);
 
 
             View v = convertView;
@@ -195,20 +198,20 @@ public class CirclesFragment extends Fragment {
             ImageView image;
         }
 
-        public List<ContactInfo> getList(){
+        public List<CiclesInfo> getList(){
             return listItem;
         }
 
     }
 
-    private class CirclesAdapter extends ArrayAdapter<ContactInfo> {
-        List<ContactInfo> listItem;
+    private class CirclesAdapter extends ArrayAdapter<CiclesInfo> {
+        List<CiclesInfo> listItem;
         private DisplayImageOptions options;
 
 
         public CirclesAdapter (Context context) {
             super(context, 0);
-            listItem = new ArrayList<ContactInfo>();
+            listItem = new ArrayList<CiclesInfo>();
             options = new DisplayImageOptions.Builder()
                     .showImageOnLoading(R.mipmap.profile_min)
                     .showImageForEmptyUri(R.mipmap.profile_min)
@@ -221,7 +224,7 @@ public class CirclesFragment extends Fragment {
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
-            final ContactInfo item = getItem(position);
+            final CiclesInfo item = getItem(position);
 
 
             View v = convertView;
@@ -244,7 +247,7 @@ public class CirclesFragment extends Fragment {
             ImageView image;
         }
 
-        public List<ContactInfo> getList(){
+        public List<CiclesInfo> getList(){
             return listItem;
         }
 
@@ -252,10 +255,10 @@ public class CirclesFragment extends Fragment {
 
     class PassObject{
         View view;
-        ContactInfo item;
-        List<ContactInfo> srcList;
+        CiclesInfo item;
+        List<CiclesInfo> srcList;
 
-        PassObject(View v, ContactInfo i, List<ContactInfo> s){
+        PassObject(View v, CiclesInfo i, List<CiclesInfo> s){
             view = v;
             item = i;
             srcList = s;
@@ -264,9 +267,9 @@ public class CirclesFragment extends Fragment {
 
     class ItemOnDragListener implements View.OnDragListener {
 
-        ContactInfo  me;
+        CiclesInfo  me;
 
-        ItemOnDragListener(ContactInfo i){
+        ItemOnDragListener(CiclesInfo i){
             me = i;
         }
 
@@ -289,14 +292,14 @@ public class CirclesFragment extends Fragment {
 
                     PassObject passObj = (PassObject)event.getLocalState();
                     View view = passObj.view;
-                    ContactInfo passedItem = passObj.item;
-                    List<ContactInfo> srcList = passObj.srcList;
+                    CiclesInfo passedItem = passObj.item;
+                    List<CiclesInfo> srcList = passObj.srcList;
                     ListView oldParent = (ListView)view.getParent();
                     ContactAdapter srcAdapter = (ContactAdapter)(oldParent.getAdapter());
 
                     ListView newParent = (ListView)v.getParent();
                     CirclesAdapter destAdapter = (CirclesAdapter)(newParent.getAdapter());
-                    List<ContactInfo> destList = destAdapter.getList();
+                    List<CiclesInfo> destList = destAdapter.getList();
 
                     int removeLocation = srcList.indexOf(passedItem);
                     int insertLocation = destList.indexOf(me);
@@ -327,7 +330,7 @@ public class CirclesFragment extends Fragment {
 
     }
 
-    private boolean removeItemToList(List<ContactInfo> l, ContactInfo it){
+    private boolean removeItemToList(List<CiclesInfo> l, CiclesInfo it){
         boolean result = l.remove(it);
         return result;
     }
@@ -338,7 +341,7 @@ public class CirclesFragment extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int position,
                                 long id) {
             Toast.makeText(getActivity(),
-                    ((ContactInfo) (parent.getItemAtPosition(position))).name,
+                    ((CiclesInfo) (parent.getItemAtPosition(position))).name,
                     Toast.LENGTH_SHORT).show();
         }
 

@@ -171,7 +171,10 @@ public class DashboardActivity extends AppCompatActivity {
 
         @SuppressWarnings("static-access")
         protected String doInBackground(String... params) {
-            String result = HttpConnectRecive.newAppKey(DashboardActivity.this, user_id);
+            String result = null;
+            if (HttpConnectRecive.isOnline(DashboardActivity.this)) {
+                result = HttpConnectRecive.newAppKey(DashboardActivity.this, user_id);
+            }
             return result;
         }
 
@@ -188,7 +191,9 @@ public class DashboardActivity extends AppCompatActivity {
                     listContacts.add(result_sql);
                 } while (c.moveToNext());
             }
-            new ContactServerTask().execute();
+            if (HttpConnectRecive.isOnline(DashboardActivity.this)) {
+                new ContactServerTask().execute();
+            }
             Updater u = new Updater();
             u.start();
             super.onPostExecute(result);
@@ -207,8 +212,10 @@ public class DashboardActivity extends AppCompatActivity {
                             new Runnable() {
                                 @Override
                                 public void run() {
-                                    new getMessegAllTask().execute();
-                                    new getGroupMessegAllTask().execute();
+                                    if (HttpConnectRecive.isOnline(DashboardActivity.this)) {
+                                        new getMessegAllTask().execute();
+                                        new getGroupMessegAllTask().execute();
+                                    }
                                 }
                             }
                     );
