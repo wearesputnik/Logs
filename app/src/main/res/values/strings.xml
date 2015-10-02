@@ -5,6 +5,8 @@
     <string name="action_settings">Log Out</string>
     <string name="action_profile">Profile</string>
     <string name="new_chat">New Chat</string>
+    <string name="action_clear_all">Clear All</string>
+    <string name="action_remowe">Remowe</string>
     <string name="title_activity_singup">SingupActivity</string>
     <string name="title_activity_splech_screen">SplechScreenActivity</string>
     <string name="title_activity_activation">ActivationActivity</string>
@@ -22,4 +24,12 @@
     <string name="title_activity_chat_item">ChatItemActivity</string>
     <string name="title_activity_new_group_chat">New Group Chat</string>
     <string name="title_activity_group_chat_item">GroupChatItemActivity</string>
+
+    <string-array name="circle_name">
+        <item>Family</item>
+        <item>Friends</item>
+        <item>Work</item>
+        <item>Hobby</item>
+    </string-array>
+    <string name="title_activity_circle_item">CircleItemActivity</string>
 </resources>

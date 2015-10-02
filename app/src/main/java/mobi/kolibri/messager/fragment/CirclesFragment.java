@@ -1,7 +1,10 @@
 package mobi.kolibri.messager.fragment;
 
+import android.app.Dialog;
 import android.content.ClipData;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -17,8 +20,11 @@ import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mobi.kolibri.messager.R;
+import mobi.kolibri.messager.activity.CircleItemActivity;
 import mobi.kolibri.messager.http.HttpConnectRecive;
 import mobi.kolibri.messager.object.CiclesInfo;
 import mobi.kolibri.messager.object.ContactInfo;
@@ -48,6 +55,13 @@ public class CirclesFragment extends Fragment {
     CirclesAdapter circlesAdapter;
     SQLMessager sqlMessager;
     int resumeColor;
+    private String[] circle_name = {
+            "Family",
+            "Friends",
+            "Work",
+            "Hobby"
+    };
+    SQLiteDatabase db;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,17 +75,15 @@ public class CirclesFragment extends Fragment {
         listContact.setAdapter(adapter);
         listContact.setDividerHeight(0);
         listContact.setOnItemLongClickListener(myOnItemLongClickListener);
-        listContact.setOnItemClickListener(listOnItemClickListener);
         listCircles.setAdapter(circlesAdapter);
         listCircles.setDividerHeight(0);
-        listCircles.setOnItemClickListener(listOnItemClickListener);
+        listCircles.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 
         sqlMessager = new SQLMessager(getActivity());
 
-        SQLiteDatabase db = sqlMessager.getWritableDatabase();
+        db = sqlMessager.getWritableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS, null);
         if (c.moveToFirst()) {
-            int i = 0;
             int ideCollumn = c.getColumnIndex("id");
             int nameCollumn = c.getColumnIndex(SQLMessager.CONTACTS_NAME);
             int phoneCollumn = c.getColumnIndex(SQLMessager.CONTACTS_PHONE);
@@ -82,14 +94,42 @@ public class CirclesFragment extends Fragment {
                 result_sql.name = c.getString(nameCollumn);
                 result_sql.phone = c.getString(phoneCollumn);
                 result_sql.photo = c.getString(photoCollumn);
+                result_sql.type_circle = "contact";
                 adapter.add(result_sql);
                 contactInfoList.add(result_sql);
-                if (i < 4) {
-                    i++;
-                    circlesAdapter.add(result_sql);
-                }
             } while (c.moveToNext());
         }
+
+        Cursor c_cir = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CIRCLES, null);
+        if (c_cir.moveToFirst()) {
+            int ideCollumn = c_cir.getColumnIndex("id");
+            int nameCollumn = c_cir.getColumnIndex(SQLMessager.CIRCLES_NAME);
+            do {
+                CiclesInfo result_sql = new CiclesInfo();
+                result_sql.id_circle = c_cir.getInt(ideCollumn);
+                result_sql.name_circle = c_cir.getString(nameCollumn);
+                result_sql.type_circle = "circle";
+                circlesAdapter.add(result_sql);
+            } while (c_cir.moveToNext());
+        }
+        else {
+            for (int i = 0; i < circle_name.length; i++) {
+                ContentValues cv = new ContentValues();
+                cv.put(SQLMessager.CIRCLES_NAME, circle_name[i]);
+                long id = db.insert(SQLMessager.TABLE_CIRCLES, null, cv);
+                CiclesInfo result_sql = new CiclesInfo();
+                result_sql.id_circle = (int) id;
+                result_sql.name_circle = circle_name[i];
+                result_sql.type_circle = "circle";
+                circlesAdapter.add(result_sql);
+            }
+        }
+
+        CiclesInfo result_sql = new CiclesInfo();
+        result_sql.id_circle = 0;
+        result_sql.name_circle = "add";
+        result_sql.type_circle = "circle_add";
+        circlesAdapter.add(result_sql);
 
         adapter.notifyDataSetChanged();
         circlesAdapter.notifyDataSetChanged();
@@ -97,6 +137,33 @@ public class CirclesFragment extends Fragment {
         resumeColor  = getResources().getColor(android.R.color.background_light);
 
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        circlesAdapter.clear();
+
+        Cursor c_cir = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CIRCLES, null);
+        if (c_cir.moveToFirst()) {
+            int ideCollumn = c_cir.getColumnIndex("id");
+            int nameCollumn = c_cir.getColumnIndex(SQLMessager.CIRCLES_NAME);
+            do {
+                CiclesInfo result_sql = new CiclesInfo();
+                result_sql.id_circle = c_cir.getInt(ideCollumn);
+                result_sql.name_circle = c_cir.getString(nameCollumn);
+                result_sql.type_circle = "circle";
+                circlesAdapter.add(result_sql);
+            } while (c_cir.moveToNext());
+        }
+
+        CiclesInfo result_sql = new CiclesInfo();
+        result_sql.id_circle = 0;
+        result_sql.name_circle = "add";
+        result_sql.type_circle = "circle_add";
+        circlesAdapter.add(result_sql);
+
+        circlesAdapter.notifyDataSetChanged();
     }
 
     AdapterView.OnItemLongClickListener myOnItemLongClickListener = new AdapterView.OnItemLongClickListener(){
@@ -232,25 +299,95 @@ public class CirclesFragment extends Fragment {
                 LayoutInflater vi = LayoutInflater.from(getContext());
                 v = vi.inflate(R.layout.circle_item, null);
                 ViewHolder holder = new ViewHolder();
-               /// holder.image = (ImageView) v.findViewById(R.id.imageView3);
+                holder.image = (ImageView) v.findViewById(R.id.imageView3);
+                holder.name_circle = (TextView) v.findViewById(R.id.name_circle);
                 v.setTag(holder);
             }
 
             final ViewHolder holder = (ViewHolder) v.getTag();
-
-           // holder.image.setImageResource(R.mipmap.profile_min);
-            v.setOnDragListener(new ItemOnDragListener(item));
+            if (item.type_circle.equals("circle_add")) {
+                holder.image.setVisibility(View.VISIBLE);
+                holder.name_circle.setVisibility(View.INVISIBLE);
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DialogAddCircle();
+                    }
+                });
+            }
+            else {
+                holder.image.setVisibility(View.INVISIBLE);
+                holder.name_circle.setVisibility(View.VISIBLE);
+                holder.name_circle.setText(item.name_circle);
+                v.setOnDragListener(new ItemOnDragListener(item));
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(getActivity(), CircleItemActivity.class);
+                        i.putExtra("circle_id", item.id_circle);
+                        startActivity(i);
+                    }
+                });
+            }
             return v;
         }
 
         class ViewHolder {
             ImageView image;
+            TextView name_circle;
         }
 
         public List<CiclesInfo> getList(){
             return listItem;
         }
 
+    }
+
+    public void DialogAddCircle() {
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_add_circle);
+        final EditText edtCircleName = (EditText) dialog.findViewById(R.id.edtCircleName);
+        Button btnAddCircle = (Button) dialog.findViewById(R.id.btnAddCircle);
+
+
+        btnAddCircle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContentValues cv = new ContentValues();
+                cv.put(SQLMessager.CIRCLES_NAME, edtCircleName.getText().toString());
+                db.insert(SQLMessager.TABLE_CIRCLES, null, cv);
+                CircleUpdate();
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void CircleUpdate() {
+        circlesAdapter.clear();
+
+        Cursor c_cir = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CIRCLES, null);
+        if (c_cir.moveToFirst()) {
+            int ideCollumn = c_cir.getColumnIndex("id");
+            int nameCollumn = c_cir.getColumnIndex(SQLMessager.CIRCLES_NAME);
+            do {
+                CiclesInfo result_sql = new CiclesInfo();
+                result_sql.id_circle = c_cir.getInt(ideCollumn);
+                result_sql.name_circle = c_cir.getString(nameCollumn);
+                result_sql.type_circle = "circle";
+                circlesAdapter.add(result_sql);
+            } while (c_cir.moveToNext());
+        }
+
+        CiclesInfo result_sql = new CiclesInfo();
+        result_sql.id_circle = 0;
+        result_sql.name_circle = "add";
+        result_sql.type_circle = "circle_add";
+        circlesAdapter.add(result_sql);
+
+        circlesAdapter.notifyDataSetChanged();
     }
 
     class PassObject{
@@ -289,34 +426,32 @@ public class CirclesFragment extends Fragment {
                     break;
                 case DragEvent.ACTION_DROP:
 
+                    if (me.type_circle.equals("circle")) {
+                        PassObject passObj = (PassObject) event.getLocalState();
+                        View view = passObj.view;
+                        CiclesInfo passedItem = passObj.item;
+                        List<CiclesInfo> srcList = passObj.srcList;
+                        ListView oldParent = (ListView) view.getParent();
+                        ContactAdapter srcAdapter = (ContactAdapter) (oldParent.getAdapter());
 
-                    PassObject passObj = (PassObject)event.getLocalState();
-                    View view = passObj.view;
-                    CiclesInfo passedItem = passObj.item;
-                    List<CiclesInfo> srcList = passObj.srcList;
-                    ListView oldParent = (ListView)view.getParent();
-                    ContactAdapter srcAdapter = (ContactAdapter)(oldParent.getAdapter());
+                        ListView newParent = (ListView) v.getParent();
+                        CirclesAdapter destAdapter = (CirclesAdapter) (newParent.getAdapter());
+                        List<CiclesInfo> destList = destAdapter.getList();
 
-                    ListView newParent = (ListView)v.getParent();
-                    CirclesAdapter destAdapter = (CirclesAdapter)(newParent.getAdapter());
-                    List<CiclesInfo> destList = destAdapter.getList();
-
-                    int removeLocation = srcList.indexOf(passedItem);
-                    int insertLocation = destList.indexOf(me);
-                    Log.e("DRAG and DROP", "Item ACTION_DROP: " + me.name + " " + passedItem.name + "\n");
+                        int removeLocation = srcList.indexOf(passedItem);
+                        int insertLocation = destList.indexOf(me);
+                        Log.e("DRAG and DROP", "Item ACTION_DROP: " + me.name + " " + passedItem.name + "\n");
+                        Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CIRCLES_CONTACT + " WHERE " + SQLMessager.CIRCLES_CONTACT_ID_CIR + "=" + me.id_circle + " and " + SQLMessager.CIRCLES_CONTACT_ID_CONT + "=" + passedItem.id_db, null);
+                        if (!c.moveToFirst()) {
+                            ContentValues cv = new ContentValues();
+                            cv.put(SQLMessager.CIRCLES_CONTACT_ID_CIR, me.id_circle);
+                            cv.put(SQLMessager.CIRCLES_CONTACT_ID_CONT, passedItem.id_db);
+                            db.insert(SQLMessager.TABLE_CIRCLES_CONTACT, null, cv);
+                        }
     /*
      * costomise circles and contacts object for drag and drop
      */
-                    if(srcList != destList || removeLocation != insertLocation){
-                        if(removeItemToList(srcList, passedItem)){
-                            destList.add(insertLocation, passedItem);
-                        }
-
-                        srcAdapter.notifyDataSetChanged();
-                        destAdapter.notifyDataSetChanged();
                     }
-
-                    v.setBackgroundColor(resumeColor);
 
                     break;
                 case DragEvent.ACTION_DRAG_ENDED:
@@ -330,21 +465,5 @@ public class CirclesFragment extends Fragment {
 
     }
 
-    private boolean removeItemToList(List<CiclesInfo> l, CiclesInfo it){
-        boolean result = l.remove(it);
-        return result;
-    }
-
-    AdapterView.OnItemClickListener listOnItemClickListener = new AdapterView.OnItemClickListener(){
-
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-                                long id) {
-            Toast.makeText(getActivity(),
-                    ((CiclesInfo) (parent.getItemAtPosition(position))).name,
-                    Toast.LENGTH_SHORT).show();
-        }
-
-    };
 
 }

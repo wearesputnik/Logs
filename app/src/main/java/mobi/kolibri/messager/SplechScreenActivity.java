@@ -29,6 +29,7 @@ public class SplechScreenActivity extends AppCompatActivity {
         db.execSQL(SQLMessager.CREATE_TABLE_CHAT);
         db.execSQL(SQLMessager.CREATE_TABLE_MESSAGER);
         db.execSQL(SQLMessager.CREATE_TABLE_CIRCLES);
+        db.execSQL(SQLMessager.CREATE_TABLE_CIRCLES_CONTACT);
 
         if (!HttpConnectRecive.isOnline(SplechScreenActivity.this)) {
             Toast.makeText(SplechScreenActivity.this, "No Internet", Toast.LENGTH_LONG).show();

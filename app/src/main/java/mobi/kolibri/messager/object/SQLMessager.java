@@ -56,6 +56,12 @@ public class SQLMessager extends SQLiteOpenHelper {
     public static final String CREATE_TABLE_CIRCLES = "CREATE TABLE IF NOT EXISTS " + TABLE_CIRCLES + " ( id integer primary key autoincrement, "
             + CIRCLES_NAME + " TEXT, " + CIRCLES_QUANTITY + " TEXT)";
 
+    public static final String TABLE_CIRCLES_CONTACT = "circles_contact";
+    public static final String CIRCLES_CONTACT_ID_CIR = "id_circle";
+    public static final String CIRCLES_CONTACT_ID_CONT = "id_contact";
+    public static final String CREATE_TABLE_CIRCLES_CONTACT = "CREATE TABLE IF NOT EXISTS " + TABLE_CIRCLES_CONTACT + " ( id integer primary key autoincrement, "
+            + CIRCLES_CONTACT_ID_CIR + " integer, " + CIRCLES_CONTACT_ID_CONT + " integer)";
+
     public SQLMessager(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
 
