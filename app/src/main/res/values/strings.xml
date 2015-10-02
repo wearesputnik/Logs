@@ -3,9 +3,11 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Log Out</string>
+    <string name="action_send_photo">Send Photo</string>
     <string name="action_profile">Profile</string>
     <string name="new_chat">New Chat</string>
     <string name="action_clear_all">Clear All</string>
+    <string name="action_clear">Clear</string>
     <string name="action_remowe">Remowe</string>
     <string name="title_activity_singup">SingupActivity</string>
     <string name="title_activity_splech_screen">SplechScreenActivity</string>

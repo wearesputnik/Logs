@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -168,16 +169,26 @@ public class ChatItemActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_chat_item, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        u.stopped = true;
-        if (type_chat.trim().equals("secret")) {
-            db = sqlMessager.getWritableDatabase();
-            db.delete(SQLMessager.TABLE_CHAT, "id=?", new String[]{chat_id.toString()});
-            db.delete(SQLMessager.TABLE_MESSAGER, SQLMessager.MESSAGER_CHAT_ID + "=?", new String[]{chat_id.toString()});
-            Log.e("TYPE CHAT ITEM", "delete");
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                u.stopped = true;
+                if (type_chat.trim().equals("secret")) {
+                    db = sqlMessager.getWritableDatabase();
+                    db.delete(SQLMessager.TABLE_CHAT, "id=?", new String[]{chat_id.toString()});
+                    db.delete(SQLMessager.TABLE_MESSAGER, SQLMessager.MESSAGER_CHAT_ID + "=?", new String[]{chat_id.toString()});
+                }
+                onBackPressed();
+                finish();
+                break;
         }
-        onBackPressed();
-        finish();
         return super.onOptionsItemSelected(item);
     }
 
