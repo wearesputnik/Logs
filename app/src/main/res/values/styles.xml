@@ -1,11 +1,11 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowActionBar">false</item>
         <item name="colorPrimaryDark">@color/background_status_bar</item>
         <item name="colorPrimary">@color/background_splech</item>
-        <item name="android:textColorPrimary">#000</item>
+        <item name="android:textColorPrimary">#fff</item>
         <item name="colorAccent">#ff1951a1</item>
     </style>
 

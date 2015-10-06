@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="20dp">
+    android:padding="20dp"
+    android:background="#fff">
 
     <EditText
         android:layout_width="wrap_content"
@@ -24,5 +25,6 @@
         android:layout_alignEnd="@+id/edtNameGroup"
         android:layout_alignLeft="@+id/edtNameGroup"
         android:layout_alignStart="@+id/edtNameGroup"
-        android:textAppearance="@android:style/TextAppearance" />
+        android:textAppearance="@android:style/TextAppearance"
+        android:background="@drawable/bg_send_chat_item" />
 </RelativeLayout>

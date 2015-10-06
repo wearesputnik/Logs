@@ -1,7 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="mobi.kolibri.messager.activity.ProfileActivity">
+    tools:context="mobi.kolibri.messager.activity.ProfileActivity"
+    android:background="#fff">
 
     <include layout="@layout/tollbar"
         android:id="@+id/toolbar" />
@@ -32,7 +33,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="10dp"
+                android:textColor="#000" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -42,7 +44,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_marginLeft="16dp"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="10dp"
+                android:textColor="#000" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -53,7 +56,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginRight="16dp" />
+                android:layout_marginRight="16dp"
+                android:textColor="#000" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -65,7 +69,8 @@
                 android:layout_alignStart="@+id/txtSummary"
                 android:layout_marginTop="10dp"
                 android:textAppearance="@android:style/TextAppearance"
-                android:background="@drawable/bg_send_chat_item" />
+                android:background="@drawable/bg_send_chat_item"
+                android:layout_marginBottom="20dp" />
         </RelativeLayout>
     </ScrollView>
 

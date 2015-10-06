@@ -8,24 +8,27 @@
         android:layout_height="wrap_content"
         android:text="Cancel"
         android:id="@+id/btnCancel" android:layout_below="@+id/btnSecChat" android:layout_centerHorizontal="true"
-        android:textAppearance="?android:attr/textAppearanceMedium" android:textColor="#3c4248"
-        android:layout_marginTop="10dp" />
+        android:textAppearance="?android:attr/textAppearanceMedium" android:textColor="#fff"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_send_chat_item" />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Choose existing"
         android:id="@+id/btnSecChat"
         android:layout_below="@+id/btnRegChat" android:layout_centerHorizontal="true"
-        android:textAppearance="?android:attr/textAppearanceMedium" android:textColor="#3c4248"
-        android:layout_marginTop="10dp" />
+        android:textAppearance="?android:attr/textAppearanceMedium" android:textColor="#fff"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_send_chat_item" />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Take photo"
         android:id="@+id/btnRegChat" android:layout_alignParentTop="false" android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp" android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#3c4248"
-        android:layout_below="@+id/textView54" />
+        android:textColor="#fff"
+        android:layout_below="@+id/textView54"
+        android:background="@drawable/bg_send_chat_item" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

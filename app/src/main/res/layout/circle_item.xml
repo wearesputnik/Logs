@@ -13,18 +13,6 @@
         android:layout_centerHorizontal="true"
         android:padding="10dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Frends"
-            android:id="@+id/name_circle"
-            android:gravity="center_horizontal"
-            android:textSize="18dp"
-            android:textStyle="bold"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            android:textColor="#fff" />
-
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -35,5 +23,17 @@
             android:visibility="invisible"
             android:layout_margin="15dp" />
     </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Frends"
+        android:id="@+id/name_circle"
+        android:gravity="center_horizontal"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="#fff" />
 
 </RelativeLayout>

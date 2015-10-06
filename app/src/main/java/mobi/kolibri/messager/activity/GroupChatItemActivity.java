@@ -57,6 +57,7 @@ public class GroupChatItemActivity extends AppCompatActivity {
         textMessages = (EditText) findViewById(R.id.edtChatMessages);
         sendMessages = (ImageButton) findViewById(R.id.btnChatSend);
         listMeseges = (ListView) findViewById(R.id.listChatMessages);
+        listMeseges.setDividerHeight(0);
         adapter = new GroupMessagerAdapter(GroupChatItemActivity.this, HttpConnectRecive.getUserId(GroupChatItemActivity.this));
         listMeseges.setAdapter(adapter);
 
