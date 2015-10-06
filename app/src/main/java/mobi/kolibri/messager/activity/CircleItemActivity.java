@@ -8,12 +8,15 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -38,6 +41,9 @@ public class CircleItemActivity extends AppCompatActivity {
     SQLiteDatabase db;
     ContactAdapter adapter;
     ListView listContact;
+    Button btnCircleDelete;
+    List<ContactInfo> listContactInfo;
+    boolean isClearCheckCont;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +59,14 @@ public class CircleItemActivity extends AppCompatActivity {
 
         db = sqlMessager.getWritableDatabase();
 
+        btnCircleDelete = (Button) findViewById(R.id.btnCircleDelete);
         listContact = (ListView) findViewById(R.id.listContact);
         adapter = new ContactAdapter(CircleItemActivity.this);
         listContact.setAdapter(adapter);
         listContact.setDividerHeight(0);
+        listContactInfo = new ArrayList<>();
+
+        isClearCheckCont = false;
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -88,12 +98,69 @@ public class CircleItemActivity extends AppCompatActivity {
                     result_sql.name = c_con.getString(nameCollumn);
                     result_sql.phone = c_con.getString(phoneCollumn);
                     result_sql.photo = c_con.getString(photoCollumn);
-                    adapter.add(result_sql);
+                    result_sql.chek_cont = false;
+                    listContactInfo.add(result_sql);
 
                 }
             } while (c.moveToNext());
         }
+
+        for (ContactInfo item : listContactInfo) {
+            adapter.add(item);
+        }
+
         adapter.notifyDataSetChanged();
+
+        if (isClearCheckCont) {
+            btnCircleDelete.setVisibility(View.VISIBLE);
+        }
+        else {
+            btnCircleDelete.setVisibility(View.GONE);
+        }
+
+        btnCircleDelete.setOnClickListener(btnCircleDeleteListener);
+    }
+
+    @Override
+    protected void onRestart() {
+        adapter.clear();
+        listContactInfo.clear();
+        Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CIRCLES_CONTACT + " WHERE " + SQLMessager.CIRCLES_CONTACT_ID_CIR + "=" + circle_id, null);
+        if (c.moveToFirst()) {
+            int idcontCollumn = c.getColumnIndex(SQLMessager.CIRCLES_CONTACT_ID_CONT);
+            do {
+                Cursor c_con = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE id=" + c.getInt(idcontCollumn), null);
+                if (c_con.moveToFirst()) {
+                    int ideCollumn = c_con.getColumnIndex("id");
+                    int nameCollumn = c_con.getColumnIndex(SQLMessager.CONTACTS_NAME);
+                    int phoneCollumn = c_con.getColumnIndex(SQLMessager.CONTACTS_PHONE);
+                    int photoCollumn = c_con.getColumnIndex(SQLMessager.CONTACTS_PHOTO);
+
+                    ContactInfo result_sql = new ContactInfo();
+                    result_sql.id_db = c_con.getInt(ideCollumn);
+                    result_sql.name = c_con.getString(nameCollumn);
+                    result_sql.phone = c_con.getString(phoneCollumn);
+                    result_sql.photo = c_con.getString(photoCollumn);
+                    result_sql.chek_cont = false;
+                    listContactInfo.add(result_sql);
+
+                }
+            } while (c.moveToNext());
+        }
+
+        for (ContactInfo item : listContactInfo) {
+            adapter.add(item);
+        }
+
+        adapter.notifyDataSetChanged();
+
+        if (isClearCheckCont) {
+            btnCircleDelete.setVisibility(View.VISIBLE);
+        }
+        else {
+            btnCircleDelete.setVisibility(View.GONE);
+        }
+        super.onRestart();
     }
 
     @Override
@@ -116,6 +183,10 @@ public class CircleItemActivity extends AppCompatActivity {
             case R.id.action_remowe:
                 RemoweCircle();
                 break;
+            case R.id.action_clear:
+                isClearCheckCont = true;
+                onRestart();
+                break;
 
         }
 
@@ -133,6 +204,21 @@ public class CircleItemActivity extends AppCompatActivity {
         adapter.clear();
         adapter.notifyDataSetChanged();
     }
+
+    View.OnClickListener btnCircleDeleteListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            for (ContactInfo item : listContactInfo) {
+                Log.e("CHECK", item.name);
+                if (item.chek_cont) {
+                    Log.e("CHECK", "ON ");
+                    db.delete(SQLMessager.TABLE_CIRCLES_CONTACT, SQLMessager.CIRCLES_CONTACT_ID_CIR + "=? and " + SQLMessager.CIRCLES_CONTACT_ID_CONT + "=?", new String[]{circle_id.toString(), item.id_db.toString()});
+                }
+            }
+            isClearCheckCont = false;
+            onRestart();
+        }
+    };
 
     private class ContactAdapter extends ArrayAdapter<ContactInfo> {
         List<ContactInfo> listItem;
@@ -160,15 +246,35 @@ public class CircleItemActivity extends AppCompatActivity {
             View v = convertView;
             if (v == null) {
                 LayoutInflater vi = LayoutInflater.from(getContext());
-                v = vi.inflate(R.layout.contact_item, null);
+                v = vi.inflate(R.layout.contact_circle_item, null);
                 ViewHolder holder = new ViewHolder();
                 holder.name = (TextView) v.findViewById(R.id.textView3);
                 holder.phone = (TextView) v.findViewById(R.id.textView4);
                 holder.image = (ImageView) v.findViewById(R.id.imageView5);
+                holder.chkDeleteCont = (CheckBox) v.findViewById(R.id.chkDeleteCont);
                 v.setTag(holder);
             }
 
             final ViewHolder holder = (ViewHolder) v.getTag();
+
+            if (isClearCheckCont) {
+                holder.chkDeleteCont.setVisibility(View.VISIBLE);
+            }
+            else {
+                holder.chkDeleteCont.setVisibility(View.GONE);
+            }
+
+            holder.chkDeleteCont.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (holder.chkDeleteCont.isChecked()) {
+                        item.chek_cont = true;
+                    }
+                    else {
+                        item.chek_cont = false;
+                    }
+                }
+            });
 
             holder.name.setText(item.name);
             holder.phone.setText(item.phone);
@@ -209,6 +315,7 @@ public class CircleItemActivity extends AppCompatActivity {
             TextView name;
             TextView phone;
             ImageView image;
+            CheckBox chkDeleteCont;
         }
 
 

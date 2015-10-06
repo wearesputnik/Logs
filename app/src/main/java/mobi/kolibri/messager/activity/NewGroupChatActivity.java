@@ -103,13 +103,15 @@ public class NewGroupChatActivity extends AppCompatActivity {
             public void onClick(View v) {
                 JSONArray arrayUser = new JSONArray();
                 for (ContactInfo item : listGroupCont) {
-                    JSONObject itemJs = new JSONObject();
-                    try {
-                        itemJs.put("user_id", item.user_id.toString());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    if (item.chek_cont) {
+                        JSONObject itemJs = new JSONObject();
+                        try {
+                            itemJs.put("user_id", item.user_id.toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        arrayUser.put(itemJs);
                     }
-                    arrayUser.put(itemJs);
                 }
                 JSONObject itemJsUs = new JSONObject();
                 try {
@@ -203,11 +205,11 @@ public class NewGroupChatActivity extends AppCompatActivity {
             holder.checkBox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (holder.checkBox.isChecked()) {
-                        item.chek_cont = true;
-                    } else {
-                        item.chek_cont = false;
-                    }
+                if (holder.checkBox.isChecked()) {
+                    item.chek_cont = true;
+                } else {
+                    item.chek_cont = false;
+                }
                 }
             });
 

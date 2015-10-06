@@ -1,28 +1,44 @@
 package mobi.kolibri.messager.activity;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileDescriptor;
 import java.util.List;
 
 import mobi.kolibri.messager.R;
+import mobi.kolibri.messager.Utils;
 import mobi.kolibri.messager.adapters.MessagerAdapter;
 import mobi.kolibri.messager.http.HttpConnectRecive;
 import mobi.kolibri.messager.object.MessagInfo;
@@ -39,6 +55,11 @@ public class ChatItemActivity extends AppCompatActivity {
     MessagerAdapter adapter;
     String type_chat;
     Updater u;
+    private Uri mUri;
+    Bitmap selected_bitmap = null;
+    private int REQUEST_TAKE_PHOTO = 1;
+    private int REQUEST_CHOOSE_EXISTING = 2;
+    private static final int GALLERY_KITKAT_INTENT_CALLED = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,6 +209,9 @@ public class ChatItemActivity extends AppCompatActivity {
                 onBackPressed();
                 finish();
                 break;
+            case R.id.action_send_photo:
+                DialogPhoto();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -261,5 +285,176 @@ public class ChatItemActivity extends AppCompatActivity {
 
     private void scrollDown() {
         listMeseges.setSelection(listMeseges.getCount() - 1);
+    }
+
+    private void DialogPhoto() {
+
+        final Dialog dialog = new Dialog(ChatItemActivity.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_add_photo);
+        Button btnCancel = (Button) dialog.findViewById(R.id.btnCancel);
+        Button btnTakePhoto = (Button) dialog
+                .findViewById(R.id.btnRegChat);
+        Button btnChooseExisting = (Button) dialog
+                .findViewById(R.id.btnSecChat);
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnTakePhoto.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                mUri = generateFileUri();
+                if (mUri == null) {
+                    Toast.makeText(ChatItemActivity.this, "SD card not available", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, mUri);
+                startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+            }
+        });
+
+        btnChooseExisting.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                /*Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                startActivityForResult(intent, REQUEST_CHOOSE_EXISTING);*/
+                if (Build.VERSION.SDK_INT >= 19) {
+                    Intent intent1 = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    intent1.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent1.setType("image/jpeg");
+                    startActivityForResult(intent1,
+                            GALLERY_KITKAT_INTENT_CALLED);
+                } else {
+                    Intent intent = new Intent();
+                    intent.setType("image/*");
+                    intent.setAction(Intent.ACTION_PICK);
+                    startActivityForResult(Intent.createChooser(intent,
+                            "Complete action using"), REQUEST_CHOOSE_EXISTING);
+                }
+            }
+        });
+        dialog.show();
+    }
+
+    private Uri generateFileUri() {
+
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
+            return null;
+
+        File path = new File (Environment.getExternalStorageDirectory(), "LogsMesager");
+        if (! path.exists()){
+            if (! path.mkdirs()){
+                return null;
+            }
+        }
+
+        String timeStamp = String.valueOf(System.currentTimeMillis());
+        File newFile = new File(path.getPath() + File.separator + timeStamp + ".jpg");
+        return Uri.fromFile(newFile);
+    }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    @SuppressWarnings("ResourceType")
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == Activity.RESULT_OK){
+            if(requestCode == REQUEST_CHOOSE_EXISTING){
+                //Take avatar from gallery
+                mUri = data.getData();
+               // appAddPhoto = getPath(mUri);
+              //  System.out.println("Image Path : " + appAddPhoto);
+
+               // imgEditProfile.setImageBitmap(BitmapFactory.decodeFile(appAddPhoto));
+               /* String selectedImagePath = Utils.getPath(getActivity(), selectedImageUri);
+                File inputFile;
+                File outputDir = getActivity().getCacheDir();
+                File outputFile;
+                try {
+                    inputFile = new File(selectedImagePath);
+
+                    outputFile = File.createTempFile("newAvatar", "png", outputDir);
+
+                    FileInputStream ios = new FileInputStream(inputFile);
+                    FileOutputStream fos = new FileOutputStream(outputFile.getPath());
+                    Utils.copyStream(ios, fos);
+
+
+                    fos.close();
+                    ios.close();
+                    appAddPhoto = outputFile.getAbsolutePath();
+                    appointAddPhotoLoad();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getActivity(), "Can't save photo", Toast.LENGTH_SHORT).show();
+                }*/
+                return;
+
+            }
+            if (requestCode == GALLERY_KITKAT_INTENT_CALLED) {
+                ParcelFileDescriptor parcelFileDescriptor;
+                Uri mImageCaptureUri = data.getData();
+                try {
+                    final int takeFlags = data.getFlags()
+                            & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    getContentResolver().takePersistableUriPermission(
+                            mImageCaptureUri, takeFlags);
+                    // performCrop(mImageCaptureUri);
+                    parcelFileDescriptor = getContentResolver()
+                            .openFileDescriptor(mImageCaptureUri, "r");
+                    FileDescriptor fileDescriptor = parcelFileDescriptor
+                            .getFileDescriptor();
+                    selected_bitmap = BitmapFactory
+                            .decodeFileDescriptor(fileDescriptor);
+                    parcelFileDescriptor.close();
+                   // filepath = Utils.getPath(getApplicationContext(),
+                         //   mImageCaptureUri);
+                    if (selected_bitmap != null) {
+                       // imgPhoto.setImageBitmap(selected_bitmap);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            if(requestCode == REQUEST_TAKE_PHOTO){
+                Log.i("Photo", "Photo taken");
+                //appAddPhoto = mUri.getPath();
+              //  Log.e("Photo_uri", appAddPhoto);
+               // imgEditProfile.setImageBitmap(BitmapFactory.decodeFile(appAddPhoto));
+            }
+
+            /*if(requestCode == REQUEST_CROP_IMAGE){
+                //Crop avatar to square
+                String path = data.getStringExtra(CropImage.IMAGE_PATH);
+                if(path != null){
+                    imgEditProfile.setImageBitmap(BitmapFactory.decodeFile(path));
+                    appAddPhoto = path;
+                    return;
+                }
+            }*/
+
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    public String getPath(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 }

@@ -188,14 +188,14 @@ public class HttpConnectRecive {
         }
     }
 
-    public static ProfileInfo getProfile(Integer id, Context c) {
+    public static ProfileInfo getProfile(Context c) {
         ProfileInfo result = new ProfileInfo();
 
         ServiceHandler sh = new ServiceHandler();
 
-        String jsonStr = sh.makeServiceCall(URL + GET_PROFILE + "?user_id=" + id + "&app_key=" + getApiKey(c), ServiceHandler.GET);
+        String jsonStr = sh.makeServiceCall(URL + GET_PROFILE + "?app_key=" + getApiKey(c), ServiceHandler.GET);
         Log.e("GET_PROFILE: ", "=> " + jsonStr);
-        Log.e("URL: ", URL + GET_PROFILE + "?user_id=" + id + "&app_key=" + getApiKey(c));
+        Log.e("URL: ", URL + GET_PROFILE + "?app_key=" + getApiKey(c));
 
         try {
             JSONObject json = new JSONObject(jsonStr);
@@ -385,7 +385,7 @@ public class HttpConnectRecive {
         }
         jsonStr = sh.makeServiceCall(urlStr, ServiceHandler.GET);
         Log.e("GET_MESSAGER", urlStr);
-        Log.e("GET_MESSAGER", jsonStr);
+      ///  Log.e("GET_MESSAGER", jsonStr);
 
         try {
             if (!jsonStr.equals("")) {
@@ -457,7 +457,7 @@ public class HttpConnectRecive {
 
         jsonStr = sh.makeServiceCall(urlStr, ServiceHandler.GET);
         Log.e("GET_GROUP_MESSAGER", urlStr);
-        Log.e("GET_GROUP_MESSAGER", jsonStr);
+///        Log.e("GET_GROUP_MESSAGER", jsonStr);
 
         try {
             if (!jsonStr.equals("")) {
