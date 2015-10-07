@@ -19,7 +19,8 @@
         android:id="@+id/textView5"
         android:layout_weight="1"
         android:layout_gravity="center_vertical"
-        android:paddingLeft="10dp" />
+        android:paddingLeft="10dp"
+        android:textColor="#000" />
 
     <CheckBox
         android:layout_width="0dp"
@@ -27,5 +28,6 @@
         android:id="@+id/checkBox"
         android:checked="false"
         android:layout_weight="0.3"
-        android:layout_gravity="center_vertical" />
+        android:layout_gravity="center_vertical"
+        style="@style/Base.Widget.AppCompat.CompoundButton.CheckBox" />
 </LinearLayout>

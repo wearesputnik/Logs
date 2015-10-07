@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -445,7 +446,7 @@ public class ChatItemActivity extends AppCompatActivity {
                 selected_bitmap = (Bitmap) data.getExtras().get(
                         "data");
                 if (selected_bitmap != null) {
-                    ///imgPhoto.setImageBitmap(selected_bitmap);
+                    DialogDuration();
                 }
             }
 
@@ -506,5 +507,18 @@ public class ChatItemActivity extends AppCompatActivity {
                     .makeText(this, errorMessage, Toast.LENGTH_SHORT);
             toast.show();
         }
+    }
+
+    private void DialogDuration () {
+        final Dialog dialog = new Dialog(ChatItemActivity.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_duration);
+
+        NumberPicker np = (NumberPicker) dialog.findViewById(R.id.numberPicker);
+        np.setMinValue(0);
+        np.setMaxValue(60);
+        np.setWrapSelectorWheel(false);
+
+        dialog.show();
     }
 }

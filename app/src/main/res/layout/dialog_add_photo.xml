@@ -19,7 +19,9 @@
         android:layout_below="@+id/btnRegChat" android:layout_centerHorizontal="true"
         android:textAppearance="?android:attr/textAppearanceMedium" android:textColor="#fff"
         android:layout_marginTop="10dp"
-        android:background="@drawable/bg_send_chat_item" />
+        android:background="@drawable/bg_send_chat_item"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,7 +30,9 @@
         android:layout_marginTop="20dp" android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#fff"
         android:layout_below="@+id/textView54"
-        android:background="@drawable/bg_send_chat_item" />
+        android:background="@drawable/bg_send_chat_item"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

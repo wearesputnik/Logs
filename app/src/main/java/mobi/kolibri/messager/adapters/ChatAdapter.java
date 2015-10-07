@@ -51,9 +51,9 @@ public class ChatAdapter extends ArrayAdapter<ChatInfo>{
         contV = context;
         db = sqlMessager.getWritableDatabase();
         options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.mipmap.profile_min)
-                .showImageForEmptyUri(R.mipmap.profile_min)
-                .showImageOnFail(R.mipmap.profile_min)
+                //.showImageOnLoading(R.mipmap.profile_min)
+               // .showImageForEmptyUri(R.mipmap.profile_min)
+               // .showImageOnFail(R.mipmap.profile_min)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .considerExifParams(true)
@@ -96,10 +96,10 @@ public class ChatAdapter extends ArrayAdapter<ChatInfo>{
             holder.clickLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent i = new Intent(contV, GroupChatItemActivity.class);
-                    i.putExtra("chat_id", item.id);
-                    i.putExtra("type", item.type_chat);
-                    contV.startActivity(i);
+                Intent i = new Intent(contV, GroupChatItemActivity.class);
+                i.putExtra("chat_id", item.id);
+                i.putExtra("type", item.type_chat);
+                contV.startActivity(i);
                 }
             });
         }
@@ -113,27 +113,27 @@ public class ChatAdapter extends ArrayAdapter<ChatInfo>{
                 if (c.getString(photoCollumn) != null) {
                     String url_img = HttpConnectRecive.URLP + c.getString(photoCollumn);
                     ImageLoader.getInstance()
-                            .displayImage(url_img, holder.image, options, new SimpleImageLoadingListener() {
-                                @Override
-                                public void onLoadingStarted(String imageUri, View view) {
+                        .displayImage(url_img, holder.image, options, new SimpleImageLoadingListener() {
+                            @Override
+                            public void onLoadingStarted(String imageUri, View view) {
 
-                                }
+                            }
 
-                                @Override
-                                public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+                            @Override
+                            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
 
-                                }
+                            }
 
-                                @Override
-                                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                            @Override
+                            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
 
-                                }
-                            }, new ImageLoadingProgressListener() {
-                                @Override
-                                public void onProgressUpdate(String imageUri, View view, int current, int total) {
+                            }
+                        }, new ImageLoadingProgressListener() {
+                            @Override
+                            public void onProgressUpdate(String imageUri, View view, int current, int total) {
 
-                                }
-                            });
+                            }
+                        });
                 } else {
                     holder.image.setImageResource(R.mipmap.profile_min);
                 }

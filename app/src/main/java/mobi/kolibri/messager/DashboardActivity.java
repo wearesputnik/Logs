@@ -374,6 +374,9 @@ public class DashboardActivity extends AppCompatActivity {
                 i.putExtra("user_id", user_id);
                 startActivity(i);
                 return true;
+            case R.id.action_out:
+                ///
+                return true;
 
         }
 
