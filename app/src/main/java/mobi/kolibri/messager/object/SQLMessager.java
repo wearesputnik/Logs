@@ -46,9 +46,12 @@ public class SQLMessager extends SQLiteOpenHelper {
     public static final String MESSAGER_TO_ID = "id_to";
     public static final String MESSAGER_MESSAG = "messag";
     public static final String MESSAGER_SERVER = "server";
+    public static final String MESSAGER_ATTACHMENT = "attachment";
+    public static final String MESSAGER_DURATION = "duration";
     public static final String MESSAGER_CHAT_ID = "chat_id";
     public static final String CREATE_TABLE_MESSAGER = "CREATE TABLE IF NOT EXISTS " + TABLE_MESSAGER + " ( id integer primary key autoincrement, "
-            + MESSAGER_FROM_ID + " TEXT, " + MESSAGER_TO_ID + " TEXT, " + MESSAGER_MESSAG + " TEXT," + MESSAGER_SERVER + " TEXT, " + MESSAGER_CHAT_ID + " TEXT)";
+            + MESSAGER_FROM_ID + " TEXT, " + MESSAGER_TO_ID + " TEXT, " + MESSAGER_MESSAG + " TEXT," + MESSAGER_SERVER + " TEXT, "
+            + MESSAGER_CHAT_ID + " TEXT," + MESSAGER_ATTACHMENT + " TEXT," + MESSAGER_DURATION + " TEXT)";
 
     public static final String TABLE_CIRCLES = "circles";
     public static final String CIRCLES_NAME = "name";

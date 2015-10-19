@@ -532,6 +532,30 @@ public class HttpConnectRecive {
         }
     }
 
+    public static String AttacmentPhotoMessage(Context c) {
+        String result = null;
+
+        http = new DefaultHttpClient();
+        ClientConnectionManager mgr = http.getConnectionManager();
+        HttpParams params = http.getParams();
+        http = new DefaultHttpClient(new ThreadSafeClientConnManager(params,
+                mgr.getSchemeRegistry()), params);
+        HttpPost request = new HttpPost(URL + SET_PROFILE + "?user_id=" + "&app_key=" + getApiKey(c));
+
+        Charset charset = Charset.forName("UTF-8");
+        MultipartEntity form = new MultipartEntity(HttpMultipartMode.STRICT);
+
+        try {
+
+
+            return result;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static boolean isOnline(Context context) {
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

@@ -12,6 +12,21 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar">
 
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/listChatMessages"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@+id/imageView4" />
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView4"
+            android:visibility="gone"
+            android:src="@mipmap/group_5"
+            android:layout_above="@+id/relativeLayout4" />
+
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -42,12 +57,6 @@
                 android:background="@mipmap/send_button" />
         </RelativeLayout>
 
-        <ListView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/listChatMessages"
-            android:layout_centerHorizontal="true"
-            android:layout_above="@+id/relativeLayout4" />
     </RelativeLayout>
 
 </RelativeLayout>

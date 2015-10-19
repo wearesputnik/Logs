@@ -43,34 +43,27 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/mess_out_no"
+            android:id="@+id/relativeLayout5"
+            android:paddingRight="15dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="8dp"
+            android:paddingLeft="10dp"
+            android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true">
 
-            <RelativeLayout
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/mess_out_no"
-                android:id="@+id/relativeLayout5"
+                android:id="@+id/textFromMessager"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentLeft="false"
                 android:layout_alignParentStart="true"
-                android:paddingRight="15dp"
-                android:paddingBottom="10dp"
-                android:paddingTop="8dp"
-                android:paddingLeft="10dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textFromMessager"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="false"
-                    android:layout_alignParentStart="true"
-                    android:textColor="#000" />
-
-            </RelativeLayout>
+                android:textColor="#000" />
 
         </RelativeLayout>
 
     </RelativeLayout>
+
 </LinearLayout>

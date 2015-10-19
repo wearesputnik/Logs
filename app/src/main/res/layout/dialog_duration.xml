@@ -15,7 +15,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Save"
-        android:id="@+id/button2"
+        android:id="@+id/btnSaveDuration"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="10dp"
         android:background="@drawable/bg_send_chat_item" />

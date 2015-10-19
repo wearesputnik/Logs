@@ -28,6 +28,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.Toast;
@@ -60,6 +61,7 @@ public class ChatItemActivity extends AppCompatActivity {
     ImageButton sendMessages;
     SQLiteDatabase db;
     MessagerAdapter adapter;
+    String duration;
     String type_chat;
     Updater u;
     private Uri mUri;
@@ -69,6 +71,7 @@ public class ChatItemActivity extends AppCompatActivity {
     private int REQUEST_CHOOSE_EXISTING = 2;
     private int REQUEST_CROP_IMAGE = 3;
     private static final int GALLERY_KITKAT_INTENT_CALLED = 4;
+    ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +100,7 @@ public class ChatItemActivity extends AppCompatActivity {
         listMeseges.setAdapter(adapter);
         textMessages = (EditText) findViewById(R.id.edtChatMessages);
         sendMessages = (ImageButton) findViewById(R.id.btnChatSend);
+        imageView = (ImageView) findViewById(R.id.imageView4);
 
         sqlMessager = new SQLMessager(ChatItemActivity.this);
 
@@ -134,6 +138,10 @@ public class ChatItemActivity extends AppCompatActivity {
                         cv_ms.put(SQLMessager.MESSAGER_FROM_ID, user_id_from.toString());
                         cv_ms.put(SQLMessager.MESSAGER_TO_ID, HttpConnectRecive.getUserId(ChatItemActivity.this));
                         cv_ms.put(SQLMessager.MESSAGER_MESSAG, textMessages.getText().toString());
+                        if (selected_bitmap != null) {
+                            cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, filename);
+                            cv_ms.put(SQLMessager.MESSAGER_DURATION, duration);
+                        }
                         cv_ms.put(SQLMessager.MESSAGER_SERVER, "1");
                         db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
                     } else {
@@ -159,6 +167,10 @@ public class ChatItemActivity extends AppCompatActivity {
                             cv_ms.put(SQLMessager.MESSAGER_TO_ID, HttpConnectRecive.getUserId(ChatItemActivity.this));
                             cv_ms.put(SQLMessager.MESSAGER_MESSAG, textMessages.getText().toString());
                             cv_ms.put(SQLMessager.MESSAGER_SERVER, "1");
+                            if (selected_bitmap != null) {
+                                cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, filename);
+                                cv_ms.put(SQLMessager.MESSAGER_DURATION, duration);
+                            }
                             db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
                         }
                     }
@@ -387,6 +399,7 @@ public class ChatItemActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         //super.onActivityResult(requestCode, resultCode, data);
+        imageView.setVisibility(View.VISIBLE);
         if(resultCode == Activity.RESULT_OK){
             if(requestCode == REQUEST_CHOOSE_EXISTING){
                 if (data != null) {
@@ -403,7 +416,9 @@ public class ChatItemActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     if (selected_bitmap != null) {
-                        //imgPhoto.setImageBitmap(selected_bitmap);
+                        Log.e("PHOTO PATCH: ", filepath + " " + selected_bitmap.toString());
+                        imageView.setImageBitmap(selected_bitmap);
+                        DialogDuration();
                     }
                 }
 
@@ -426,7 +441,8 @@ public class ChatItemActivity extends AppCompatActivity {
                     parcelFileDescriptor.close();
                     filepath = Utils.getPath(getApplicationContext(), mImageCaptureUri);
                     if (selected_bitmap != null) {
-                       // imgPhoto.setImageBitmap(selected_bitmap);
+                        imageView.setImageBitmap(selected_bitmap);
+                        DialogDuration();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -446,6 +462,8 @@ public class ChatItemActivity extends AppCompatActivity {
                 selected_bitmap = (Bitmap) data.getExtras().get(
                         "data");
                 if (selected_bitmap != null) {
+                    Log.e("PHOTO PATCH: ", filepath + " " + selected_bitmap.toString());
+                    imageView.setImageBitmap(selected_bitmap);
                     DialogDuration();
                 }
             }
@@ -457,7 +475,7 @@ public class ChatItemActivity extends AppCompatActivity {
                 Bitmap thumbnail = BitmapFactory.decodeFile(filepath);
                 selectedBitmap = thumbnail;
                 if (selectedBitmap != null) {
-               //     imgPhoto.setImageBitmap(selectedBitmap);
+                  ///   DialogDuration();
                 }
             }
 
@@ -514,11 +532,43 @@ public class ChatItemActivity extends AppCompatActivity {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_duration);
 
-        NumberPicker np = (NumberPicker) dialog.findViewById(R.id.numberPicker);
+        Button btnSaveDuration = (Button) dialog.findViewById(R.id.btnSaveDuration);
+        final NumberPicker np = (NumberPicker) dialog.findViewById(R.id.numberPicker);
         np.setMinValue(0);
         np.setMaxValue(60);
         np.setWrapSelectorWheel(false);
 
+        btnSaveDuration.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ///new AttacmentPhotoMessageTask().execute(np.getValue() + "");
+                duration = np.getValue() + "";
+                dialog.dismiss();
+            }
+        });
+
         dialog.show();
+    }
+
+    class AttacmentPhotoMessageTask extends AsyncTask<String, String, String> {
+
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @SuppressWarnings("static-access")
+        protected String doInBackground(String... params) {
+            String result = null;///HttpConnectRecive.AttacmentPhotoMessage();
+            return result;
+        }
+
+        protected void onPostExecute(String result) {
+            if (result != null) {
+
+            }
+
+            super.onPostExecute(result);
+
+        }
     }
 }
