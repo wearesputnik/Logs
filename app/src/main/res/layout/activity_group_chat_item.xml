@@ -1,47 +1,62 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/backlogs">
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="mobi.kolibri.messager.activity.ChatItemActivity"
+    style="@style/bacground_item_chat">
 
     <include layout="@layout/tollbar"
-        android:id="@+id/toolbar" />
+        android:id="@+id/toolbar"/>
 
     <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/relativeLayout4"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:layout_marginBottom="5dp">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar">
 
-        <EditText
+        <ListView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/edtChatMessages"
-            android:layout_toLeftOf="@+id/btnChatSend"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:textColor="#000" />
+            android:id="@+id/listChatMessages"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@+id/imageView4" />
 
-        <ImageButton
-            android:layout_width="wrap_content"
+        <ImageView
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btnChatSend"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:src="@mipmap/send_button"
-            android:background="@mipmap/send_button" />
+            android:id="@+id/imageView4"
+            android:visibility="gone"
+            android:src="@mipmap/group_5"
+            android:layout_above="@+id/relativeLayout4" />
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/relativeLayout4"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginBottom="5dp">
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/edtChatMessages"
+                android:layout_toLeftOf="@+id/btnChatSend"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:textColor="#000" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnChatSend"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:src="@mipmap/send_button"
+                android:background="@mipmap/send_button" />
+        </RelativeLayout>
+
     </RelativeLayout>
-
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/listChatMessages"
-        android:layout_below="@+id/toolbar"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@+id/relativeLayout4" />
 
 </RelativeLayout>

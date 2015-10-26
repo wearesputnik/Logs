@@ -10,6 +10,8 @@ public class MessagInfo {
     public String id_to;
     public String message;
     public String type_chat;
+    public String attachment;
+    public String duration;
 
     public static MessagInfo parseJson(JSONObject json) {
         MessagInfo result = new MessagInfo();
@@ -19,6 +21,8 @@ public class MessagInfo {
             result.id_to = json.getString("id_to");
             result.message = json.getString("message");
             result.type_chat = json.getString("type_chat");
+            result.attachment = json.getString("attachment");
+            result.duration = json.getString("duration");
             return result;
         }
         catch(Exception e) {

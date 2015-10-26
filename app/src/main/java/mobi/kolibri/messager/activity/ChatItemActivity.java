@@ -61,6 +61,7 @@ public class ChatItemActivity extends AppCompatActivity {
     ImageButton sendMessages;
     SQLiteDatabase db;
     MessagerAdapter adapter;
+    Integer photo_witch;
     String duration;
     String type_chat;
     Updater u;
@@ -90,6 +91,8 @@ public class ChatItemActivity extends AppCompatActivity {
             type_chat = b.getString("type");
         }
 
+        photo_witch = 0;
+
 
 
         new getMessegTask().execute();
@@ -116,11 +119,15 @@ public class ChatItemActivity extends AppCompatActivity {
             int idFromCollumn = c_ch.getColumnIndex(SQLMessager.MESSAGER_FROM_ID);
             int idToCollumn = c_ch.getColumnIndex(SQLMessager.MESSAGER_TO_ID);
             int idMessageCollumn = c_ch.getColumnIndex(SQLMessager.MESSAGER_MESSAG);
+            int attacmentCollumn = c_ch.getColumnIndex(SQLMessager.MESSAGER_ATTACHMENT);
+            int durationCollumn = c_ch.getColumnIndex(SQLMessager.MESSAGER_DURATION);
             do {
                 MessagInfo result_sql = new MessagInfo();
                 result_sql.id_from = c_ch.getString(idFromCollumn);
                 result_sql.id_to = c_ch.getString(idToCollumn);
                 result_sql.message = c_ch.getString(idMessageCollumn);
+                result_sql.attachment = c_ch.getString(attacmentCollumn);
+                result_sql.duration = c_ch.getString(durationCollumn);
                 adapter.add(result_sql);
             } while (c_ch.moveToNext());
 
@@ -139,7 +146,7 @@ public class ChatItemActivity extends AppCompatActivity {
                         cv_ms.put(SQLMessager.MESSAGER_TO_ID, HttpConnectRecive.getUserId(ChatItemActivity.this));
                         cv_ms.put(SQLMessager.MESSAGER_MESSAG, textMessages.getText().toString());
                         if (selected_bitmap != null) {
-                            cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, filename);
+                            cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, filepath);
                             cv_ms.put(SQLMessager.MESSAGER_DURATION, duration);
                         }
                         cv_ms.put(SQLMessager.MESSAGER_SERVER, "1");
@@ -168,7 +175,7 @@ public class ChatItemActivity extends AppCompatActivity {
                             cv_ms.put(SQLMessager.MESSAGER_MESSAG, textMessages.getText().toString());
                             cv_ms.put(SQLMessager.MESSAGER_SERVER, "1");
                             if (selected_bitmap != null) {
-                                cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, filename);
+                                cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, filepath);
                                 cv_ms.put(SQLMessager.MESSAGER_DURATION, duration);
                             }
                             db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
@@ -246,7 +253,15 @@ public class ChatItemActivity extends AppCompatActivity {
 
         @SuppressWarnings("static-access")
         protected MessagInfo doInBackground(String... params) {
-            MessagInfo result = HttpConnectRecive.setMessage(ChatItemActivity.this, user_id_from, textMessages.getText().toString(), type_chat);
+            MessagInfo item_msg = new MessagInfo();
+            item_msg.id_from = user_id_from.toString();
+            item_msg.message = textMessages.getText().toString();
+            item_msg.type_chat = type_chat;
+            if (selected_bitmap != null) {
+                item_msg.attachment = filepath;
+                item_msg.duration = duration;
+            }
+            MessagInfo result = HttpConnectRecive.setMessage(ChatItemActivity.this, item_msg, photo_witch);
             return result;
         }
 
@@ -255,10 +270,18 @@ public class ChatItemActivity extends AppCompatActivity {
             result_sql.id_from = user_id_from.toString();
             result_sql.id_to = HttpConnectRecive.getUserId(ChatItemActivity.this);
             result_sql.message = textMessages.getText().toString();
+            if (selected_bitmap != null) {
+                result_sql.attachment = filepath;
+                result_sql.duration = duration;
+            }
             adapter.add(result_sql);
             textMessages.setText("");
             adapter.notifyDataSetChanged();
             scrollDown();
+            photo_witch = 0;
+            selected_bitmap = null;
+            imageView.setVisibility(View.GONE);
+
 
             super.onPostExecute(result);
 
@@ -287,11 +310,15 @@ public class ChatItemActivity extends AppCompatActivity {
                     cv_ms.put(SQLMessager.MESSAGER_TO_ID, item.id_to);
                     cv_ms.put(SQLMessager.MESSAGER_MESSAG, item.message);
                     cv_ms.put(SQLMessager.MESSAGER_SERVER, "0");
+                    cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, item.attachment);
+                    cv_ms.put(SQLMessager.MESSAGER_DURATION, item.duration);
                     db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
                     MessagInfo result_sql = new MessagInfo();
                     result_sql.id_from = item.id_from;
                     result_sql.id_to = item.id_to;
                     result_sql.message = item.message;
+                    result_sql.attachment = item.attachment;
+                    result_sql.duration = item.duration;
                     adapter.add(result_sql);
 
                 }
@@ -404,8 +431,7 @@ public class ChatItemActivity extends AppCompatActivity {
             if(requestCode == REQUEST_CHOOSE_EXISTING){
                 if (data != null) {
                     Uri selectedImage = data.getData();
-                    filepath = Utils.getPath(getApplicationContext(),
-                            selectedImage);
+                    filepath = Utils.getPath(getApplicationContext(), selectedImage);
 
                     performCrop(selectedImage);
                     selected_bitmap = null;
@@ -419,6 +445,7 @@ public class ChatItemActivity extends AppCompatActivity {
                         Log.e("PHOTO PATCH: ", filepath + " " + selected_bitmap.toString());
                         imageView.setImageBitmap(selected_bitmap);
                         DialogDuration();
+
                     }
                 }
 
@@ -441,6 +468,7 @@ public class ChatItemActivity extends AppCompatActivity {
                     parcelFileDescriptor.close();
                     filepath = Utils.getPath(getApplicationContext(), mImageCaptureUri);
                     if (selected_bitmap != null) {
+                        Log.e("PHOTO PATCH: ", filepath + " " + selected_bitmap.toString());
                         imageView.setImageBitmap(selected_bitmap);
                         DialogDuration();
                     }
@@ -451,7 +479,6 @@ public class ChatItemActivity extends AppCompatActivity {
             }
 
             if(requestCode == REQUEST_TAKE_PHOTO){
-                Log.i("Photo", "Photo taken");
                 Bitmap imageData = (Bitmap) data.getExtras().get("data");
                 Uri selectedImage = getImageUri(ChatItemActivity.this,
                         imageData);
@@ -543,6 +570,7 @@ public class ChatItemActivity extends AppCompatActivity {
             public void onClick(View v) {
                 ///new AttacmentPhotoMessageTask().execute(np.getValue() + "");
                 duration = np.getValue() + "";
+                photo_witch = 1;
                 dialog.dismiss();
             }
         });
@@ -550,25 +578,4 @@ public class ChatItemActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    class AttacmentPhotoMessageTask extends AsyncTask<String, String, String> {
-
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @SuppressWarnings("static-access")
-        protected String doInBackground(String... params) {
-            String result = null;///HttpConnectRecive.AttacmentPhotoMessage();
-            return result;
-        }
-
-        protected void onPostExecute(String result) {
-            if (result != null) {
-
-            }
-
-            super.onPostExecute(result);
-
-        }
-    }
 }

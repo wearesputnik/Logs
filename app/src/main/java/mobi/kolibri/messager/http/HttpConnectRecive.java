@@ -335,27 +335,34 @@ public class HttpConnectRecive {
         }
     }
 
-    public static MessagInfo setMessage(Context c, Integer user_id_from, String message, String type_chat) {
+    public static MessagInfo setMessage(Context c, MessagInfo item_msg, Integer photo_witch) {
         MessagInfo result = new MessagInfo();
-
-        sqlMessager = new SQLMessager(c);
-        ContentValues cv = new ContentValues();
-        SQLiteDatabase db = sqlMessager.getWritableDatabase();
 
         http = new DefaultHttpClient();
         ClientConnectionManager mgr = http.getConnectionManager();
         HttpParams params = http.getParams();
-        http = new DefaultHttpClient(new ThreadSafeClientConnManager(params, mgr.getSchemeRegistry()), params);
+        http = new DefaultHttpClient(new ThreadSafeClientConnManager(params,
+                mgr.getSchemeRegistry()), params);
         HttpPost request = new HttpPost(URL + SET_MESSAGER + "?app_key=" + getApiKey(c));
 
-        List<BasicNameValuePair> parameters = Arrays.asList(
-                new BasicNameValuePair("user_id_from", user_id_from.toString()),
-                new BasicNameValuePair("message", message),
-                new BasicNameValuePair("type_chat", type_chat));
+        Charset charset = Charset.forName("UTF-8");
+        MultipartEntity form = new MultipartEntity(HttpMultipartMode.STRICT);
 
         try {
-            UrlEncodedFormEntity form = new UrlEncodedFormEntity(parameters,
-                    "UTF-8");
+            form.addPart("user_id_from", new StringBody(item_msg.id_from, charset));
+            form.addPart("message", new StringBody(item_msg.message, charset));
+            form.addPart("type_chat", new StringBody(item_msg.type_chat, charset));
+
+
+            if (photo_witch == 1) {
+                form.addPart("photo_witch", new StringBody("" + photo_witch, charset));
+                form.addPart("duration", new StringBody(item_msg.duration, charset));
+                form.addPart("photo", new FileBody(new File(item_msg.attachment)));
+            }
+            else {
+                form.addPart("photo_witch", new StringBody("" + photo_witch, charset));
+            }
+
             request.setEntity(form);
             HttpResponse response = http.execute(request);
             String jsonStr = Utils.streamToString(response
@@ -414,7 +421,7 @@ public class HttpConnectRecive {
         }
     }
 
-    public static String setGroupMessage(Context c, String json_user, String message, String type_chat, String chat_name) {
+    public static String setGroupMessage(Context c, GroupMessagerInfo item_msg, Integer photo_witch) {
         String result = null;
 
         http = new DefaultHttpClient();
@@ -423,15 +430,25 @@ public class HttpConnectRecive {
         http = new DefaultHttpClient(new ThreadSafeClientConnManager(params, mgr.getSchemeRegistry()), params);
         HttpPost request = new HttpPost(URL + SET_GROUP_MESSAGER + "?app_key=" + getApiKey(c));
 
-        List<BasicNameValuePair> parameters = Arrays.asList(
-                new BasicNameValuePair("json_users", json_user),
-                new BasicNameValuePair("message", message),
-                new BasicNameValuePair("chat_name", chat_name),
-                new BasicNameValuePair("type_chat", type_chat));
+        Charset charset = Charset.forName("UTF-8");
+        MultipartEntity form = new MultipartEntity(HttpMultipartMode.STRICT);
 
         try {
-            UrlEncodedFormEntity form = new UrlEncodedFormEntity(parameters,
-                    "UTF-8");
+            form.addPart("json_users", new StringBody(item_msg.json_users, charset));
+            form.addPart("message", new StringBody(item_msg.message, charset));
+            form.addPart("chat_name", new StringBody(item_msg.chat_name, charset));
+            form.addPart("type_chat", new StringBody(item_msg.type_chat, charset));
+
+
+            if (photo_witch == 1) {
+                form.addPart("photo_witch", new StringBody("" + photo_witch, charset));
+                form.addPart("duration", new StringBody(item_msg.duration, charset));
+                form.addPart("photo", new FileBody(new File(item_msg.attachment)));
+            }
+            else {
+                form.addPart("photo_witch", new StringBody("" + photo_witch, charset));
+            }
+
             request.setEntity(form);
             HttpResponse response = http.execute(request);
             String jsonStr = Utils.streamToString(response

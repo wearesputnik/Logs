@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="fill_parent">
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -26,7 +26,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textToMessager"
-                android:textColor="#000" />
+                android:textColor="#000"
+                android:layout_below="@+id/messagePhoto2"
+                android:layout_alignLeft="@+id/messagePhoto2"
+                android:layout_alignStart="@+id/messagePhoto2" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/messagePhoto2"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:src="@mipmap/add_file"
+                android:visibility="gone" />
 
         </RelativeLayout>
 
@@ -53,14 +66,23 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true">
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/messagePhoto1"
+                android:layout_alignParentTop="false"
+                android:layout_alignParentLeft="false"
+                android:src="@mipmap/add_file"
+                android:visibility="gone" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textFromMessager"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="false"
-                android:layout_alignParentStart="true"
-                android:textColor="#000" />
+                android:textColor="#000"
+                android:layout_below="@+id/messagePhoto1"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
 
         </RelativeLayout>
 

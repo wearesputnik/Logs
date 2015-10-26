@@ -283,6 +283,8 @@ public class DashboardActivity extends AppCompatActivity {
                         cv_ms.put(SQLMessager.MESSAGER_TO_ID, item.id_to);
                         cv_ms.put(SQLMessager.MESSAGER_MESSAG, item.message);
                         cv_ms.put(SQLMessager.MESSAGER_SERVER, "0");
+                        cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, item.attachment);
+                        cv_ms.put(SQLMessager.MESSAGER_DURATION, item.duration);
                         db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
                     }
                     else {
@@ -298,6 +300,8 @@ public class DashboardActivity extends AppCompatActivity {
                             cv_ms.put(SQLMessager.MESSAGER_TO_ID, item.id_to);
                             cv_ms.put(SQLMessager.MESSAGER_MESSAG, item.message);
                             cv_ms.put(SQLMessager.MESSAGER_SERVER, "0");
+                            cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, item.attachment);
+                            cv_ms.put(SQLMessager.MESSAGER_DURATION, item.duration);
                             db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
                         }
                     }
@@ -334,6 +338,8 @@ public class DashboardActivity extends AppCompatActivity {
                         cv_ms.put(SQLMessager.MESSAGER_TO_ID, item.id_to);
                         cv_ms.put(SQLMessager.MESSAGER_MESSAG, item.message);
                         cv_ms.put(SQLMessager.MESSAGER_SERVER, "0");
+                        cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, item.attachment);
+                        cv_ms.put(SQLMessager.MESSAGER_DURATION, item.duration);
                         db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
                     }
                     else {
@@ -350,6 +356,8 @@ public class DashboardActivity extends AppCompatActivity {
                             cv_ms.put(SQLMessager.MESSAGER_TO_ID, item.id_to);
                             cv_ms.put(SQLMessager.MESSAGER_MESSAG, item.message);
                             cv_ms.put(SQLMessager.MESSAGER_SERVER, "0");
+                            cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, item.attachment);
+                            cv_ms.put(SQLMessager.MESSAGER_DURATION, item.duration);
                             db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
                         }
                     }
