@@ -10,6 +10,7 @@ public class CiclesInfo {
     public String photo;
     public Integer id_db;
     public String type_circle;
+    public String server;
     public Integer id_circle;
     public String name_circle;
 }

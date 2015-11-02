@@ -1,6 +1,7 @@
 package mobi.kolibri.messager.fragment;
 
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.ClipData;
 import android.content.ContentValues;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
@@ -39,6 +41,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 import java.util.ArrayList;
 import java.util.List;
 
+import mobi.kolibri.messager.DashboardActivity;
 import mobi.kolibri.messager.R;
 import mobi.kolibri.messager.activity.CircleItemActivity;
 import mobi.kolibri.messager.http.HttpConnectRecive;
@@ -82,18 +85,40 @@ public class CirclesFragment extends Fragment {
         sqlMessager = new SQLMessager(getActivity());
 
         db = sqlMessager.getWritableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS, null);
+        Cursor c_serv = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE server='1'", null);
+        if (c_serv.moveToFirst()) {
+            int ideCollumn = c_serv.getColumnIndex("id");
+            int nameCollumn = c_serv.getColumnIndex(SQLMessager.CONTACTS_NAME);
+            int phoneCollumn = c_serv.getColumnIndex(SQLMessager.CONTACTS_PHONE);
+            int photoCollumn = c_serv.getColumnIndex(SQLMessager.CONTACTS_PHOTO);
+            int serverCollumn = c_serv.getColumnIndex(SQLMessager.CONTACTS_SERV);
+            do {
+                CiclesInfo result_sql = new CiclesInfo();
+                result_sql.id_db = c_serv.getInt(ideCollumn);
+                result_sql.name = c_serv.getString(nameCollumn);
+                result_sql.phone = c_serv.getString(phoneCollumn);
+                result_sql.photo = c_serv.getString(photoCollumn);
+                result_sql.server = c_serv.getString(serverCollumn);
+                result_sql.type_circle = "contact";
+                adapter.add(result_sql);
+                contactInfoList.add(result_sql);
+            } while (c_serv.moveToNext());
+        }
+
+        Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE server='0'", null);
         if (c.moveToFirst()) {
             int ideCollumn = c.getColumnIndex("id");
             int nameCollumn = c.getColumnIndex(SQLMessager.CONTACTS_NAME);
             int phoneCollumn = c.getColumnIndex(SQLMessager.CONTACTS_PHONE);
             int photoCollumn = c.getColumnIndex(SQLMessager.CONTACTS_PHOTO);
+            int serverCollumn = c.getColumnIndex(SQLMessager.CONTACTS_SERV);
             do {
                 CiclesInfo result_sql = new CiclesInfo();
                 result_sql.id_db = c.getInt(ideCollumn);
                 result_sql.name = c.getString(nameCollumn);
                 result_sql.phone = c.getString(phoneCollumn);
                 result_sql.photo = c.getString(photoCollumn);
+                result_sql.server = c.getString(serverCollumn);
                 result_sql.type_circle = "contact";
                 adapter.add(result_sql);
                 contactInfoList.add(result_sql);
@@ -190,10 +215,12 @@ public class CirclesFragment extends Fragment {
     private class ContactAdapter extends ArrayAdapter<CiclesInfo> {
         List<CiclesInfo> listItem;
         private DisplayImageOptions options;
+        Context contV;
 
 
         public ContactAdapter (Context context) {
             super(context, 0);
+            contV = context;
             listItem = new ArrayList<CiclesInfo>();
             options = new DisplayImageOptions.Builder()
                     .showImageOnLoading(R.mipmap.profile_min)
@@ -217,6 +244,7 @@ public class CirclesFragment extends Fragment {
                 ViewHolder holder = new ViewHolder();
                 holder.name = (TextView) v.findViewById(R.id.textView3);
                 holder.phone = (TextView) v.findViewById(R.id.textView4);
+                holder.send_sms = (TextView) v.findViewById(R.id.textView7);
                 holder.image = (ImageView) v.findViewById(R.id.imageView5);
                 v.setTag(holder);
             }
@@ -225,6 +253,19 @@ public class CirclesFragment extends Fragment {
 
             holder.name.setText(item.name);
             holder.phone.setText(item.phone);
+            holder.send_sms.setVisibility(View.GONE);
+            if (item.server.equals("0")) {
+                holder.send_sms.setVisibility(View.VISIBLE);
+                holder.send_sms.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        PendingIntent pi= PendingIntent.getActivity(contV, 0,
+                                new Intent(contV, DashboardActivity.class), 0);
+                        SmsManager sms= SmsManager.getDefault();
+                        sms.sendTextMessage(item.phone, null, "Hello install Logs messager", pi, null);
+                    }
+                });
+            }
             if (item.photo != null) {
                 String url_img = HttpConnectRecive.URLP + item.photo;
                 ImageLoader.getInstance()
@@ -262,6 +303,7 @@ public class CirclesFragment extends Fragment {
         class ViewHolder {
             TextView name;
             TextView phone;
+            TextView send_sms;
             ImageView image;
         }
 
