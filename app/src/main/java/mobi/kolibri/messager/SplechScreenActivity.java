@@ -55,8 +55,8 @@ public class SplechScreenActivity extends AppCompatActivity {
 
                 ParseUtils.verifyParseConfiguration(this);
 
-                /*PrefManager pref = new PrefManager(getApplicationContext());
-                if (pref.isLoggedIn()) {*/
+                PrefManager pref = new PrefManager(getApplicationContext());
+                if (pref.isLoggedIn()) {
                     new Handler().postDelayed(new Runnable() {
 
 
@@ -70,7 +70,7 @@ public class SplechScreenActivity extends AppCompatActivity {
                         }
                     }, SPLASH_TIME_OUT);
 
-               /// }
+                }
 
 
             } else {

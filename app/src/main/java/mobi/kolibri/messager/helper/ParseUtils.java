@@ -27,12 +27,12 @@ public class ParseUtils {
         }
     }
 
-    public static void registerParse(Context context) {
+    public static void registerParse(Context context, String user) {
         // initializing parse library
         Parse.initialize(context, AppConfig.PARSE_APPLICATION_ID, AppConfig.PARSE_CLIENT_KEY);
         ParseInstallation.getCurrentInstallation().saveInBackground();
 
-        ParsePush.subscribeInBackground(AppConfig.PARSE_CHANNEL, new SaveCallback() {
+        ParsePush.subscribeInBackground(user, new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 Log.e(TAG, "Successfully subscribed to Parse!");

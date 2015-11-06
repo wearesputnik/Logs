@@ -26,9 +26,6 @@ public class UILApplication extends Application {
 
 		mInstance = this;
 
-		// register with parse
-		ParseUtils.registerParse(this);
-
 	}
 
 	public static void initImageLoader(Context context) {

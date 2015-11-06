@@ -98,7 +98,9 @@ public class LoginActivity extends AppCompatActivity {
             dialog.dismiss();
             if (result != null) {
 
-                pref.createLoginSession(edtLoginEmail.getText().toString());
+                ParseUtils.registerParse(LoginActivity.this, "users_" + result);
+
+                pref.createLoginSession("users_" + result);
 
                 Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
                 i.putExtra("user_id", Integer.parseInt(result));
