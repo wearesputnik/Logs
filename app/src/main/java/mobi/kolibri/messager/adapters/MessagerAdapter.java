@@ -81,10 +81,10 @@ public class MessagerAdapter extends ArrayAdapter<MessagInfo>{
             holder.textToMessager.setText(item.message);
             holder.messagePhoto2.setVisibility(View.GONE);
             holder.textToTimer.setVisibility(View.GONE);
-            if (item.attachment != null) {
-
+            if (!item.attachment.equals("")) {
                 holder.messagePhoto2.setVisibility(View.VISIBLE);
-                holder.textToTimer.setVisibility(View.VISIBLE);
+                ///holder.textToTimer.setVisibility(View.VISIBLE);
+
                 /*final TextView tv = holder.textToTimer;
 
                 CountDownTimer cdt = counters.get(holder.textToTimer);
@@ -109,7 +109,6 @@ public class MessagerAdapter extends ArrayAdapter<MessagInfo>{
                 };
 
                 counters.put(tv, cdt);*/
-
 
                 String url_img = HttpConnectRecive.URLP + item.attachment;
                 ImageLoader.getInstance()

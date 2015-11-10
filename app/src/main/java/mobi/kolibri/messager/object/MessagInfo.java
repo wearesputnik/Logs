@@ -8,6 +8,7 @@ import org.json.JSONObject;
 public class MessagInfo {
     public String id_from;
     public String id_to;
+    public String name_to;
     public String message;
     public String type_chat;
     public String attachment;
@@ -19,6 +20,7 @@ public class MessagInfo {
         try {
             result.id_from = json.getString("id_from");
             result.id_to = json.getString("id_to");
+            result.name_to = json.getString("name_to");
             result.message = json.getString("message");
             result.type_chat = json.getString("type_chat");
             result.attachment = json.getString("attachment");

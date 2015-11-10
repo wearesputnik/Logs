@@ -292,6 +292,7 @@ public class DashboardActivity extends AppCompatActivity {
                         ContentValues cv_ch = new ContentValues();
                         cv_ch.put(SQLMessager.CHAT_JSON_INTERLOCUTOR, arrayUser.toString());
                         cv_ch.put(SQLMessager.CHAT_TYPE, item.type_chat);
+                        cv_ch.put(SQLMessager.CHAT_NAME, item.name_to);
                         chat_id_db = db.insert(SQLMessager.TABLE_CHAT, null, cv_ch);
                         if (chat_id_db > 0) {
                             ContentValues cv_ms = new ContentValues();

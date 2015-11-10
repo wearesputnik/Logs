@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -73,6 +74,7 @@ public class ChatAdapter extends ArrayAdapter<ChatInfo>{
             holder.image = (ImageView) v.findViewById(R.id.imageView5);
             holder.name = (TextView) v.findViewById(R.id.textView3);
             holder.clickLayout = (LinearLayout) v.findViewById(R.id.clickLayout);
+            holder.chkDeleteChat = (CheckBox) v.findViewById(R.id.chkDeleteChat);
             v.setTag(holder);
         }
 
@@ -90,26 +92,34 @@ public class ChatAdapter extends ArrayAdapter<ChatInfo>{
             e.printStackTrace();
         }
 
+        if (item.is_viseble) {
+            holder.chkDeleteChat.setVisibility(View.VISIBLE);
+        }
+        else {
+            holder.chkDeleteChat.setVisibility(View.GONE);
+        }
+
         if (item.type_chat.trim().equals("group")) {
             holder.name.setText(item.name);
             holder.image.setImageResource(R.mipmap.group_4);
-            holder.clickLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                Intent i = new Intent(contV, GroupChatItemActivity.class);
-                i.putExtra("chat_id", item.id);
-                i.putExtra("type", item.type_chat);
-                contV.startActivity(i);
-                }
-            });
+            if (!item.is_viseble) {
+                holder.clickLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(contV, GroupChatItemActivity.class);
+                        i.putExtra("chat_id", item.id);
+                        i.putExtra("type", item.type_chat);
+                        contV.startActivity(i);
+                    }
+                });
+            }
         }
         else {
+            holder.name.setText(item.name);
             Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE " + SQLMessager.CONTACTS_USER_ID + "='" + user_id_from + "'", null);
             if (c.moveToFirst()) {
-                int nameCollumn = c.getColumnIndex(SQLMessager.CONTACTS_NAME);
+                ///int nameCollumn = c.getColumnIndex(SQLMessager.CONTACTS_NAME);
                 int photoCollumn = c.getColumnIndex(SQLMessager.CONTACTS_PHOTO);
-
-                holder.name.setText(c.getString(nameCollumn));
                 if (c.getString(photoCollumn) != null) {
                     String url_img = HttpConnectRecive.URLP + c.getString(photoCollumn);
                     ImageLoader.getInstance()
@@ -143,11 +153,21 @@ public class ChatAdapter extends ArrayAdapter<ChatInfo>{
             holder.clickLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent i = new Intent(contV, ChatItemActivity.class);
-                    i.putExtra("user_id_from", Integer.parseInt(finalUser_id_from));
-                    i.putExtra("chat_id", item.id);
-                    i.putExtra("type", item.type_chat);
-                    contV.startActivity(i);
+                    if (!item.is_viseble) {
+                        Intent i = new Intent(contV, ChatItemActivity.class);
+                        i.putExtra("user_id_from", Integer.parseInt(finalUser_id_from));
+                        i.putExtra("chat_id", item.id);
+                        i.putExtra("type", item.type_chat);
+                        contV.startActivity(i);
+                    }
+                    else {
+                        if (holder.chkDeleteChat.isChecked()) {
+                            holder.chkDeleteChat.setChecked(false);
+                        }
+                        else {
+                            holder.chkDeleteChat.setChecked(true);
+                        }
+                    }
                 }
             });
         }
@@ -159,5 +179,6 @@ public class ChatAdapter extends ArrayAdapter<ChatInfo>{
         TextView name;
         ImageView image;
         LinearLayout clickLayout;
+        CheckBox chkDeleteChat;
     }
 }

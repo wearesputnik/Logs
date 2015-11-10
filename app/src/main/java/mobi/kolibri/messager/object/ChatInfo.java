@@ -8,4 +8,6 @@ public class ChatInfo {
     public String json_user;
     public String type_chat;
     public String name;
+    public boolean cheked;
+    public boolean is_viseble;
 }

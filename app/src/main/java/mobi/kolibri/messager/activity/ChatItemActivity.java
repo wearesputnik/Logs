@@ -108,9 +108,10 @@ public class ChatItemActivity extends AppCompatActivity {
         sqlMessager = new SQLMessager(ChatItemActivity.this);
 
         db = sqlMessager.getWritableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE " + SQLMessager.CONTACTS_USER_ID + "='" + user_id_from + "'", null);
+        Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CHAT + " WHERE id=" + chat_id, null);
         if (c.moveToFirst()) {
-            int nameCollumn = c.getColumnIndex(SQLMessager.CONTACTS_NAME);
+            int nameCollumn = c.getColumnIndex(SQLMessager.CHAT_NAME);
+
             getSupportActionBar().setTitle(c.getString(nameCollumn));
         }
 
@@ -152,6 +153,13 @@ public class ChatItemActivity extends AppCompatActivity {
                         cv_ms.put(SQLMessager.MESSAGER_SERVER, "1");
                         db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
                     } else {
+                        String title = null;
+                        Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE " + SQLMessager.CONTACTS_USER_ID + "='" + user_id_from + "'", null);
+                        if (c.moveToFirst()) {
+                            int nameCollumn = c.getColumnIndex(SQLMessager.CONTACTS_NAME);
+                            title = c.getString(nameCollumn);
+                            ///getSupportActionBar().setTitle(c.getString(nameCollumn));
+                        }
                         long chat_id_db = 0;
                         JSONArray arrayUser = new JSONArray();
                         JSONObject itemJs = new JSONObject();
@@ -165,6 +173,7 @@ public class ChatItemActivity extends AppCompatActivity {
                         cv_ch.put(SQLMessager.CHAT_JSON_INTERLOCUTOR, arrayUser.toString());
                         cv_ch.put(SQLMessager.CHAT_TYPE, type_chat.toString());
                         cv_ch.put(SQLMessager.CHAT_READ, "1");
+                        cv_ch.put(SQLMessager.CHAT_NAME, title);
                         chat_id_db = db.insert(SQLMessager.TABLE_CHAT, null, cv_ch);
                         if (chat_id_db > 0) {
                             chat_id = (int) chat_id_db;

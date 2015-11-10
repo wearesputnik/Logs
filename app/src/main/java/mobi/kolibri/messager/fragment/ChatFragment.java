@@ -34,6 +34,8 @@ public class ChatFragment extends Fragment {
     ListView listChatView;
     SQLMessager sqlMessager;
     ChatAdapter adapter;
+    Button btnDeleteChat;
+    boolean isVisibleClear;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,9 @@ public class ChatFragment extends Fragment {
         listChatView.setDividerHeight(0);
         adapter = new ChatAdapter(getActivity());
         listChatView.setAdapter(adapter);
+        btnDeleteChat = (Button) rootView.findViewById(R.id.btnDeleteChat);
+        isVisibleClear = false;
+        btnDeleteChat.setVisibility(View.GONE);
 
         sqlMessager = new SQLMessager(getActivity());
 
@@ -65,6 +70,8 @@ public class ChatFragment extends Fragment {
                 result_sql.json_user = c.getString(nameCollumn);
                 result_sql.type_chat = c.getString(typeCollumn);
                 result_sql.name = c.getString(nameCCollumn);
+                result_sql.cheked = false;
+                result_sql.is_viseble = isVisibleClear;
 
                 adapter.add(result_sql);
             } while (c.moveToNext());
@@ -94,11 +101,20 @@ public class ChatFragment extends Fragment {
                 result_sql.json_user = c.getString(nameCollumn);
                 result_sql.type_chat = c.getString(typeCollumn);
                 result_sql.name = c.getString(nameCCollumn);
+                result_sql.cheked = false;
+                result_sql.is_viseble = isVisibleClear;
 
                 adapter.add(result_sql);
             } while (c.moveToNext());
         }
         adapter.notifyDataSetChanged();
+
+        if (isVisibleClear) {
+            btnDeleteChat.setVisibility(View.VISIBLE);
+        }
+        else {
+            btnDeleteChat.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -112,6 +128,10 @@ public class ChatFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.new_chat:
                 DialogChat();
+                break;
+            case R.id.action_clear:
+                isVisibleClear = true;
+                onResume();
                 break;
         }
         return super.onOptionsItemSelected(item);
