@@ -36,6 +36,8 @@ public class ChatFragment extends Fragment {
     ChatAdapter adapter;
     Button btnDeleteChat;
     boolean isVisibleClear;
+    List<ChatInfo> listChat;
+    SQLiteDatabase db;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,10 +56,11 @@ public class ChatFragment extends Fragment {
         btnDeleteChat = (Button) rootView.findViewById(R.id.btnDeleteChat);
         isVisibleClear = false;
         btnDeleteChat.setVisibility(View.GONE);
+        listChat = new ArrayList<>();
 
         sqlMessager = new SQLMessager(getActivity());
+        db = sqlMessager.getWritableDatabase();
 
-        SQLiteDatabase db = sqlMessager.getWritableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CHAT, null);
         if (c.moveToFirst()) {
             int idCollumn = c.getColumnIndex("id");
@@ -73,13 +76,19 @@ public class ChatFragment extends Fragment {
                 result_sql.cheked = false;
                 result_sql.is_viseble = isVisibleClear;
 
-                adapter.add(result_sql);
+                listChat.add(result_sql);
             } while (c.moveToNext());
+        }
+
+        for (ChatInfo item : listChat) {
+            adapter.add(item);
         }
         adapter.notifyDataSetChanged();
 
         Updater u = new Updater();
         u.start();
+
+        btnDeleteChat.setOnClickListener(btnDeleteChatLisener);
 
         return rootView;
     }
@@ -88,6 +97,7 @@ public class ChatFragment extends Fragment {
     public void onResume() {
         super.onResume();
         adapter.clear();
+        listChat.clear();
         SQLiteDatabase db = sqlMessager.getWritableDatabase();
         Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CHAT, null);
         if (c.moveToFirst()) {
@@ -104,8 +114,12 @@ public class ChatFragment extends Fragment {
                 result_sql.cheked = false;
                 result_sql.is_viseble = isVisibleClear;
 
-                adapter.add(result_sql);
+                listChat.add(result_sql);
             } while (c.moveToNext());
+        }
+
+        for (ChatInfo item : listChat) {
+            adapter.add(item);
         }
         adapter.notifyDataSetChanged();
 
@@ -161,6 +175,20 @@ public class ChatFragment extends Fragment {
             }
         }
     }
+
+    View.OnClickListener btnDeleteChatLisener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            for (ChatInfo item : listChat) {
+                if (item.cheked) {
+                    db.delete(SQLMessager.TABLE_MESSAGER, SQLMessager.MESSAGER_CHAT_ID + "=?", new String[]{item.id.toString()});
+                    db.delete(SQLMessager.TABLE_CHAT, "id=?", new String[]{item.id.toString()});
+                }
+            }
+            isVisibleClear = false;
+            onResume();
+        }
+    };
 
     private void DialogChat() {
 

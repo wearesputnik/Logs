@@ -102,17 +102,27 @@ public class ChatAdapter extends ArrayAdapter<ChatInfo>{
         if (item.type_chat.trim().equals("group")) {
             holder.name.setText(item.name);
             holder.image.setImageResource(R.mipmap.group_4);
-            if (!item.is_viseble) {
-                holder.clickLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+            holder.clickLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!item.is_viseble) {
                         Intent i = new Intent(contV, GroupChatItemActivity.class);
                         i.putExtra("chat_id", item.id);
                         i.putExtra("type", item.type_chat);
                         contV.startActivity(i);
                     }
-                });
-            }
+                    else {
+                        if (holder.chkDeleteChat.isChecked()) {
+                            holder.chkDeleteChat.setChecked(false);
+                            item.cheked = false;
+                        }
+                        else {
+                            holder.chkDeleteChat.setChecked(true);
+                            item.cheked = true;
+                        }
+                    }
+                }
+            });
         }
         else {
             holder.name.setText(item.name);
@@ -163,9 +173,11 @@ public class ChatAdapter extends ArrayAdapter<ChatInfo>{
                     else {
                         if (holder.chkDeleteChat.isChecked()) {
                             holder.chkDeleteChat.setChecked(false);
+                            item.cheked = false;
                         }
                         else {
                             holder.chkDeleteChat.setChecked(true);
+                            item.cheked = true;
                         }
                     }
                 }
