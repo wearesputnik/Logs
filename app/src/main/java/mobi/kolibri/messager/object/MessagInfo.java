@@ -13,6 +13,7 @@ public class MessagInfo {
     public String type_chat;
     public String attachment;
     public String duration;
+    public String created;
 
     public static MessagInfo parseJson(JSONObject json) {
         MessagInfo result = new MessagInfo();
@@ -25,6 +26,7 @@ public class MessagInfo {
             result.type_chat = json.getString("type_chat");
             result.attachment = json.getString("attachment");
             result.duration = json.getString("duration");
+            result.created = json.getString("created");
             return result;
         }
         catch(Exception e) {

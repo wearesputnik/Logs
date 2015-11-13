@@ -42,6 +42,7 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -114,6 +115,14 @@ public class ChatItemActivity extends AppCompatActivity {
 
             getSupportActionBar().setTitle(c.getString(nameCollumn));
         }
+        else {
+            Cursor c_us = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE " + SQLMessager.CONTACTS_USER_ID + "=" + user_id_from, null);
+            if (c_us.moveToFirst()) {
+                int nameCollumn = c_us.getColumnIndex(SQLMessager.CONTACTS_NAME);
+
+                getSupportActionBar().setTitle(c_us.getString(nameCollumn));
+            }
+        }
 
         Cursor c_ch = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_MESSAGER + " WHERE " + SQLMessager.MESSAGER_CHAT_ID + "='" + chat_id + "'", null);
         if (c_ch.moveToFirst()) {
@@ -140,12 +149,16 @@ public class ChatItemActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!textMessages.getText().toString().trim().equals("")) {
+                    Calendar cal = Calendar.getInstance();
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String formattedDate = df.format(cal.getTime());
                     if (chat_id != 0) {
                         ContentValues cv_ms = new ContentValues();
                         cv_ms.put(SQLMessager.MESSAGER_CHAT_ID, chat_id.toString());
                         cv_ms.put(SQLMessager.MESSAGER_FROM_ID, user_id_from.toString());
                         cv_ms.put(SQLMessager.MESSAGER_TO_ID, HttpConnectRecive.getUserId(ChatItemActivity.this));
                         cv_ms.put(SQLMessager.MESSAGER_MESSAG, textMessages.getText().toString());
+                        cv_ms.put(SQLMessager.MESSAGER_CREATED, formattedDate);
                         if (selected_bitmap != null) {
                             cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, filepath);
                             cv_ms.put(SQLMessager.MESSAGER_DURATION, duration);
@@ -183,6 +196,7 @@ public class ChatItemActivity extends AppCompatActivity {
                             cv_ms.put(SQLMessager.MESSAGER_TO_ID, HttpConnectRecive.getUserId(ChatItemActivity.this));
                             cv_ms.put(SQLMessager.MESSAGER_MESSAG, textMessages.getText().toString());
                             cv_ms.put(SQLMessager.MESSAGER_SERVER, "1");
+                            cv_ms.put(SQLMessager.MESSAGER_CREATED, formattedDate);
                             if (selected_bitmap != null) {
                                 cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, filepath);
                                 cv_ms.put(SQLMessager.MESSAGER_DURATION, duration);

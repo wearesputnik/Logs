@@ -83,6 +83,8 @@ public class DashboardActivity extends AppCompatActivity {
             user_id = b.getInt("user_id");
         }
 
+       /// ParseUtils.registerParse(DashboardActivity.this, "users_" + user_id);
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setElevation(0);
         }

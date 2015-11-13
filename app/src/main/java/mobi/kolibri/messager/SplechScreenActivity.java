@@ -24,12 +24,12 @@ public class SplechScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splech_screen);
         sqlMessager = new SQLMessager(SplechScreenActivity.this);
         SQLiteDatabase db = sqlMessager.getWritableDatabase();
-        db.execSQL(SQLMessager.CREATE_TABLE_APP_ID);
-        db.execSQL(SQLMessager.CREATE_TABLE_CONTACTS);
-        db.execSQL(SQLMessager.CREATE_TABLE_CHAT);
-        db.execSQL(SQLMessager.CREATE_TABLE_MESSAGER);
-        db.execSQL(SQLMessager.CREATE_TABLE_CIRCLES);
-        db.execSQL(SQLMessager.CREATE_TABLE_CIRCLES_CONTACT);
+//        db.execSQL(SQLMessager.CREATE_TABLE_APP_ID);
+//        db.execSQL(SQLMessager.CREATE_TABLE_CONTACTS);
+//        db.execSQL(SQLMessager.CREATE_TABLE_CHAT);
+//        db.execSQL(SQLMessager.CREATE_TABLE_MESSAGER);
+//        db.execSQL(SQLMessager.CREATE_TABLE_CIRCLES);
+//        db.execSQL(SQLMessager.CREATE_TABLE_CIRCLES_CONTACT);
 
         if (!HttpConnectRecive.isOnline(SplechScreenActivity.this)) {
             Toast.makeText(SplechScreenActivity.this, "No Internet", Toast.LENGTH_LONG).show();

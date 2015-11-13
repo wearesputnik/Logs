@@ -15,6 +15,7 @@ public class GroupMessagerInfo {
     public String json_users;
     public String attachment;
     public String duration;
+    public String created;
 
     public static GroupMessagerInfo parseJson(JSONObject json) {
         GroupMessagerInfo result = new GroupMessagerInfo();
@@ -29,6 +30,7 @@ public class GroupMessagerInfo {
             result.json_users = json.getString("json_users");
             result.attachment = json.getString("attachment");
             result.duration = json.getString("duration");
+            result.created = json.getString("created");
             return result;
         }
         catch(Exception e) {
