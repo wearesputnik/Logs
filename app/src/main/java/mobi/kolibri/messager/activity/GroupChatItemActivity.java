@@ -134,7 +134,7 @@ public class GroupChatItemActivity extends AppCompatActivity {
         sendMessages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!textMessages.getText().toString().trim().equals("")) {
+                if (!textMessages.getText().toString().trim().equals("") || selected_bitmap != null) {
                     ContentValues cv_ms = new ContentValues();
                     cv_ms.put(SQLMessager.MESSAGER_CHAT_ID, id_chat.toString());
                     cv_ms.put(SQLMessager.MESSAGER_FROM_ID, json_users);
@@ -437,7 +437,7 @@ public class GroupChatItemActivity extends AppCompatActivity {
                 Bitmap thumbnail = BitmapFactory.decodeFile(filepath);
                 selectedBitmap = thumbnail;
                 if (selectedBitmap != null) {
-                    ///   DialogDuration();
+                   DialogDuration();
                 }
             }
 

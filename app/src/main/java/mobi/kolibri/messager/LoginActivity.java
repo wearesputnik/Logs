@@ -32,7 +32,32 @@ public class LoginActivity extends AppCompatActivity {
         singup = (Button) findViewById(R.id.singup);
         btnLogin = (Button) findViewById(R.id.btnLogin);
         edtLoginEmail = (EditText) findViewById(R.id.edtLoginEmail);
+        edtLoginEmail.setFocusableInTouchMode(true);
+        edtLoginEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    v.setBackgroundResource(R.drawable.custom_edittext_pasiv);
+                } else {
+                    v.setBackgroundResource(R.drawable.custom_edittext_activ);
+                }
+            }
+        });
+
         edtLoginPass = (EditText) findViewById(R.id.edtLoginPass);
+        edtLoginPass.setFocusableInTouchMode(true);
+        edtLoginPass.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    v.setBackgroundResource(R.drawable.custom_edittext_pasiv);
+                } else {
+                    v.setBackgroundResource(R.drawable.custom_edittext_activ);
+                }
+            }
+        });
 
         ParseUtils.verifyParseConfiguration(this);
 

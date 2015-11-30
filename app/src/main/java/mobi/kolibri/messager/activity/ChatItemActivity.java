@@ -74,6 +74,7 @@ public class ChatItemActivity extends AppCompatActivity {
     private int REQUEST_CROP_IMAGE = 3;
     private static final int GALLERY_KITKAT_INTENT_CALLED = 4;
     ImageView imageView;
+    String formattedDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,10 +149,10 @@ public class ChatItemActivity extends AppCompatActivity {
         sendMessages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!textMessages.getText().toString().trim().equals("")) {
+                if (!textMessages.getText().toString().trim().equals("") || selected_bitmap != null) {
                     Calendar cal = Calendar.getInstance();
                     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    String formattedDate = df.format(cal.getTime());
+                    formattedDate = df.format(cal.getTime());
                     if (chat_id != 0) {
                         ContentValues cv_ms = new ContentValues();
                         cv_ms.put(SQLMessager.MESSAGER_CHAT_ID, chat_id.toString());
@@ -223,12 +224,12 @@ public class ChatItemActivity extends AppCompatActivity {
                 while (!stopped) {
                     // Активность списка
                     runOnUiThread(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    new getMessegTask().execute();
-                                }
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                new getMessegTask().execute();
                             }
+                        }
                     );
                     try {
                         Thread.sleep(5000);
@@ -280,6 +281,7 @@ public class ChatItemActivity extends AppCompatActivity {
             item_msg.id_from = user_id_from.toString();
             item_msg.message = textMessages.getText().toString();
             item_msg.type_chat = type_chat;
+            item_msg.created = formattedDate;
             if (selected_bitmap != null) {
                 item_msg.attachment = filepath;
                 item_msg.duration = duration;
@@ -293,6 +295,7 @@ public class ChatItemActivity extends AppCompatActivity {
             result_sql.id_from = user_id_from.toString();
             result_sql.id_to = HttpConnectRecive.getUserId(ChatItemActivity.this);
             result_sql.message = textMessages.getText().toString();
+            result_sql.created = formattedDate;
             if (selected_bitmap != null) {
                 result_sql.attachment = filepath;
                 result_sql.duration = duration;
@@ -525,7 +528,7 @@ public class ChatItemActivity extends AppCompatActivity {
                 Bitmap thumbnail = BitmapFactory.decodeFile(filepath);
                 selectedBitmap = thumbnail;
                 if (selectedBitmap != null) {
-                  ///   DialogDuration();
+                    DialogDuration();
                 }
             }
 

@@ -38,6 +38,18 @@ public class ActivationActivity extends AppCompatActivity {
         }
 
         edtKeyActivete = (EditText) findViewById(R.id.edtKeyActivete);
+        edtKeyActivete.setFocusableInTouchMode(true);
+        edtKeyActivete.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    v.setBackgroundResource(R.drawable.custom_edittext_pasiv);
+                } else {
+                    v.setBackgroundResource(R.drawable.custom_edittext_activ);
+                }
+            }
+        });
         btnKeyActivete = (Button) findViewById(R.id.btnKeyActivete);
 
         btnKeyActivete.setOnClickListener(new View.OnClickListener() {

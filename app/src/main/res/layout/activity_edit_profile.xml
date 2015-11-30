@@ -37,7 +37,9 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="10dp"
                 android:textColor="#000"
-                android:hint="Firstname" />
+                android:hint="Firstname"
+                android:textColorHint="#ff939196"
+                android:background="@drawable/custom_edittext_activ" />
 
             <EditText
                 android:layout_width="wrap_content"
@@ -52,7 +54,9 @@
                 android:layout_alignEnd="@+id/edtEditFirstname"
                 android:layout_marginTop="10dp"
                 android:textColor="#000"
-                android:hint="Lastname" />
+                android:hint="Lastname"
+                android:textColorHint="#ff939196"
+                android:background="@drawable/custom_edittext_activ" />
 
             <EditText
                 android:layout_width="wrap_content"
@@ -71,7 +75,9 @@
                 android:editable="false"
                 android:enabled="false"
                 android:focusable="@bool/abc_action_bar_embed_tabs_pre_jb"
-                android:focusableInTouchMode="@bool/abc_action_bar_embed_tabs_pre_jb" />
+                android:focusableInTouchMode="@bool/abc_action_bar_embed_tabs_pre_jb"
+                android:textColorHint="#ff939196"
+                android:background="@drawable/custom_edittext_activ" />
 
             <EditText
                 android:layout_width="wrap_content"
@@ -84,7 +90,9 @@
                 android:layout_alignEnd="@+id/edtEditPhone"
                 android:layout_marginTop="10dp"
                 android:textColor="#000"
-                android:hint="Summary" />
+                android:hint="Summary"
+                android:textColorHint="#ff939196"
+                android:background="@drawable/custom_edittext_activ" />
 
             <Button
                 android:layout_width="wrap_content"

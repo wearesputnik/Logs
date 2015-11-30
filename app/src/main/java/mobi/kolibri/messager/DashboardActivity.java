@@ -287,6 +287,7 @@ public class DashboardActivity extends AppCompatActivity {
                         cv_ms.put(SQLMessager.MESSAGER_SERVER, "0");
                         cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, item.attachment);
                         cv_ms.put(SQLMessager.MESSAGER_DURATION, item.duration);
+                        cv_ms.put(SQLMessager.MESSAGER_CREATED, item.created);
                         db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
                     }
                     else {
@@ -305,6 +306,7 @@ public class DashboardActivity extends AppCompatActivity {
                             cv_ms.put(SQLMessager.MESSAGER_SERVER, "0");
                             cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, item.attachment);
                             cv_ms.put(SQLMessager.MESSAGER_DURATION, item.duration);
+                            cv_ms.put(SQLMessager.MESSAGER_CREATED, item.created);
                             db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
                         }
                     }
@@ -343,6 +345,7 @@ public class DashboardActivity extends AppCompatActivity {
                         cv_ms.put(SQLMessager.MESSAGER_SERVER, "0");
                         cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, item.attachment);
                         cv_ms.put(SQLMessager.MESSAGER_DURATION, item.duration);
+                        cv_ms.put(SQLMessager.MESSAGER_CREATED, item.created);
                         db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
                     }
                     else {
@@ -361,6 +364,7 @@ public class DashboardActivity extends AppCompatActivity {
                             cv_ms.put(SQLMessager.MESSAGER_SERVER, "0");
                             cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, item.attachment);
                             cv_ms.put(SQLMessager.MESSAGER_DURATION, item.duration);
+                            cv_ms.put(SQLMessager.MESSAGER_CREATED, item.created);
                             db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
                         }
                     }
@@ -386,7 +390,7 @@ public class DashboardActivity extends AppCompatActivity {
                 startActivity(i);
                 return true;
             case R.id.action_out:
-                ///
+                LogOut();
                 return true;
 
         }
@@ -394,36 +398,17 @@ public class DashboardActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    private void LogOut() {
+        db.delete(SQLMessager.TABLE_CHAT, null, null);
+        db.delete(SQLMessager.TABLE_MESSAGER, null, null);
+        db.delete(SQLMessager.TABLE_APP_ID, null, null);
+        db.delete(SQLMessager.TABLE_CIRCLES_CONTACT, null, null);
+        db.delete(SQLMessager.TABLE_CIRCLES, null, null);
+        db.delete(SQLMessager.TABLE_CONTACTS, null, null);
+        pref.logout();
 
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            if (position == 1) {
-                return new ChatFragment();
-            }
-            return new CirclesFragment();
-        }
-
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return 2;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            Locale l = Locale.getDefault();
-            switch (position) {
-                case 0:
-                    return getString(R.string.title_section1).toUpperCase(l);
-                case 1:
-                    return getString(R.string.title_section2).toUpperCase(l);
-            }
-            return null;
-        }
+        Intent i = new Intent(DashboardActivity.this, LoginActivity.class);
+        startActivity(i);
+        finish();
     }
 }

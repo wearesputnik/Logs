@@ -17,7 +17,9 @@
         android:layout_alignParentStart="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:textColor="#000" />
+        android:textColor="#000"
+        android:background="@drawable/custom_edittext_activ"
+        android:textColorHint="#ff939196" />
 
     <EditText
         android:layout_width="fill_parent"
@@ -32,7 +34,9 @@
         android:layout_alignRight="@+id/edtLoginEmail"
         android:layout_alignEnd="@+id/edtLoginEmail"
         android:textColor="#000"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        android:background="@drawable/custom_edittext_activ"
+        android:textColorHint="#ff939196" />
 
     <Button
         android:layout_width="fill_parent"
@@ -47,7 +51,8 @@
         android:layout_alignRight="@+id/edtLoginEmail"
         android:layout_alignEnd="@+id/edtLoginEmail"
         android:background="@drawable/bg_send_chat_item"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        android:textSize="18dp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -61,7 +66,8 @@
         android:layout_marginLeft="16dp"
         android:layout_marginBottom="16dp"
         android:textColor="#fff"
-        android:background="@drawable/bg_send_chat_item" />
+        android:background="@drawable/bg_send_chat_item"
+        android:textSize="18dp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -75,6 +81,7 @@
         android:layout_marginRight="16dp"
         android:background="@drawable/bg_send_chat_item"
         android:paddingLeft="5dp"
-        android:paddingRight="5dp" />
+        android:paddingRight="5dp"
+        android:textSize="18dp" />
 
 </RelativeLayout>

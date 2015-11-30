@@ -84,7 +84,7 @@
                 android:layout_alignParentTop="false"
                 android:layout_alignParentLeft="false"
                 android:src="@mipmap/add_file"
-                android:visibility="gone" />
+                android:visibility="visible" />
 
             <TextView
                 android:layout_width="wrap_content"

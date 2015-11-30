@@ -352,6 +352,7 @@ public class HttpConnectRecive {
             form.addPart("user_id_from", new StringBody(item_msg.id_from, charset));
             form.addPart("message", new StringBody(item_msg.message, charset));
             form.addPart("type_chat", new StringBody(item_msg.type_chat, charset));
+            form.addPart("created", new StringBody(item_msg.created, charset));
 
 
             if (photo_witch == 1) {

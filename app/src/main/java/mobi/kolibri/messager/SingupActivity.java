@@ -25,9 +25,57 @@ public class SingupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_singup);
 
         edtEmail = (EditText) findViewById(R.id.edtEmail);
+        edtEmail.setFocusableInTouchMode(true);
+        edtEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    v.setBackgroundResource(R.drawable.custom_edittext_pasiv);
+                } else {
+                    v.setBackgroundResource(R.drawable.custom_edittext_activ);
+                }
+            }
+        });
         edtPassword = (EditText) findViewById(R.id.edtPassword);
+        edtPassword.setFocusableInTouchMode(true);
+        edtPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    v.setBackgroundResource(R.drawable.custom_edittext_pasiv);
+                } else {
+                    v.setBackgroundResource(R.drawable.custom_edittext_activ);
+                }
+            }
+        });
         edtConfPassword = (EditText) findViewById(R.id.edtConfPassword);
+        edtConfPassword.setFocusableInTouchMode(true);
+        edtConfPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    v.setBackgroundResource(R.drawable.custom_edittext_pasiv);
+                } else {
+                    v.setBackgroundResource(R.drawable.custom_edittext_activ);
+                }
+            }
+        });
         edtPhone = (EditText) findViewById(R.id.edtPhone);
+        edtPhone.setFocusableInTouchMode(true);
+        edtPhone.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    v.setBackgroundResource(R.drawable.custom_edittext_pasiv);
+                } else {
+                    v.setBackgroundResource(R.drawable.custom_edittext_activ);
+                }
+            }
+        });
         btnSingup = (Button) findViewById(R.id.btnSingup);
 
         btnSingup.setOnClickListener(new View.OnClickListener() {
