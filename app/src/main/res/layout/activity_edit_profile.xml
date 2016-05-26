@@ -14,100 +14,172 @@
         android:layout_below="@+id/toolbar">
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/toolbar">
 
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="300dp"
-                android:id="@+id/imgEditProfile"
-                android:layout_centerHorizontal="true"
-                android:src="@mipmap/profile_max"
-                android:layout_marginTop="10dp" />
-
-            <EditText
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:ems="10"
-                android:id="@+id/edtEditFirstname"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/imgEditProfile"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="10dp"
-                android:textColor="#000"
-                android:hint="Firstname"
-                android:textColorHint="#ff939196"
-                android:background="@drawable/custom_edittext_activ" />
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/linearLayout8"
+                android:paddingLeft="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:background="@drawable/custom_border_bottom">
 
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:ems="10"
-                android:id="@+id/edtEditLastname"
-                android:layout_below="@+id/edtEditFirstname"
-                android:layout_alignLeft="@+id/edtEditFirstname"
-                android:layout_alignStart="@+id/edtEditFirstname"
-                android:layout_alignRight="@+id/edtEditFirstname"
-                android:layout_alignEnd="@+id/edtEditFirstname"
-                android:layout_marginTop="10dp"
-                android:textColor="#000"
-                android:hint="Lastname"
-                android:textColorHint="#ff939196"
-                android:background="@drawable/custom_edittext_activ" />
+                <mobi.kolibri.messager.object.TextViewBold
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Name:"
+                    android:id="@+id/textView22"
+                    android:textColor="#000"
+                    android:textSize="16dp" />
 
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="phone"
-                android:ems="10"
-                android:id="@+id/edtEditPhone"
-                android:layout_below="@+id/edtEditLastname"
-                android:layout_alignLeft="@+id/edtEditLastname"
-                android:layout_alignStart="@+id/edtEditLastname"
-                android:layout_alignRight="@+id/edtEditLastname"
-                android:layout_alignEnd="@+id/edtEditLastname"
-                android:layout_marginTop="10dp"
-                android:textColor="#000"
-                android:hint="Phone"
-                android:editable="false"
-                android:enabled="false"
-                android:focusable="@bool/abc_action_bar_embed_tabs_pre_jb"
-                android:focusableInTouchMode="@bool/abc_action_bar_embed_tabs_pre_jb"
-                android:textColorHint="#ff939196"
-                android:background="@drawable/custom_edittext_activ" />
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:ems="10"
+                    android:id="@+id/edtEditFirstname"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="#000"
+                    android:hint="Firstname"
+                    android:textColorHint="#ff939196"
+                    android:background="@drawable/custom_edittext_activ"
+                    android:layout_marginTop="10dp" />
+            </LinearLayout>
 
-            <EditText
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/edtEditSummary"
-                android:layout_below="@+id/edtEditPhone"
-                android:layout_alignLeft="@+id/edtEditPhone"
-                android:layout_alignStart="@+id/edtEditPhone"
-                android:layout_alignRight="@+id/edtEditPhone"
-                android:layout_alignEnd="@+id/edtEditPhone"
-                android:layout_marginTop="10dp"
-                android:textColor="#000"
-                android:hint="Summary"
-                android:textColorHint="#ff939196"
-                android:background="@drawable/custom_edittext_activ" />
+                android:layout_below="@+id/linearLayout8"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/linearLayout9"
+                android:background="@drawable/custom_border_bottom"
+                android:paddingLeft="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
 
-            <Button
-                android:layout_width="wrap_content"
+                <mobi.kolibri.messager.object.TextViewBold
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lastname:"
+                    android:id="@+id/textView23"
+                    android:textColor="#000"
+                    android:textSize="16dp" />
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:ems="10"
+                    android:id="@+id/edtEditLastname"
+                    android:textColor="#000"
+                    android:hint="Lastname"
+                    android:textColorHint="#ff939196"
+                    android:background="@drawable/custom_edittext_activ"
+                    android:layout_below="@+id/linearLayout8"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="10dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Save"
-                android:id="@+id/btnEditSave"
-                android:layout_below="@+id/edtEditSummary"
-                android:layout_alignLeft="@+id/edtEditSummary"
-                android:layout_alignStart="@+id/edtEditSummary"
-                android:layout_alignRight="@+id/edtEditSummary"
-                android:layout_alignEnd="@+id/edtEditSummary"
-                android:layout_marginTop="10dp"
-                android:textAppearance="@android:style/TextAppearance"
-                android:background="@drawable/bg_send_chat_item" />
+                android:layout_below="@+id/linearLayout9"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/linearLayout10"
+                android:background="@drawable/custom_border_bottom"
+                android:paddingLeft="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <mobi.kolibri.messager.object.TextViewBold
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Phone:"
+                    android:id="@+id/textView24"
+                    android:textColor="#000"
+                    android:textSize="16dp" />
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    android:ems="10"
+                    android:id="@+id/edtEditPhone"
+                    android:layout_below="@+id/edtEditLastname"
+                    android:layout_alignLeft="@+id/edtEditLastname"
+                    android:layout_alignStart="@+id/edtEditLastname"
+                    android:layout_alignRight="@+id/edtEditLastname"
+                    android:layout_alignEnd="@+id/edtEditLastname"
+                    android:layout_marginTop="10dp"
+                    android:textColor="#000"
+                    android:hint="Phone"
+                    android:editable="false"
+                    android:enabled="false"
+                    android:focusable="@bool/abc_action_bar_embed_tabs_pre_jb"
+                    android:focusableInTouchMode="@bool/abc_action_bar_embed_tabs_pre_jb"
+                    android:textColorHint="#ff939196"
+                    android:background="@drawable/custom_edittext_activ" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linearLayout10"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:background="@drawable/custom_border_bottom"
+                android:paddingLeft="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
+
+                <mobi.kolibri.messager.object.TextViewBold
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Summary:"
+                    android:id="@+id/textView25"
+                    android:textColor="#000"
+                    android:textSize="16dp" />
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/edtEditSummary"
+                    android:layout_below="@+id/edtEditPhone"
+                    android:layout_alignLeft="@+id/edtEditPhone"
+                    android:layout_alignStart="@+id/edtEditPhone"
+                    android:layout_alignRight="@+id/edtEditPhone"
+                    android:layout_alignEnd="@+id/edtEditPhone"
+                    android:layout_marginTop="10dp"
+                    android:textColor="#000"
+                    android:hint="Summary"
+                    android:textColorHint="#ff939196"
+                    android:background="@drawable/custom_edittext_activ" />
+            </LinearLayout>
+
         </RelativeLayout>
     </ScrollView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/icon_confirmation"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp" />
 
 </RelativeLayout>

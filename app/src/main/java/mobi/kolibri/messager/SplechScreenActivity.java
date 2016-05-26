@@ -15,7 +15,6 @@ import mobi.kolibri.messager.object.SQLMessager;
 
 public class SplechScreenActivity extends AppCompatActivity {
     private static int SPLASH_TIME_OUT = 3000;
-    private static int NO_INTERNET_TIME_OUT = 3000;
     private SQLMessager sqlMessager;
 
     @Override
@@ -24,69 +23,41 @@ public class SplechScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splech_screen);
         sqlMessager = new SQLMessager(SplechScreenActivity.this);
         SQLiteDatabase db = sqlMessager.getWritableDatabase();
-//        db.execSQL(SQLMessager.CREATE_TABLE_APP_ID);
-//        db.execSQL(SQLMessager.CREATE_TABLE_CONTACTS);
-//        db.execSQL(SQLMessager.CREATE_TABLE_CHAT);
-//        db.execSQL(SQLMessager.CREATE_TABLE_MESSAGER);
-//        db.execSQL(SQLMessager.CREATE_TABLE_CIRCLES);
-//        db.execSQL(SQLMessager.CREATE_TABLE_CIRCLES_CONTACT);
 
-        if (!HttpConnectRecive.isOnline(SplechScreenActivity.this)) {
-            Toast.makeText(SplechScreenActivity.this, "No Internet", Toast.LENGTH_LONG).show();
+
+        final Cursor ca = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_APP_ID, null);
+        if (ca.moveToFirst()) {
+            int appidColIndex = ca.getColumnIndex(sqlMessager.APP_ID);
+            final int useridColIndex = ca.getColumnIndex(sqlMessager.USER_ID);
+
+            HttpConnectRecive.api_key = ca.getString(appidColIndex);
+
+            ParseUtils.verifyParseConfiguration(this);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    finish();
+                    Intent i = new Intent(SplechScreenActivity.this, DashboardActivity.class);
+                    i.putExtra("user_id", Integer.parseInt(ca.getString(useridColIndex)));
+                    startActivity(i);
+
+                }
+            }, SPLASH_TIME_OUT);
+
+        } else {
+
             new Handler().postDelayed(new Runnable() {
 
 
                 @Override
                 public void run() {
+                    Intent i = new Intent(SplechScreenActivity.this, LoginActivity.class);
+                    startActivity(i);
                     finish();
 
                 }
-            }, NO_INTERNET_TIME_OUT);
-        }
-        else {
-
-
-            final Cursor ca = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_APP_ID, null);
-            if (ca.moveToFirst()) {
-                int appidColIndex = ca.getColumnIndex(sqlMessager.APP_ID);
-                final int useridColIndex = ca.getColumnIndex(sqlMessager.USER_ID);
-
-                HttpConnectRecive.api_key = ca.getString(appidColIndex);
-
-                ParseUtils.verifyParseConfiguration(this);
-
-                PrefManager pref = new PrefManager(getApplicationContext());
-                if (pref.isLoggedIn()) {
-                    new Handler().postDelayed(new Runnable() {
-
-
-                        @Override
-                        public void run() {
-                            finish();
-                            Intent i = new Intent(SplechScreenActivity.this, DashboardActivity.class);
-                            i.putExtra("user_id", Integer.parseInt(ca.getString(useridColIndex)));
-                            startActivity(i);
-
-                        }
-                    }, SPLASH_TIME_OUT);
-
-                }
-
-
-            } else {
-
-                new Handler().postDelayed(new Runnable() {
-
-
-                    @Override
-                    public void run() {
-                        Intent i = new Intent(SplechScreenActivity.this, LoginActivity.class);
-                        startActivity(i);
-                        finish();
-
-                    }
-                }, SPLASH_TIME_OUT);
-            }
+            }, SPLASH_TIME_OUT);
         }
 
     }

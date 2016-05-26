@@ -4,21 +4,32 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import net.yanzm.mth.MaterialTabHost;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,13 +43,18 @@ import java.util.Locale;
 import mobi.kolibri.messager.activity.ProfileActivity;
 import mobi.kolibri.messager.fragment.ChatFragment;
 import mobi.kolibri.messager.fragment.CirclesFragment;
+import mobi.kolibri.messager.fragment.PeopleFragment;
+import mobi.kolibri.messager.fragment.SettingFragment;
 import mobi.kolibri.messager.helper.ParseUtils;
 import mobi.kolibri.messager.helper.PrefManager;
 import mobi.kolibri.messager.http.HttpConnectRecive;
+import mobi.kolibri.messager.object.CiclesInfo;
 import mobi.kolibri.messager.object.ContactInfo;
 import mobi.kolibri.messager.object.GroupMessagerInfo;
 import mobi.kolibri.messager.object.MessagInfo;
+import mobi.kolibri.messager.object.ProfileInfo;
 import mobi.kolibri.messager.object.SQLMessager;
+import mobi.kolibri.messager.R;
 
 
 public class DashboardActivity extends AppCompatActivity {
@@ -46,32 +62,80 @@ public class DashboardActivity extends AppCompatActivity {
     SQLMessager sqlMessager;
     List<ContactInfo> listContacts;
     SQLiteDatabase db;
-    private PrefManager pref;
-    private CirclesFragment mCirclesFragment = null;
-    private ChatFragment mChatFragment = null;
+    ImageView imgProfile;
+    Button btnProfile;
+    TextView txtTitleActionBar;
 
-    private TextView btnCircles;
-    private TextView btnChats;
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
+    public PrefManager pref;
+    private CirclesFragment mCirclesFragment = null;
+    private DisplayImageOptions options;
+
+    private FragmentManager.OnBackStackChangedListener
+            mOnBackStackChangedListener = new FragmentManager.OnBackStackChangedListener() {
+        @Override
+        public void onBackStackChanged() {
+            syncActionBarArrowState();
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
+        options = new DisplayImageOptions.Builder()
+                .displayer(new RoundedBitmapDisplayer(1000))
+                .showImageOnLoading(R.mipmap.profile_max)
+                .showImageForEmptyUri(R.mipmap.profile_max)
+                .showImageOnFail(R.mipmap.profile_max)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true)
+                .bitmapConfig(Bitmap.Config.RGB_565)
+                .build();
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(R.string.app_name);
+        txtTitleActionBar = (TextView) findViewById(R.id.txtTitleActionBar);
+        txtTitleActionBar.setText("");
 
-        initButtons();
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.mipmap.ic_menu_white);
+
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.root_screen_drawer_layout);
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,
+                mDrawerLayout,
+                R.string.app_name,
+                R.string.app_name) {
+
+            public void onDrawerClosed(View view) {
+                syncActionBarArrowState();
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                mDrawerToggle.setDrawerIndicatorEnabled(true);
+            }
+        };
 
         if(mCirclesFragment == null){
-            mCirclesFragment = new CirclesFragment();
-            btnCircles.setBackgroundResource(R.drawable.activ_bag_tab);
-        }
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.content_frame, mCirclesFragment)
-                .commit();
+            replaceAnimatedFragment(new ChatFragment());
 
+        }
+
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        getSupportFragmentManager().addOnBackStackChangedListener(mOnBackStackChangedListener);
+
+
+        initButtonsPartHome();
 
         listContacts = new ArrayList<>();
         sqlMessager = new SQLMessager(DashboardActivity.this);
@@ -82,8 +146,6 @@ public class DashboardActivity extends AppCompatActivity {
         if (b != null) {
             user_id = b.getInt("user_id");
         }
-
-       /// ParseUtils.registerParse(DashboardActivity.this, "users_" + user_id);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setElevation(0);
@@ -106,11 +168,13 @@ public class DashboardActivity extends AppCompatActivity {
 
             if (cursor.getCount() > 0) {
                 while (cursor.moveToNext()) {
-                    ContentValues cv = new ContentValues();
-                    cv.put(SQLMessager.CONTACTS_NAME, cursor.getString(0));
-                    cv.put(SQLMessager.CONTACTS_PHONE, cursor.getString(1));
-                    cv.put(SQLMessager.CONTACTS_SERV, "0");
-                    db.insert(SQLMessager.TABLE_CONTACTS, null, cv);
+                    if (isValidPhone(cursor.getString(1))) {
+                        ContentValues cv = new ContentValues();
+                        cv.put(SQLMessager.CONTACTS_NAME, cursor.getString(0));
+                        cv.put(SQLMessager.CONTACTS_PHONE, cursor.getString(1));
+                        cv.put(SQLMessager.CONTACTS_SERV, "0");
+                        db.insert(SQLMessager.TABLE_CONTACTS, null, cv);
+                    }
 
                 }
             }
@@ -120,49 +184,111 @@ public class DashboardActivity extends AppCompatActivity {
 
     }
 
-    private void initButtons() {
-        btnCircles = (TextView) findViewById(R.id.btnCircles);
-        btnChats = (TextView) findViewById(R.id.btnChats);
-
-        btnCircles.setOnClickListener(btnCirclesListener);
-        btnChats.setOnClickListener(btnChatsListener);
+    @Override
+    protected void onDestroy() {
+        getSupportFragmentManager().removeOnBackStackChangedListener(mOnBackStackChangedListener);
+        super.onDestroy();
     }
 
-    private final View.OnClickListener btnCirclesListener = new View.OnClickListener() {
+    private void replaceAnimatedFragment(Fragment fragment) {
+        /*FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.fragment_animation_pop_enter, R.anim.fragment_animation_pop_exit,
+                R.anim.fragment_animation_enter, R.anim.fragment_animation_exit);
+        transaction.replace(R.id.container, fragment);
+        transaction.commit();*/
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, fragment)
+                .commit();
+    }
 
-        @Override
-        public void onClick(View v) {
-            btnCircles.setBackgroundResource(R.drawable.activ_bag_tab);
-            btnChats.setBackgroundResource(R.drawable.pasiv_bac_tab);
-            FragmentManager fManager = getSupportFragmentManager();
-            if(!(fManager.findFragmentById(R.id.content_frame) instanceof CirclesFragment)){
-                if(mCirclesFragment == null){
-                    mCirclesFragment = new CirclesFragment();
-                }
-                fManager.beginTransaction()
-                        .replace(R.id.content_frame, mCirclesFragment)
-                        .commit();
-            }
+    private void closeAllFragments() {
+        FragmentManager fm = getSupportFragmentManager();
+        for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
+            fm.popBackStack();
         }
-    };
+    }
 
-    private final View.OnClickListener btnChatsListener = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            btnCircles.setBackgroundResource(R.drawable.pasiv_bac_tab);
-            btnChats.setBackgroundResource(R.drawable.activ_bag_tab);
-            FragmentManager fManager = getSupportFragmentManager();
-            if(!(fManager.findFragmentById(R.id.content_frame) instanceof ChatFragment)){
-                if(mChatFragment == null){
-                    mChatFragment = new ChatFragment();
-                }
-                fManager.beginTransaction()
-                        .replace(R.id.content_frame, mChatFragment)
-                        .commit();
-            }
+    private void syncActionBarArrowState() {
+        int backStackEntryCount =
+                getSupportFragmentManager().getBackStackEntryCount();
+        if (backStackEntryCount == 0) {
+            mDrawerToggle.setDrawerIndicatorEnabled(true);
+        } else {
+            mDrawerToggle.setDrawerIndicatorEnabled(false);
         }
-    };
+    }
+
+    private void initButtonsPartHome() {
+        imgProfile = (ImageView) findViewById(R.id.imgProfile);
+        btnProfile = (Button) findViewById(R.id.btnProfile);
+        LinearLayout layProfile = (LinearLayout) findViewById(R.id.layProfile);
+        final Button btnPeople = (Button) findViewById(R.id.btnPeople);
+        final Button btnCircle = (Button) findViewById(R.id.btnCircle);
+        final Button btnChat = (Button) findViewById(R.id.btnChat);
+        final Button btnSetting = (Button) findViewById(R.id.btnSetting);
+
+
+        layProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.closeDrawers();
+                Intent i = new Intent(DashboardActivity.this, ProfileActivity.class);
+                i.putExtra("user_id", user_id);
+                startActivity(i);
+            }
+        });
+        btnPeople.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.closeDrawers();
+                closeAllFragments();
+                replaceAnimatedFragment(new PeopleFragment());
+                v.setBackgroundResource(R.drawable.custom_active_part);
+                btnSetting.setBackgroundResource(R.drawable.custom_buttom_part);
+                btnCircle.setBackgroundResource(R.drawable.custom_buttom_part);
+                btnChat.setBackgroundResource(R.drawable.custom_buttom_part);
+            }
+        });
+        btnCircle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.closeDrawers();
+                closeAllFragments();
+                replaceAnimatedFragment(new CirclesFragment());
+                v.setBackgroundResource(R.drawable.custom_active_part);
+                btnSetting.setBackgroundResource(R.drawable.custom_buttom_part);
+                btnPeople.setBackgroundResource(R.drawable.custom_buttom_part);
+                btnChat.setBackgroundResource(R.drawable.custom_buttom_part);
+            }
+        });
+        btnChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.closeDrawers();
+                closeAllFragments();
+                replaceAnimatedFragment(new ChatFragment());
+                v.setBackgroundResource(R.drawable.custom_active_part);
+                btnPeople.setBackgroundResource(R.drawable.custom_buttom_part);
+                btnSetting.setBackgroundResource(R.drawable.custom_buttom_part);
+                btnCircle.setBackgroundResource(R.drawable.custom_buttom_part);
+            }
+        });
+        btnSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.closeDrawers();
+                closeAllFragments();
+                replaceAnimatedFragment(new SettingFragment());
+                v.setBackgroundResource(R.drawable.custom_active_part);
+                btnPeople.setBackgroundResource(R.drawable.custom_buttom_part);
+                btnChat.setBackgroundResource(R.drawable.custom_buttom_part);
+                btnCircle.setBackgroundResource(R.drawable.custom_buttom_part);
+            }
+        });
+        btnChat.setBackgroundResource(R.drawable.custom_active_part);
+
+
+    }
 
     class NewAppKeyTask extends AsyncTask<String, String, String> {
 
@@ -195,6 +321,8 @@ public class DashboardActivity extends AppCompatActivity {
             }
             if (HttpConnectRecive.isOnline(DashboardActivity.this)) {
                 new ContactServerTask().execute();
+                new statusContact().execute();
+                new ProfileTask().execute();
             }
             Updater u = new Updater();
             u.start();
@@ -217,6 +345,8 @@ public class DashboardActivity extends AppCompatActivity {
                                     if (HttpConnectRecive.isOnline(DashboardActivity.this)) {
                                         new getMessegAllTask().execute();
                                         new getGroupMessegAllTask().execute();
+                                        new statusContact().execute();
+                                        new ProfileTask().execute();
                                     }
                                 }
                             }
@@ -375,40 +505,104 @@ public class DashboardActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_dashboard, menu);
-        return super.onCreateOptionsMenu(menu);
+    class statusContact extends AsyncTask<String, ContactInfo, ContactInfo> {
+
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @SuppressWarnings("static-access")
+        protected ContactInfo doInBackground(String... params) {
+            ContactInfo result = null;
+            if (HttpConnectRecive.isOnline(DashboardActivity.this)) {
+                result = HttpConnectRecive.statusContact(DashboardActivity.this, ServerContact());
+            }
+            return result;
+        }
+
+        protected void onPostExecute(ContactInfo result) {
+
+            super.onPostExecute(result);
+
+        }
+    }
+
+    private String ServerContact() {
+        List<ContactInfo> contactInfoList = new ArrayList<>();
+        Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE server='1'", null);
+        if (c.moveToFirst()) {
+            int ideCollumn = c.getColumnIndex("id");
+            int useridCollumn = c.getColumnIndex(SQLMessager.CONTACTS_USER_ID);
+            int statusCollumn = c.getColumnIndex(SQLMessager.CONTACTS_STATUS);
+            do {
+                ContactInfo result_sql = new ContactInfo();
+                result_sql.id_db = c.getInt(ideCollumn);
+                result_sql.user_id = c.getInt(useridCollumn);
+                result_sql.status = c.getString(statusCollumn);
+                contactInfoList.add(result_sql);
+            } while (c.moveToNext());
+        }
+        return ContactInfo.stringJsonStatus(contactInfoList);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_profile:
-                Intent i = new Intent(DashboardActivity.this, ProfileActivity.class);
-                i.putExtra("user_id", user_id);
-                startActivity(i);
-                return true;
-            case R.id.action_out:
-                LogOut();
-                return true;
-
+        if (mDrawerToggle.isDrawerIndicatorEnabled() &&
+                mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void LogOut() {
-        db.delete(SQLMessager.TABLE_CHAT, null, null);
-        db.delete(SQLMessager.TABLE_MESSAGER, null, null);
-        db.delete(SQLMessager.TABLE_APP_ID, null, null);
-        db.delete(SQLMessager.TABLE_CIRCLES_CONTACT, null, null);
-        db.delete(SQLMessager.TABLE_CIRCLES, null, null);
-        db.delete(SQLMessager.TABLE_CONTACTS, null, null);
-        pref.logout();
+    class ProfileTask extends AsyncTask<String, String, ProfileInfo> {
 
-        Intent i = new Intent(DashboardActivity.this, LoginActivity.class);
-        startActivity(i);
-        finish();
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @SuppressWarnings("static-access")
+        protected ProfileInfo doInBackground(String... params) {
+            ProfileInfo result = HttpConnectRecive.getProfile(DashboardActivity.this);
+            return result;
+        }
+
+        protected void onPostExecute(ProfileInfo result) {
+            if (result != null) {
+                btnProfile.setText(result.firstname + " " + result.lastname);
+                String url_img = HttpConnectRecive.URLP + result.photo;
+                ImageLoader.getInstance()
+                        .displayImage(url_img, imgProfile, options, new SimpleImageLoadingListener() {
+                            @Override
+                            public void onLoadingStarted(String imageUri, View view) {
+
+                            }
+
+                            @Override
+                            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+
+                            }
+
+                            @Override
+                            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+
+                            }
+                        }, new ImageLoadingProgressListener() {
+                            @Override
+                            public void onProgressUpdate(String imageUri, View view, int current, int total) {
+
+                            }
+                        });
+            }
+
+            super.onPostExecute(result);
+
+        }
+    }
+
+    public final static boolean isValidPhone(CharSequence target) {
+        return !TextUtils.isEmpty(target) && Patterns.PHONE.matcher(target).matches();
     }
 }

@@ -1,20 +1,29 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
     android:layout_height="match_parent"
     tools:context="mobi.kolibri.messager.fragment.CirclesFragment"
-    android:orientation="horizontal">
+    android:orientation="vertical"
+    android:focusableInTouchMode="true">
 
-    <!-- TODO: Update blank fragment layout -->
-
-    <ListView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/listContact"
-        android:layout_weight="1" />
-
-    <ListView
-        android:layout_width="0dp"
+    <GridView
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/listCircles"
-        android:layout_weight="0.5" />
-</LinearLayout>
+        android:gravity="center"
+        android:horizontalSpacing="4dip"
+        android:numColumns="2"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="4dip"
+        android:paddingTop="10dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_delete"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp" />
+
+</RelativeLayout>

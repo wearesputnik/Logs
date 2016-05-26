@@ -2,6 +2,7 @@ package mobi.kolibri.messager;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,10 +17,11 @@ import android.widget.Toast;
 import mobi.kolibri.messager.helper.ParseUtils;
 import mobi.kolibri.messager.helper.PrefManager;
 import mobi.kolibri.messager.http.HttpConnectRecive;
+import mobi.kolibri.messager.object.Typefaces;
 
 
 public class LoginActivity extends AppCompatActivity {
-    Button singup;
+    TextView txtSingUp;
     Button btnLogin;
     EditText edtLoginEmail, edtLoginPass;
     private PrefManager pref;
@@ -29,42 +31,21 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        singup = (Button) findViewById(R.id.singup);
+        txtSingUp = (TextView) findViewById(R.id.txtSingUp);
+        txtSingUp.setPaintFlags(txtSingUp.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         btnLogin = (Button) findViewById(R.id.btnLogin);
         edtLoginEmail = (EditText) findViewById(R.id.edtLoginEmail);
-        edtLoginEmail.setFocusableInTouchMode(true);
-        edtLoginEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    v.setBackgroundResource(R.drawable.custom_edittext_pasiv);
-                } else {
-                    v.setBackgroundResource(R.drawable.custom_edittext_activ);
-                }
-            }
-        });
-
+        edtLoginEmail.setTypeface(Typefaces.get(LoginActivity.this, LoginActivity.this.getText(R.string.font_helvetica_lite).toString()));
         edtLoginPass = (EditText) findViewById(R.id.edtLoginPass);
-        edtLoginPass.setFocusableInTouchMode(true);
-        edtLoginPass.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        edtLoginPass.setTypeface(Typefaces.get(LoginActivity.this, LoginActivity.this.getText(R.string.font_helvetica_lite).toString()));
 
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    v.setBackgroundResource(R.drawable.custom_edittext_pasiv);
-                } else {
-                    v.setBackgroundResource(R.drawable.custom_edittext_activ);
-                }
-            }
-        });
 
         ParseUtils.verifyParseConfiguration(this);
 
         pref = new PrefManager(getApplicationContext());
 
 
-        singup.setOnClickListener(new View.OnClickListener() {
+        txtSingUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(LoginActivity.this, SingupActivity.class);

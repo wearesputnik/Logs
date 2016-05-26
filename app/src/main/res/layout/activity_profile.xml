@@ -14,63 +14,128 @@
         android:layout_below="@+id/toolbar">
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 
             <ImageView
                 android:layout_width="fill_parent"
-                android:layout_height="300dp"
+                android:layout_height="200dp"
                 android:id="@+id/imgProfile"
                 android:layout_centerHorizontal="true"
                 android:src="@mipmap/profile_max"
-                android:layout_marginTop="10dp" />
+                android:scaleType="centerCrop" />
 
-            <TextView
+            <mobi.kolibri.messager.object.TextViewLite
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/txtName"
+                android:textColor="#000"
+                android:layout_alignBottom="@+id/imgProfile"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginLeft="16dp"
+                android:layout_marginBottom="16dp"
+                android:textSize="18dp" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/imgProfile"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="10dp"
-                android:textColor="#000" />
+                android:id="@+id/linearLayout6"
+                android:background="@drawable/custom_border_bottom"
+                android:paddingLeft="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+                <mobi.kolibri.messager.object.TextViewBold
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mobile:"
+                    android:id="@+id/textView20"
+                    android:textColor="#000"
+                    android:textSize="16dp" />
+
+                <mobi.kolibri.messager.object.TextViewLite
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txtPhone"
+                    android:layout_below="@+id/txtName"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="10dp"
+                    android:textColor="#000" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/txtPhone"
-                android:layout_below="@+id/txtName"
+                android:layout_below="@+id/linearLayout6"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="10dp"
-                android:textColor="#000" />
+                android:id="@+id/linearLayout7"
+                android:background="@drawable/custom_border_bottom"
+                android:paddingLeft="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+                <mobi.kolibri.messager.object.TextViewBold
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Summary:"
+                    android:id="@+id/textView21"
+                    android:textColor="#000"
+                    android:textSize="16dp" />
+
+                <mobi.kolibri.messager.object.TextViewLite
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/txtSummary"
+                    android:layout_below="@+id/txtPhone"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="10dp"
+                    android:textColor="#000" />
+
+            </LinearLayout>
+
+            <mobi.kolibri.messager.object.ButtomLite
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/txtSummary"
-                android:layout_below="@+id/txtPhone"
+                android:text="Log out"
+                android:id="@+id/button2"
+                android:layout_below="@+id/btnProfileEdit"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="16dp"
-                android:textColor="#000" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Edit Profile"
-                android:id="@+id/btnEditProfile"
-                android:layout_below="@+id/txtSummary"
-                android:layout_alignLeft="@+id/txtSummary"
-                android:layout_alignStart="@+id/txtSummary"
-                android:layout_marginTop="10dp"
+                android:textColor="#000"
                 android:textAppearance="@android:style/TextAppearance"
-                android:background="@drawable/bg_send_chat_item"
-                android:layout_marginBottom="20dp" />
+                android:gravity="left|center_vertical"
+                android:paddingLeft="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:background="@drawable/custom_border_bottom" />
+
+            <mobi.kolibri.messager.object.ButtomLite
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Setting"
+                android:id="@+id/btnProfileEdit"
+                android:layout_below="@+id/linearLayout7"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:textColor="#000"
+                android:textAppearance="@android:style/TextAppearance"
+                android:gravity="left|center_vertical"
+                android:paddingLeft="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:background="@drawable/custom_top_buttom_border"
+                android:layout_marginTop="5dp" />
+
         </RelativeLayout>
     </ScrollView>
 

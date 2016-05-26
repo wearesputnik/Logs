@@ -1,42 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" android:background="#fff" android:padding="50dp">
+    android:layout_height="wrap_content" android:background="#fff"
+    android:paddingTop="50dp"
+    android:paddingBottom="50dp"
+    android:paddingLeft="70dp"
+    android:paddingRight="70dp">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cancel"
-        android:id="@+id/btnCancel" android:layout_below="@+id/btnSecChat" android:layout_centerHorizontal="true"
-        android:textAppearance="?android:attr/textAppearanceMedium" android:textColor="#fff"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/bg_send_chat_item" />
-    <Button
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Choose existing"
         android:id="@+id/btnSecChat"
-        android:layout_below="@+id/btnRegChat" android:layout_centerHorizontal="true"
+        android:layout_below="@+id/btnRegChat"
         android:textAppearance="?android:attr/textAppearanceMedium" android:textColor="#fff"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/bg_send_chat_item"
+        android:layout_marginTop="20dp"
+        android:background="@mipmap/ic_gallery"
         android:paddingLeft="10dp"
-        android:paddingRight="10dp" />
-    <Button
+        android:paddingRight="10dp"
+        android:src="@mipmap/ic_gallery"
+        android:layout_centerHorizontal="true" />
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Take photo"
-        android:id="@+id/btnRegChat" android:layout_alignParentTop="false" android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp" android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/btnRegChat" android:layout_alignParentTop="false"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#fff"
-        android:layout_below="@+id/textView54"
-        android:background="@drawable/bg_send_chat_item"
+        android:background="@mipmap/ic_foto"
         android:paddingLeft="10dp"
-        android:paddingRight="10dp" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Photo"
-        android:id="@+id/textView54"
-        android:layout_centerHorizontal="true" android:textSize="18dp" android:textColor="#ff565555"/>
+        android:paddingRight="10dp"
+        android:src="@mipmap/ic_foto"
+        android:layout_alignRight="@+id/btnSecChat"
+        android:layout_alignEnd="@+id/btnSecChat" />
 </RelativeLayout>

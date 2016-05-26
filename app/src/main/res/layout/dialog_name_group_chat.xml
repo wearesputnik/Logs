@@ -3,7 +3,17 @@
     android:orientation="vertical" android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:padding="20dp"
-    android:background="#fff">
+    android:background="#3f51b5">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enter the name"
+        android:id="@+id/textView2"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="20dp"
+        android:textColor="#fff" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -11,20 +21,27 @@
         android:inputType="textPersonName"
         android:ems="10"
         android:id="@+id/edtNameGroup"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/textView2"
         android:layout_centerHorizontal="true"
-        android:textColor="#000" />
+        android:layout_marginTop="10dp"
+        android:textColor="#000"
+        android:background="@drawable/custom_edittext_activ" />
 
-    <Button
+    <mobi.kolibri.messager.object.ButtomLite
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save"
+        android:text="Ok"
         android:id="@+id/btnSaveGroupName"
-        android:layout_below="@+id/edtNameGroup"
-        android:layout_alignRight="@+id/edtNameGroup"
-        android:layout_alignEnd="@+id/edtNameGroup"
-        android:layout_alignLeft="@+id/edtNameGroup"
-        android:layout_alignStart="@+id/edtNameGroup"
+
         android:textAppearance="@android:style/TextAppearance"
-        android:background="@drawable/bg_send_chat_item" />
+        android:background="@drawable/bg_send_chat_item"
+        android:layout_below="@+id/edtNameGroup"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="30dp"
+        android:paddingTop="16dp"
+        android:paddingRight="30dp"
+        android:paddingBottom="16dp"
+        android:textColor="#fff"
+        android:textSize="18dp"
+        android:layout_marginTop="15dp" />
 </RelativeLayout>

@@ -27,9 +27,10 @@ public class SQLMessager extends SQLiteOpenHelper {
     public static final String CONTACTS_PHOTO = "photo";
     public static final String CONTACTS_SUMMARY = "summary";
     public static final String CONTACTS_SERV = "server";
+    public static final String CONTACTS_STATUS = "status";
     public static final String CREATE_TABLE_CONTACTS = "CREATE TABLE IF NOT EXISTS " + TABLE_CONTACTS + " ( id integer primary key autoincrement, "
             + CONTACTS_USER_ID + " TEXT, " + CONTACTS_NAME + " TEXT, " + CONTACTS_PHONE + " TEXT, " + CONTACTS_PHOTO + " TEXT, " + CONTACTS_SUMMARY +
-            " TEXT, " + CONTACTS_SERV + " TEXT)";
+            " TEXT, " + CONTACTS_SERV + " TEXT, " + CONTACTS_STATUS + " TEXT)";
 
     /* table chat*/
     public static final String TABLE_CHAT = "chat";

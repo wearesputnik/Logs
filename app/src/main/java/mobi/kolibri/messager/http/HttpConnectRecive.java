@@ -8,14 +8,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
@@ -54,6 +52,7 @@ public class HttpConnectRecive {
     public static final String GET_MESSAGER = "get_messager";
     public static final String SET_GROUP_MESSAGER = "set_group_messeger";
     public static final String GET_GROUP_MESSAGER = "get_group_messager";
+    public static final String STATUS_USERS = "online_users";
     public static HttpClient http;
     public static String api_key = null;
 
@@ -194,8 +193,8 @@ public class HttpConnectRecive {
         ServiceHandler sh = new ServiceHandler();
 
         String jsonStr = sh.makeServiceCall(URL + GET_PROFILE + "?app_key=" + getApiKey(c), ServiceHandler.GET);
-        Log.e("GET_PROFILE: ", "=> " + jsonStr);
-        Log.e("URL: ", URL + GET_PROFILE + "?app_key=" + getApiKey(c));
+        Log.e("GET_PROFILE ", "=> " + jsonStr);
+        Log.e("URL ", URL + GET_PROFILE + "?app_key=" + getApiKey(c));
 
         try {
             JSONObject json = new JSONObject(jsonStr);
@@ -238,8 +237,7 @@ public class HttpConnectRecive {
 
             request.setEntity(form);
             HttpResponse response = http.execute(request);
-            String jsonStr = Utils.streamToString(response.getEntity()
-                    .getContent());
+            String jsonStr = Utils.streamToString(response.getEntity().getContent());
             Log.e("SET_PROFILE", jsonStr);
             JSONObject json = new JSONObject(jsonStr);
 
@@ -262,7 +260,7 @@ public class HttpConnectRecive {
         ServiceHandler sh = new ServiceHandler();
 
         String jsonStr = sh.makeServiceCall(URL + NEW_APPKEY + "?id=" + id, ServiceHandler.GET);
-        Log.e("ACTIVATION: ", "=> " + jsonStr);
+        Log.e("ACTIVATION ", "=> " + jsonStr);
 
         try {
             JSONObject json = new JSONObject(jsonStr);
@@ -320,6 +318,7 @@ public class HttpConnectRecive {
                         cv.put(SQLMessager.CONTACTS_NAME, result.name);
                     }
                     cv.put(SQLMessager.CONTACTS_SUMMARY, result.summary);
+                    cv.put(SQLMessager.CONTACTS_STATUS, "0");
                     cv.put(SQLMessager.CONTACTS_SERV, "1");
                     db.update(SQLMessager.TABLE_CONTACTS, cv, "id=?", new String[]{result.id_db + ""});
                 }
@@ -366,8 +365,7 @@ public class HttpConnectRecive {
 
             request.setEntity(form);
             HttpResponse response = http.execute(request);
-            String jsonStr = Utils.streamToString(response
-                    .getEntity().getContent());
+            String jsonStr = Utils.streamToString(response.getEntity().getContent());
             Log.e("SET_MESSAGER", jsonStr);
 
             return result;
@@ -392,7 +390,7 @@ public class HttpConnectRecive {
             urlStr = URL + GET_MESSAGER + "?user_from=" + user_from + "&app_key=" + getApiKey(c);
         }
         jsonStr = sh.makeServiceCall(urlStr, ServiceHandler.GET);
-        Log.e("GET_MESSAGER", urlStr);
+        //Log.e("GET_MESSAGER", urlStr);
       ///  Log.e("GET_MESSAGER", jsonStr);
 
         try {
@@ -439,6 +437,7 @@ public class HttpConnectRecive {
             form.addPart("message", new StringBody(item_msg.message, charset));
             form.addPart("chat_name", new StringBody(item_msg.chat_name, charset));
             form.addPart("type_chat", new StringBody(item_msg.type_chat, charset));
+            form.addPart("created", new StringBody(item_msg.created, charset));
 
 
             if (photo_witch == 1) {
@@ -565,6 +564,51 @@ public class HttpConnectRecive {
 
         try {
 
+
+            return result;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static ContactInfo statusContact (Context c, String json_str) {
+        ContactInfo result = new ContactInfo();
+
+        sqlMessager = new SQLMessager(c);
+        ContentValues cv = new ContentValues();
+        SQLiteDatabase db = sqlMessager.getWritableDatabase();
+
+        http = new DefaultHttpClient();
+        ClientConnectionManager mgr = http.getConnectionManager();
+        HttpParams params = http.getParams();
+        http = new DefaultHttpClient(new ThreadSafeClientConnManager(params, mgr.getSchemeRegistry()), params);
+        HttpPost request = new HttpPost(URL + STATUS_USERS + "?app_key=" + getApiKey(c));
+
+        List<BasicNameValuePair> parameters = Arrays.asList(
+                new BasicNameValuePair("contacts", json_str));
+//        Log.e("STATUS_USERS", json_str);
+//        Log.e("STATUS_USERS", URL + STATUS_USERS + "?app_key=" + getApiKey(c));
+        try {
+            UrlEncodedFormEntity form = new UrlEncodedFormEntity(parameters,
+                    "UTF-8");
+            request.setEntity(form);
+            HttpResponse response = http.execute(request);
+            String jsonStr = Utils.streamToString(response
+                    .getEntity().getContent());
+            Log.e("STATUS_USERS", jsonStr);
+
+            JSONObject jsonObject = new JSONObject(jsonStr);
+            JSONArray data = jsonObject.getJSONArray("result");
+            for (int i = 0; i < data.length(); i++) {
+                result = ContactInfo.parseJsonStatus(data.getJSONObject(i));
+                if (result != null) {
+                    cv.put(SQLMessager.CONTACTS_STATUS, result.status);
+
+                    db.update(SQLMessager.TABLE_CONTACTS, cv, "id=?", new String[]{result.id_db + ""});
+                }
+            }
 
             return result;
         }

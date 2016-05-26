@@ -11,7 +11,8 @@
         android:background="@drawable/circle_baground"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:padding="10dp">
+        android:padding="30dp"
+        android:id="@+id/relativeLayout">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -35,5 +36,15 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:textColor="#fff" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/checkBox2"
+        android:layout_alignBottom="@+id/relativeLayout"
+        android:layout_toRightOf="@+id/name_circle"
+        android:layout_toEndOf="@+id/name_circle"
+        android:checked="false"
+        android:visibility="gone" />
 
 </RelativeLayout>

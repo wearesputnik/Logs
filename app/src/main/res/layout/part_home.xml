@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentTop="true"
+    android:layout_gravity="start"
+    android:background="#3f51b5">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/layProfile"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:layout_alignParentTop="true">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/imgProfile" />
+
+        <mobi.kolibri.messager.object.ButtomLite
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Profile"
+            android:id="@+id/btnProfile"
+            android:layout_weight="1"
+            android:textAppearance="@android:style/TextAppearance"
+            android:textColor="#fff"
+            android:background="@null"
+            android:textSize="20dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp" />
+    </LinearLayout>
+
+    <mobi.kolibri.messager.object.ButtomLite
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="People"
+        android:id="@+id/btnPeople"
+        android:paddingLeft="40dp"
+        android:gravity="left|center_vertical"
+        android:textAppearance="@android:style/TextAppearance"
+        android:textColor="#fff"
+        android:textSize="20dp"
+        android:background="@drawable/custom_buttom_part"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:layout_below="@+id/layProfile"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <mobi.kolibri.messager.object.ButtomLite
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Chats"
+        android:id="@+id/btnChat"
+        android:paddingLeft="40dp"
+        android:gravity="left|center_vertical"
+        android:textAppearance="@android:style/TextAppearance"
+        android:textColor="#fff"
+        android:textSize="20dp"
+        android:background="@drawable/custom_buttom_part"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:layout_below="@+id/btnPeople"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <mobi.kolibri.messager.object.ButtomLite
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Circles"
+        android:id="@+id/btnCircle"
+        android:layout_below="@+id/btnChat"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:paddingLeft="40dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:textColor="#fff"
+        android:textSize="20dp"
+        android:textAppearance="@android:style/TextAppearance" />
+
+    <mobi.kolibri.messager.object.ButtomLite
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Settings"
+        android:id="@+id/btnSetting"
+        android:paddingLeft="40dp"
+        android:gravity="left|center_vertical"
+        android:textAppearance="@android:style/TextAppearance"
+        android:textColor="#fff"
+        android:textSize="20dp"
+        android:background="@drawable/custom_buttom_part"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:layout_below="@+id/btnCircle"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+</RelativeLayout>

@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import mobi.kolibri.messager.http.HttpConnectRecive;
+import mobi.kolibri.messager.object.Typefaces;
 
 
 public class SingupActivity extends AppCompatActivity {
@@ -25,57 +26,13 @@ public class SingupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_singup);
 
         edtEmail = (EditText) findViewById(R.id.edtEmail);
-        edtEmail.setFocusableInTouchMode(true);
-        edtEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    v.setBackgroundResource(R.drawable.custom_edittext_pasiv);
-                } else {
-                    v.setBackgroundResource(R.drawable.custom_edittext_activ);
-                }
-            }
-        });
+        edtEmail.setTypeface(Typefaces.get(SingupActivity.this, SingupActivity.this.getText(R.string.font_helvetica_lite).toString()));
         edtPassword = (EditText) findViewById(R.id.edtPassword);
-        edtPassword.setFocusableInTouchMode(true);
-        edtPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    v.setBackgroundResource(R.drawable.custom_edittext_pasiv);
-                } else {
-                    v.setBackgroundResource(R.drawable.custom_edittext_activ);
-                }
-            }
-        });
+        edtPassword.setTypeface(Typefaces.get(SingupActivity.this, SingupActivity.this.getText(R.string.font_helvetica_lite).toString()));
         edtConfPassword = (EditText) findViewById(R.id.edtConfPassword);
-        edtConfPassword.setFocusableInTouchMode(true);
-        edtConfPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    v.setBackgroundResource(R.drawable.custom_edittext_pasiv);
-                } else {
-                    v.setBackgroundResource(R.drawable.custom_edittext_activ);
-                }
-            }
-        });
+        edtConfPassword.setTypeface(Typefaces.get(SingupActivity.this, SingupActivity.this.getText(R.string.font_helvetica_lite).toString()));
         edtPhone = (EditText) findViewById(R.id.edtPhone);
-        edtPhone.setFocusableInTouchMode(true);
-        edtPhone.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    v.setBackgroundResource(R.drawable.custom_edittext_pasiv);
-                } else {
-                    v.setBackgroundResource(R.drawable.custom_edittext_activ);
-                }
-            }
-        });
+        edtPhone.setTypeface(Typefaces.get(SingupActivity.this, SingupActivity.this.getText(R.string.font_helvetica_lite).toString()));
         btnSingup = (Button) findViewById(R.id.btnSingup);
 
         btnSingup.setOnClickListener(new View.OnClickListener() {

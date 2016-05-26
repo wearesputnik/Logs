@@ -1,1 +1,1 @@
-include ':app', ':mth', ':universalimageloader', ':cropimage'
+include ':app', ':universalimageloader', ':cropimage'

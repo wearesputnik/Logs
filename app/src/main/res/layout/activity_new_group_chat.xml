@@ -7,22 +7,54 @@
     <include layout="@layout/tollbar"
         android:id="@+id/toolbar" />
 
-    <Button
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add"
-        android:id="@+id/btnAddGroupChat"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:textAppearance="@android:style/TextAppearance"
-        android:background="@drawable/bg_send_chat_item" />
+        android:layout_below="@+id/toolbar"
+        android:id="@+id/linearLayout3">
+
+        <mobi.kolibri.messager.object.ButtomLite
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="People"
+            android:id="@+id/btnPeopleChat"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:textColor="#fff"
+            android:textAppearance="@android:style/TextAppearance"
+            android:textSize="18dp"
+            android:background="@drawable/custom_buttom_part"
+            android:gravity="center_horizontal" />
+
+        <mobi.kolibri.messager.object.ButtomLite
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Circles"
+            android:id="@+id/btnCirclesChat"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:textColor="#fff"
+            android:textAppearance="@android:style/TextAppearance"
+            android:textSize="18dp"
+            android:background="@drawable/custom_buttom_part"
+            android:gravity="center_horizontal" />
+    </LinearLayout>
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/listView3"
-        android:layout_below="@+id/toolbar"
         android:layout_centerHorizontal="true"
-        android:layout_above="@+id/btnAddGroupChat" />
+        android:layout_below="@+id/linearLayout3" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_input_add"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"/>
 
 </RelativeLayout>

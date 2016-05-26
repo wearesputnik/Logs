@@ -2,8 +2,15 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     tools:context=".LoginActivity"
-    android:paddingTop="100dp"
-    android:background="#fff">
+    android:background="@mipmap/bg_login">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView6"
+        android:src="@mipmap/logo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp" />
 
     <EditText
         android:layout_width="fill_parent"
@@ -12,14 +19,14 @@
         android:ems="10"
         android:id="@+id/edtLoginEmail"
         android:hint="Email"
-        android:layout_marginTop="20dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:textColor="#fff"
+        android:textColorHint="#fff"
+        android:layout_below="@+id/imageView6"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:textColor="#000"
-        android:background="@drawable/custom_edittext_activ"
-        android:textColorHint="#ff939196" />
+        android:layout_marginTop="50dp" />
 
     <EditText
         android:layout_width="fill_parent"
@@ -27,61 +34,76 @@
         android:inputType="textPassword"
         android:ems="10"
         android:id="@+id/edtLoginPass"
-        android:layout_below="@+id/edtLoginEmail"
-        android:layout_alignParentLeft="true"
         android:hint="Password"
+        android:textColor="#fff"
+        android:textColorHint="#fff"
+        android:layout_below="@+id/edtLoginEmail"
+        android:layout_alignParentRight="true"
         android:layout_marginLeft="16dp"
-        android:layout_alignRight="@+id/edtLoginEmail"
-        android:layout_alignEnd="@+id/edtLoginEmail"
-        android:textColor="#000"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/custom_edittext_activ"
-        android:textColorHint="#ff939196" />
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="10dp" />
 
-    <Button
-        android:layout_width="fill_parent"
+    <mobi.kolibri.messager.object.ButtomLite
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Log in"
         android:id="@+id/btnLogin"
         android:textAppearance="@android:style/TextAppearance"
         android:layout_below="@+id/edtLoginPass"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="16dp"
         android:layout_alignRight="@+id/edtLoginEmail"
         android:layout_alignEnd="@+id/edtLoginEmail"
         android:background="@drawable/bg_send_chat_item"
-        android:layout_marginTop="10dp"
-        android:textSize="18dp" />
+        android:textSize="18dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:gravity="center_horizontal"
+        android:layout_weight="1"
+        android:layout_alignLeft="@+id/edtLoginPass"
+        android:layout_alignStart="@+id/edtLoginPass"
+        android:layout_marginTop="10dp" />
 
-    <Button
+    <mobi.kolibri.messager.object.TextViewLite
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Sing up"
-        android:id="@+id/singup"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="16dp"
-        android:layout_marginBottom="16dp"
-        android:textColor="#fff"
-        android:background="@drawable/bg_send_chat_item"
-        android:textSize="18dp" />
+        android:text="You don&apos;t have logs account?"
+        android:id="@+id/textView9"
+        android:textSize="16dp"
+        android:layout_below="@+id/btnLogin"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
 
-    <Button
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Forgot password"
-        android:id="@+id/button"
-        android:layout_alignTop="@+id/singup"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="16dp"
-        android:background="@drawable/bg_send_chat_item"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:textSize="18dp" />
+        android:layout_below="@+id/textView9"
+        android:layout_alignLeft="@+id/textView9"
+        android:layout_alignStart="@+id/textView9"
+        android:layout_alignRight="@+id/textView9"
+        android:layout_alignEnd="@+id/textView9"
+        android:paddingBottom="5dp">
+
+        <mobi.kolibri.messager.object.TextViewLite
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Please "
+            android:id="@+id/textView10"
+            android:layout_below="@+id/textView9"
+            android:layout_centerHorizontal="true"
+            android:textSize="16dp"
+            android:layout_weight="1"
+            android:gravity="right" />
+
+        <mobi.kolibri.messager.object.TextViewLite
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Sign up"
+            android:id="@+id/txtSingUp"
+            android:textSize="16dp"
+            android:layout_weight="1"
+            android:textColor="#69ffda" />
+    </LinearLayout>
 
 </RelativeLayout>

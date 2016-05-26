@@ -3,52 +3,29 @@
     android:layout_height="match_parent"
     tools:context="mobi.kolibri.messager.DashboardActivity"
     android:background="#fff">
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/root_screen_drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <include layout="@layout/tollbar"
-        android:id="@+id/toolbar" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
-        android:layout_centerHorizontal="true"
-        android:background="?attr/colorPrimary"
-        android:id="@+id/linearLayout">
+            <!-- The ActionBar -->
+            <include layout="@layout/tollbar"
+                android:id="@+id/toolbar" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/title_section1"
-            android:id="@+id/btnCircles"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:textSize="18dp"
-            android:textColor="#fff"
-            android:background="@drawable/pasiv_bac_tab" />
+            <!-- The main content view -->
+            <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/title_section2"
-            android:id="@+id/btnChats"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:textSize="18dp"
-            android:textColor="#fff"
-            android:background="@drawable/pasiv_bac_tab" />
-    </LinearLayout>
-    <FrameLayout
-        android:id="@+id/content_frame"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@+id/linearLayout">
-
-    </FrameLayout>
+        <include layout="@layout/part_home"/>
+    </android.support.v4.widget.DrawerLayout>
 
 
 </RelativeLayout>

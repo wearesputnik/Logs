@@ -29,10 +29,10 @@ import mobi.kolibri.messager.object.ProfileInfo;
 
 public class ProfileActivity extends AppCompatActivity {
     Integer user_id;
-    Button btnEditProfile;
     TextView txtName, txtPhone, txtSummary;
     private DisplayImageOptions options;
     ImageView imgProfile;
+    TextView txtTitleActionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +44,6 @@ public class ProfileActivity extends AppCompatActivity {
             user_id = b.getInt("user_id");
         }
 
-        btnEditProfile = (Button) findViewById(R.id.btnEditProfile);
         txtName = (TextView) findViewById(R.id.txtName);
         txtPhone = (TextView) findViewById(R.id.txtPhone);
         txtSummary = (TextView) findViewById(R.id.txtSummary);
@@ -52,17 +51,10 @@ public class ProfileActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        txtTitleActionBar = (TextView) findViewById(R.id.txtTitleActionBar);
+        txtTitleActionBar.setText("Profile");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.mipmap.back_from_chats);
 
-        btnEditProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(ProfileActivity.this, EditProfileActivity.class);
-                i.putExtra("user_id", user_id);
-                startActivity(i);
-            }
-        });
 
         options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.mipmap.profile_max)

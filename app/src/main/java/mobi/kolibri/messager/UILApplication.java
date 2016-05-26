@@ -45,19 +45,12 @@ public class UILApplication extends Application {
 			ParseUtils.registerParse(this, "users_" + ca.getString(useridColIndex));
 		}
 
-		///ParseUtils.registerParse(this, null);
-
 		initImageLoader(getApplicationContext());
 
 		mInstance = this;
-
 	}
 
 	public static void initImageLoader(Context context) {
-		// This configuration tuning is custom. You can tune every option, you may tune some of them,
-		// or you can create default configuration by
-		//  ImageLoaderConfiguration.createDefault(this);
-		// method.
 		ImageLoaderConfiguration.Builder config = new ImageLoaderConfiguration.Builder(context);
 		config.threadPriority(Thread.NORM_PRIORITY - 2);
 		config.denyCacheImageMultipleSizesInMemory();
@@ -66,7 +59,6 @@ public class UILApplication extends Application {
 		config.tasksProcessingOrder(QueueProcessingType.LIFO);
 		config.writeDebugLogs(); // Remove for release app
 
-		// Initialize ImageLoader with configuration.
 		ImageLoader.getInstance().init(config.build());
 	}
 

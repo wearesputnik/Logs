@@ -28,6 +28,7 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import mobi.kolibri.messager.R;
 import mobi.kolibri.messager.http.HttpConnectRecive;
@@ -39,6 +40,7 @@ public class NewChatActivity extends AppCompatActivity {
     ContactAdapter adapter;
     SQLMessager sqlMessager;
     String type_chat;
+    private TextView txtTitleActionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +49,9 @@ public class NewChatActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.mipmap.back_from_chats);
+        //getSupportActionBar().setHomeAsUpIndicator(R.mipmap.back_from_chats);
+        txtTitleActionBar = (TextView) findViewById(R.id.txtTitleActionBar);
+        txtTitleActionBar.setText("New Chat");
 
         Bundle b = getIntent().getExtras();
         if (b != null) {
@@ -61,7 +65,7 @@ public class NewChatActivity extends AppCompatActivity {
         sqlMessager = new SQLMessager(NewChatActivity.this);
 
         SQLiteDatabase db = sqlMessager.getWritableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE " + SQLMessager.CONTACTS_SERV + "='1'", null);
+        Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE " + SQLMessager.CONTACTS_SERV + "='1' and " + SQLMessager.CONTACTS_USER_ID + "<>" + HttpConnectRecive.getUserId(NewChatActivity.this), null);
         if (c.moveToFirst()) {
             int nameCollumn = c.getColumnIndex(SQLMessager.CONTACTS_NAME);
             int phoneCollumn = c.getColumnIndex(SQLMessager.CONTACTS_PHONE);
@@ -98,9 +102,9 @@ public class NewChatActivity extends AppCompatActivity {
             contV = context;
             listItem = new ArrayList<ContactInfo>();
             options = new DisplayImageOptions.Builder()
-                    .showImageOnLoading(R.mipmap.profile_min)
-                    .showImageForEmptyUri(R.mipmap.profile_min)
-                    .showImageOnFail(R.mipmap.profile_min)
+                    .showImageOnLoading(R.mipmap.profile_max)
+                    .showImageForEmptyUri(R.mipmap.profile_max)
+                    .showImageOnFail(R.mipmap.profile_max)
                     .cacheInMemory(true)
                     .cacheOnDisk(true)
                     .considerExifParams(true)
@@ -154,7 +158,7 @@ public class NewChatActivity extends AppCompatActivity {
                         });
             }
             else {
-                holder.image.setImageResource(R.mipmap.profile_min);
+                holder.image.setImageResource(R.mipmap.profile_max);
             }
             holder.clickLayout.setOnClickListener(new View.OnClickListener() {
                 @Override

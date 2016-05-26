@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Logs Messager</string>
+    <string name="app_name">Logs</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Log Out</string>
@@ -8,7 +8,7 @@
     <string name="new_chat">New Chat</string>
     <string name="action_clear_all">Clear All</string>
     <string name="action_clear">Clear</string>
-    <string name="action_remowe">Remowe</string>
+    <string name="action_add">Add users</string>
     <string name="title_activity_singup">SingupActivity</string>
     <string name="title_activity_splech_screen">SplechScreenActivity</string>
     <string name="title_activity_activation">ActivationActivity</string>
@@ -18,7 +18,7 @@
     <string name="title_section1">People</string>
     <string name="title_section2">Chats</string>
 
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_profile">Profile</string>
     <string name="title_activity_edit_profile">Edit Profile</string>
@@ -34,4 +34,10 @@
         <item>Hobby</item>
     </string-array>
     <string name="title_activity_circle_item">CircleItemActivity</string>
+
+    <string name="font_helvetica_lite">fonts/HelveticaNeueLTStd-Lt.otf</string>
+    <string name="font_helvetica_roman">fonts/HelveticaNeueLTStd-Roman.otf</string>
+    <string name="title_activity_contact_profile">ContactProfileActivity</string>
+    <string name="title_activity_add_users_circle">AddUsersCircleActivity</string>
+    <string name="title_activity_main">MainActivity</string>
 </resources>

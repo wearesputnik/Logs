@@ -18,8 +18,8 @@
             android:background="@drawable/mess_in_yes"
             android:layout_alignParentTop="true"
             android:paddingTop="8dp"
-            android:paddingBottom="10dp"
-            android:paddingLeft="15dp"
+            android:paddingBottom="8dp"
+            android:paddingLeft="22dp"
             android:paddingRight="10dp">
 
             <TextView
@@ -27,20 +27,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/textToMessager"
                 android:textColor="#000"
-                android:layout_below="@+id/textView6"
-                android:layout_alignLeft="@+id/textView6"
-                android:layout_alignStart="@+id/textView6" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="New Text"
-                android:id="@+id/textView6"
-                android:textColor="#000"
                 android:layout_below="@+id/messagePhoto2"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:visibility="gone" />
+                android:layout_centerVertical="true" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -67,10 +55,10 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/mess_out_no"
+            android:background="@drawable/mess_out_yes"
             android:id="@+id/relativeLayout5"
-            android:paddingRight="15dp"
-            android:paddingBottom="10dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="8dp"
             android:paddingTop="8dp"
             android:paddingLeft="10dp"
             android:layout_alignParentTop="true"
@@ -82,16 +70,16 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/messagePhoto1"
                 android:layout_alignParentTop="false"
-                android:layout_alignParentLeft="false"
-                android:src="@mipmap/add_file"
-                android:visibility="visible" />
+                android:src="@mipmap/bg_login"
+                android:visibility="gone"
+                android:layout_alignParentLeft="false" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textFromMessager"
                 android:textColor="#000"
-                android:layout_below="@+id/messagePhoto1"
+                android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 

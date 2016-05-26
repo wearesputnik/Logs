@@ -25,13 +25,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.devadvance.circularseekbar.CircularSeekBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,6 +71,8 @@ public class ChatItemActivity extends AppCompatActivity {
     Integer photo_witch;
     String duration;
     String type_chat;
+    LinearLayout laySelectPhoto;
+    ImageView btnTakePhoto, btnChooseExisting;
     Updater u;
     private Uri mUri;
     private String filepath = "";
@@ -73,6 +81,7 @@ public class ChatItemActivity extends AppCompatActivity {
     private int REQUEST_CHOOSE_EXISTING = 2;
     private int REQUEST_CROP_IMAGE = 3;
     private static final int GALLERY_KITKAT_INTENT_CALLED = 4;
+    private TextView txtTitleActionBar;
     ImageView imageView;
     String formattedDate;
 
@@ -84,7 +93,10 @@ public class ChatItemActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.mipmap.back_from_chats);
+        txtTitleActionBar = (TextView) findViewById(R.id.txtTitleActionBar);
+        laySelectPhoto = (LinearLayout) findViewById(R.id.laySelectPhoto);
+        btnTakePhoto = (ImageView) findViewById(R.id.btnTakePhoto);
+        btnChooseExisting = (ImageView) findViewById(R.id.btnChooseExisting);
 
         Bundle b = getIntent().getExtras();
         if (b != null) {
@@ -94,8 +106,6 @@ public class ChatItemActivity extends AppCompatActivity {
         }
 
         photo_witch = 0;
-
-
 
         new getMessegTask().execute();
 
@@ -113,15 +123,14 @@ public class ChatItemActivity extends AppCompatActivity {
         Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CHAT + " WHERE id=" + chat_id, null);
         if (c.moveToFirst()) {
             int nameCollumn = c.getColumnIndex(SQLMessager.CHAT_NAME);
-
-            getSupportActionBar().setTitle(c.getString(nameCollumn));
+            txtTitleActionBar.setText(c.getString(nameCollumn));
         }
         else {
             Cursor c_us = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE " + SQLMessager.CONTACTS_USER_ID + "=" + user_id_from, null);
             if (c_us.moveToFirst()) {
                 int nameCollumn = c_us.getColumnIndex(SQLMessager.CONTACTS_NAME);
 
-                getSupportActionBar().setTitle(c_us.getString(nameCollumn));
+                txtTitleActionBar.setText(c_us.getString(nameCollumn));
             }
         }
 
@@ -150,62 +159,7 @@ public class ChatItemActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!textMessages.getText().toString().trim().equals("") || selected_bitmap != null) {
-                    Calendar cal = Calendar.getInstance();
-                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    formattedDate = df.format(cal.getTime());
-                    if (chat_id != 0) {
-                        ContentValues cv_ms = new ContentValues();
-                        cv_ms.put(SQLMessager.MESSAGER_CHAT_ID, chat_id.toString());
-                        cv_ms.put(SQLMessager.MESSAGER_FROM_ID, user_id_from.toString());
-                        cv_ms.put(SQLMessager.MESSAGER_TO_ID, HttpConnectRecive.getUserId(ChatItemActivity.this));
-                        cv_ms.put(SQLMessager.MESSAGER_MESSAG, textMessages.getText().toString());
-                        cv_ms.put(SQLMessager.MESSAGER_CREATED, formattedDate);
-                        if (selected_bitmap != null) {
-                            cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, filepath);
-                            cv_ms.put(SQLMessager.MESSAGER_DURATION, duration);
-                        }
-                        cv_ms.put(SQLMessager.MESSAGER_SERVER, "1");
-                        db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
-                    } else {
-                        String title = null;
-                        Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE " + SQLMessager.CONTACTS_USER_ID + "='" + user_id_from + "'", null);
-                        if (c.moveToFirst()) {
-                            int nameCollumn = c.getColumnIndex(SQLMessager.CONTACTS_NAME);
-                            title = c.getString(nameCollumn);
-                            ///getSupportActionBar().setTitle(c.getString(nameCollumn));
-                        }
-                        long chat_id_db = 0;
-                        JSONArray arrayUser = new JSONArray();
-                        JSONObject itemJs = new JSONObject();
-                        try {
-                            itemJs.put("user_id", user_id_from.toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        arrayUser.put(itemJs);
-                        ContentValues cv_ch = new ContentValues();
-                        cv_ch.put(SQLMessager.CHAT_JSON_INTERLOCUTOR, arrayUser.toString());
-                        cv_ch.put(SQLMessager.CHAT_TYPE, type_chat.toString());
-                        cv_ch.put(SQLMessager.CHAT_READ, "1");
-                        cv_ch.put(SQLMessager.CHAT_NAME, title);
-                        chat_id_db = db.insert(SQLMessager.TABLE_CHAT, null, cv_ch);
-                        if (chat_id_db > 0) {
-                            chat_id = (int) chat_id_db;
-                            ContentValues cv_ms = new ContentValues();
-                            cv_ms.put(SQLMessager.MESSAGER_CHAT_ID, chat_id_db);
-                            cv_ms.put(SQLMessager.MESSAGER_FROM_ID, user_id_from.toString());
-                            cv_ms.put(SQLMessager.MESSAGER_TO_ID, HttpConnectRecive.getUserId(ChatItemActivity.this));
-                            cv_ms.put(SQLMessager.MESSAGER_MESSAG, textMessages.getText().toString());
-                            cv_ms.put(SQLMessager.MESSAGER_SERVER, "1");
-                            cv_ms.put(SQLMessager.MESSAGER_CREATED, formattedDate);
-                            if (selected_bitmap != null) {
-                                cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, filepath);
-                                cv_ms.put(SQLMessager.MESSAGER_DURATION, duration);
-                            }
-                            db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
-                        }
-                    }
-                    new setMessagerTask().execute();
+                    SendMessage();
                 }
             }
         });
@@ -214,6 +168,120 @@ public class ChatItemActivity extends AppCompatActivity {
 
         u.start();
 
+        btnTakePhoto.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                laySelectPhoto.setVisibility(View.GONE);
+                if (Build.VERSION.SDK_INT >= 19) {
+                    Intent intent = new Intent(
+                            MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+                } else {
+                    Intent intent = new Intent(
+                            "android.media.action.IMAGE_CAPTURE");
+                    startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+                }
+            }
+        });
+
+        btnChooseExisting.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                laySelectPhoto.setVisibility(View.GONE);
+                if (Build.VERSION.SDK_INT >= 19) {
+                    Intent intent1 = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    intent1.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent1.setType("image/jpeg");
+                    startActivityForResult(intent1,
+                            GALLERY_KITKAT_INTENT_CALLED);
+                } else {
+                    Intent intent = new Intent();
+                    intent.setType("image/*");
+                    intent.setAction(Intent.ACTION_PICK);
+                    startActivityForResult(Intent.createChooser(intent,
+                            "Complete action using"), REQUEST_CHOOSE_EXISTING);
+                }
+            }
+        });
+
+    }
+
+    private void SendMessage() {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        formattedDate = df.format(cal.getTime());
+        if (!formattedDate.trim().toString().equals("")) {
+            if (chat_id != 0) {
+                ContentValues cv_ms = new ContentValues();
+                cv_ms.put(SQLMessager.MESSAGER_CHAT_ID, chat_id.toString());
+                cv_ms.put(SQLMessager.MESSAGER_FROM_ID, user_id_from.toString());
+                cv_ms.put(SQLMessager.MESSAGER_TO_ID, HttpConnectRecive.getUserId(ChatItemActivity.this));
+                cv_ms.put(SQLMessager.MESSAGER_MESSAG, textMessages.getText().toString());
+                cv_ms.put(SQLMessager.MESSAGER_CREATED, formattedDate);
+                if (selected_bitmap != null) {
+                    cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, filepath);
+                    cv_ms.put(SQLMessager.MESSAGER_DURATION, duration);
+                }
+                cv_ms.put(SQLMessager.MESSAGER_SERVER, "1");
+                db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
+            } else {
+                String title = null;
+                Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE " + SQLMessager.CONTACTS_USER_ID + "='" + user_id_from + "'", null);
+                if (c.moveToFirst()) {
+                    int nameCollumn = c.getColumnIndex(SQLMessager.CONTACTS_NAME);
+                    title = c.getString(nameCollumn);
+                }
+                long chat_id_db = 0;
+                JSONArray arrayUser = new JSONArray();
+                JSONObject itemJs = new JSONObject();
+                try {
+                    itemJs.put("user_id", user_id_from.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                arrayUser.put(itemJs);
+                ContentValues cv_ch = new ContentValues();
+                cv_ch.put(SQLMessager.CHAT_JSON_INTERLOCUTOR, arrayUser.toString());
+                cv_ch.put(SQLMessager.CHAT_TYPE, type_chat.toString());
+                cv_ch.put(SQLMessager.CHAT_READ, "1");
+                cv_ch.put(SQLMessager.CHAT_NAME, title);
+                chat_id_db = db.insert(SQLMessager.TABLE_CHAT, null, cv_ch);
+                if (chat_id_db > 0) {
+                    chat_id = (int) chat_id_db;
+                    ContentValues cv_ms = new ContentValues();
+                    cv_ms.put(SQLMessager.MESSAGER_CHAT_ID, chat_id_db);
+                    cv_ms.put(SQLMessager.MESSAGER_FROM_ID, user_id_from.toString());
+                    cv_ms.put(SQLMessager.MESSAGER_TO_ID, HttpConnectRecive.getUserId(ChatItemActivity.this));
+                    cv_ms.put(SQLMessager.MESSAGER_MESSAG, textMessages.getText().toString());
+                    cv_ms.put(SQLMessager.MESSAGER_SERVER, "1");
+                    cv_ms.put(SQLMessager.MESSAGER_CREATED, formattedDate);
+                    if (selected_bitmap != null) {
+                        cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, filepath);
+                        cv_ms.put(SQLMessager.MESSAGER_DURATION, duration);
+                    }
+                    db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
+                }
+            }
+            new setMessagerTask().execute();
+            MessagInfo result_sql = new MessagInfo();
+            result_sql.id_from = user_id_from.toString();
+            result_sql.id_to = HttpConnectRecive.getUserId(ChatItemActivity.this);
+            result_sql.message = textMessages.getText().toString();
+            result_sql.created = formattedDate;
+            if (selected_bitmap != null) {
+                result_sql.attachment = filepath;
+                result_sql.duration = duration;
+            }
+            adapter.add(result_sql);
+            textMessages.setText("");
+            adapter.notifyDataSetChanged();
+            scrollDown();
+            photo_witch = 0;
+            selected_bitmap = null;
+            imageView.setVisibility(View.GONE);
+        }
     }
 
     private class Updater extends Thread {
@@ -262,7 +330,16 @@ public class ChatItemActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.action_send_photo:
-                DialogPhoto();
+                if (laySelectPhoto.getVisibility() == View.GONE) {
+                    laySelectPhoto.setVisibility(View.VISIBLE);
+                    Animation anim = AnimationUtils.loadAnimation(ChatItemActivity.this, R.anim.menuplus);
+                    anim.reset();
+                    laySelectPhoto.clearAnimation();
+                    laySelectPhoto.startAnimation(anim);
+                }
+                else {
+                    laySelectPhoto.setVisibility(View.GONE);
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -291,24 +368,6 @@ public class ChatItemActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(MessagInfo result) {
-            MessagInfo result_sql = new MessagInfo();
-            result_sql.id_from = user_id_from.toString();
-            result_sql.id_to = HttpConnectRecive.getUserId(ChatItemActivity.this);
-            result_sql.message = textMessages.getText().toString();
-            result_sql.created = formattedDate;
-            if (selected_bitmap != null) {
-                result_sql.attachment = filepath;
-                result_sql.duration = duration;
-            }
-            adapter.add(result_sql);
-            textMessages.setText("");
-            adapter.notifyDataSetChanged();
-            scrollDown();
-            photo_witch = 0;
-            selected_bitmap = null;
-            imageView.setVisibility(View.GONE);
-
-
             super.onPostExecute(result);
 
         }
@@ -361,75 +420,6 @@ public class ChatItemActivity extends AppCompatActivity {
         listMeseges.setSelection(listMeseges.getCount() - 1);
     }
 
-    private void DialogPhoto() {
-
-        final Dialog dialog = new Dialog(ChatItemActivity.this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_add_photo);
-        Button btnCancel = (Button) dialog.findViewById(R.id.btnCancel);
-        Button btnTakePhoto = (Button) dialog
-                .findViewById(R.id.btnRegChat);
-        Button btnChooseExisting = (Button) dialog
-                .findViewById(R.id.btnSecChat);
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        btnTakePhoto.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                /*mUri = generateFileUri();
-                if (mUri == null) {
-                    Toast.makeText(ChatItemActivity.this, "SD card not available", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, mUri);
-                startActivityForResult(intent, REQUEST_TAKE_PHOTO);*/
-                if (Build.VERSION.SDK_INT >= 19) {
-                    Intent intent = new Intent(
-                            MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intent, REQUEST_TAKE_PHOTO);
-                } else {
-                    Intent intent = new Intent(
-                            "android.media.action.IMAGE_CAPTURE");
-                    startActivityForResult(intent, REQUEST_TAKE_PHOTO);
-                }
-            }
-        });
-
-        btnChooseExisting.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                /*Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/*");
-                startActivityForResult(intent, REQUEST_CHOOSE_EXISTING);*/
-                if (Build.VERSION.SDK_INT >= 19) {
-                    Intent intent1 = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    intent1.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent1.setType("image/jpeg");
-                    startActivityForResult(intent1,
-                            GALLERY_KITKAT_INTENT_CALLED);
-                } else {
-                    Intent intent = new Intent();
-                    intent.setType("image/*");
-                    intent.setAction(Intent.ACTION_PICK);
-                    startActivityForResult(Intent.createChooser(intent,
-                            "Complete action using"), REQUEST_CHOOSE_EXISTING);
-                }
-            }
-        });
-        dialog.show();
-    }
-
     private Uri generateFileUri() {
 
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
@@ -452,14 +442,14 @@ public class ChatItemActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         //super.onActivityResult(requestCode, resultCode, data);
-        imageView.setVisibility(View.VISIBLE);
+        imageView.setVisibility(View.GONE);
         if(resultCode == Activity.RESULT_OK){
             if(requestCode == REQUEST_CHOOSE_EXISTING){
                 if (data != null) {
                     Uri selectedImage = data.getData();
                     filepath = Utils.getPath(getApplicationContext(), selectedImage);
 
-                    performCrop(selectedImage);
+                    //performCrop(selectedImage);
                     selected_bitmap = null;
                     try {
                         selected_bitmap = Utils.decodeUri(
@@ -510,8 +500,8 @@ public class ChatItemActivity extends AppCompatActivity {
                         imageData);
                 filepath = Utils.getPath(getApplicationContext(),
                         selectedImage);
-                if (Build.VERSION.SDK_INT < 19)
-                    performCrop(selectedImage);
+                /*if (Build.VERSION.SDK_INT < 19)
+                    performCrop(selectedImage);*/
                 selected_bitmap = (Bitmap) data.getExtras().get(
                         "data");
                 if (selected_bitmap != null) {
@@ -586,17 +576,35 @@ public class ChatItemActivity extends AppCompatActivity {
         dialog.setContentView(R.layout.dialog_duration);
 
         Button btnSaveDuration = (Button) dialog.findViewById(R.id.btnSaveDuration);
-        final NumberPicker np = (NumberPicker) dialog.findViewById(R.id.numberPicker);
-        np.setMinValue(0);
-        np.setMaxValue(60);
-        np.setWrapSelectorWheel(false);
+        final TextView txtSecondV = (TextView) dialog.findViewById(R.id.textView11);
+
+        final CircularSeekBar seekbar = (CircularSeekBar) dialog.findViewById(R.id.circularSeekBar1);
+        seekbar.setProgress(5);
+        txtSecondV.setText("5");
+        seekbar.setOnSeekBarChangeListener(new CircularSeekBar.OnCircularSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(CircularSeekBar circularSeekBar, int progress, boolean fromUser) {
+                txtSecondV.setText(circularSeekBar.getProgress() + "");            }
+
+            @Override
+            public void onStopTrackingTouch(CircularSeekBar seekBar) {
+                txtSecondV.setText(seekBar.getProgress() + "");
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(CircularSeekBar seekBar) {
+                txtSecondV.setText(seekBar.getProgress() + "");
+
+            }
+        });
 
         btnSaveDuration.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ///new AttacmentPhotoMessageTask().execute(np.getValue() + "");
-                duration = np.getValue() + "";
+                duration = txtSecondV.getText().toString();
                 photo_witch = 1;
+                SendMessage();
                 dialog.dismiss();
             }
         });

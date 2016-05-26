@@ -1,5 +1,6 @@
 package mobi.kolibri.messager.adapters;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,6 +9,8 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -67,7 +70,6 @@ public class MessagerAdapter extends ArrayAdapter<MessagInfo>{
             holder.rlFromMesseger = (RelativeLayout) v.findViewById(R.id.rlFromMesseger);
             holder.textToMessager = (TextView) v.findViewById(R.id.textToMessager);
             holder.textFromMessager = (TextView) v.findViewById(R.id.textFromMessager);
-            holder.textToTimer = (TextView) v.findViewById(R.id.textView6);
             holder.messagePhoto1 = (ImageView) v.findViewById(R.id.messagePhoto1);
             holder.messagePhoto2 = (ImageView) v.findViewById(R.id.messagePhoto2);
             v.setTag(holder);
@@ -80,36 +82,11 @@ public class MessagerAdapter extends ArrayAdapter<MessagInfo>{
             holder.rlFromMesseger.setVisibility(View.GONE);
             holder.textToMessager.setText(item.message);
             holder.messagePhoto2.setVisibility(View.GONE);
-            holder.textToTimer.setVisibility(View.GONE);
+///            holder.textToTimer.setVisibility(View.GONE);
             if (!item.attachment.equals("")) {
+                holder.messagePhoto2.getLayoutParams().height = 200;
+                holder.messagePhoto2.getLayoutParams().width = 150;
                 holder.messagePhoto2.setVisibility(View.VISIBLE);
-                ///holder.textToTimer.setVisibility(View.VISIBLE);
-
-                /*final TextView tv = holder.textToTimer;
-
-                CountDownTimer cdt = counters.get(holder.textToTimer);
-                if(cdt!=null)
-                {
-                    cdt.cancel();
-                    cdt=null;
-                }
-                long difference = Integer.parseInt(item.duration) * 1000;
-
-                cdt = new CountDownTimer(difference, 1000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                        tv.setText("" + millisUntilFinished / 1000);
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        tv.setText("Finished");
-
-                    }
-                };
-
-                counters.put(tv, cdt);*/
-
                 String url_img = HttpConnectRecive.URLP + item.attachment;
                 ImageLoader.getInstance()
                     .displayImage(url_img, holder.messagePhoto2, options, new SimpleImageLoadingListener() {
@@ -134,8 +111,48 @@ public class MessagerAdapter extends ArrayAdapter<MessagInfo>{
 
                         }
                     });
+                holder.messagePhoto2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final Dialog dialog = new Dialog(contV);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        dialog.setContentView(R.layout.dialog_chat_photo);
+                        final ImageView imgPhotoChat = (ImageView) dialog.findViewById(R.id.imageView7);
+                        String url_img = HttpConnectRecive.URLP + item.attachment;
+                        ImageLoader.getInstance()
+                            .displayImage(url_img, imgPhotoChat, options, new SimpleImageLoadingListener() {
+                                @Override
+                                public void onLoadingStarted(String imageUri, View view) {
 
-                ///cdt.start();
+                                }
+
+                                @Override
+                                public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+
+                                }
+
+                                @Override
+                                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+
+
+                                }
+                            }, new ImageLoadingProgressListener() {
+                                @Override
+                                public void onProgressUpdate(String imageUri, View view, int current, int total) {
+
+                                }
+                            });
+                        imgPhotoChat.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                imgPhotoChat.setImageBitmap(null);
+                                dialog.dismiss();
+                            }
+                        });
+                        dialog.show();
+                    }
+                });
+
 
             }
 
@@ -148,6 +165,26 @@ public class MessagerAdapter extends ArrayAdapter<MessagInfo>{
             if (item.attachment != null) {
                 holder.messagePhoto1.setVisibility(View.VISIBLE);
                 holder.messagePhoto1.setImageBitmap(BitmapFactory.decodeFile(item.attachment));
+                holder.messagePhoto1.getLayoutParams().height = 200;
+                holder.messagePhoto1.getLayoutParams().width = 150;
+                holder.messagePhoto1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final Dialog dialog = new Dialog(contV);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        dialog.setContentView(R.layout.dialog_chat_photo);
+                        final ImageView imgPhotoChat = (ImageView) dialog.findViewById(R.id.imageView7);
+                        imgPhotoChat.setImageBitmap(BitmapFactory.decodeFile(item.attachment));
+                        imgPhotoChat.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                imgPhotoChat.setImageBitmap(null);
+                                dialog.dismiss();
+                            }
+                        });
+                        dialog.show();
+                    }
+                });
             }
         }
 

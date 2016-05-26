@@ -5,7 +5,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="mobi.kolibri.messager.SplechScreenActivity"
-    android:background="#e3f2fe">
+    android:background="@mipmap/bg_login">
 
     <ImageView
         android:layout_width="wrap_content"

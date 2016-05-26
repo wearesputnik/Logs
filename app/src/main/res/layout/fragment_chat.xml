@@ -1,9 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="mobi.kolibri.messager.fragment.ChatFragment">
-
-    <!-- TODO: Update blank fragment layout -->
+    tools:context="mobi.kolibri.messager.fragment.ChatFragment"
+    android:background="@mipmap/screen_stopper">
 
     <ListView
         android:layout_width="fill_parent"
@@ -29,4 +28,119 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:textSize="16dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/relLayoutChat"
+        android:visibility="gone"></RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/plus_right_bottom"
+        android:layout_alignLeft="@+id/plus_right_bottom"
+        android:layout_alignStart="@+id/plus_right_bottom"
+        android:layout_marginBottom="5dp"
+        android:layout_alignRight="@+id/plus_right_bottom"
+        android:layout_alignEnd="@+id/plus_right_bottom"
+        android:id="@+id/plus_cont"
+        android:paddingBottom="10dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imgAddChat"
+            android:layout_alignParentBottom="false"
+            android:layout_centerHorizontal="true"
+            android:src="@mipmap/ic_add_circle_black"
+            android:layout_marginBottom="10dp"
+            android:layout_above="@+id/imgRemoveChat"
+            android:layout_alignStart="@id/imgRemoveChat"
+            android:layout_alignLeft="@+id/imgRemoveChat" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imgRemoveChat"
+            android:src="@mipmap/ic_remove_circle_black"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/plus_right_bottom"
+        android:padding="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/translate" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="#bd000000"
+        android:id="@+id/relLayoutNewChat">
+
+        <LinearLayout
+            android:orientation="vertical" android:layout_width="match_parent"
+            android:background="@color/background_status_bar"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:visibility="gone"
+            android:id="@+id/btnNewChatLayout">
+
+            <mobi.kolibri.messager.object.ButtomLite
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="New Group Chat"
+                android:id="@+id/btnGroupChat"
+                android:gravity="left"
+                android:textColor="#fff"
+                android:textAppearance="@android:style/TextAppearance"
+                android:textSize="16dp"
+                android:drawableLeft="@mipmap/icon_group_chat_withe"
+                android:drawablePadding="10dp"
+                android:layout_marginTop="5dp"
+                android:padding="16dp" />
+
+            <mobi.kolibri.messager.object.ButtomLite
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="New Secret Chat"
+                android:id="@+id/btnSecretChat"
+                android:gravity="left"
+                android:textColor="#fff"
+                android:textAppearance="@android:style/TextAppearance"
+                android:textSize="16dp"
+                android:drawableLeft="@mipmap/icon_lock_withe"
+                android:drawablePadding="10dp"
+                android:layout_marginTop="5dp"
+                android:padding="16dp" />
+
+            <mobi.kolibri.messager.object.ButtomLite
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="New Chat"
+                android:id="@+id/btnChat"
+                android:gravity="left"
+                android:textColor="#fff"
+                android:textAppearance="@android:style/TextAppearance"
+                android:textSize="16dp"
+                android:drawableLeft="@mipmap/icon_chat_withe"
+                android:drawablePadding="10dp"
+                android:layout_marginTop="5dp"
+                android:padding="16dp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+
 </RelativeLayout>

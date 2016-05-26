@@ -25,20 +25,26 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.devadvance.circularseekbar.CircularSeekBar;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -60,6 +66,8 @@ public class GroupChatItemActivity extends AppCompatActivity {
     String json_users;
     String chat_name;
     GroupMessagerAdapter adapter;
+    LinearLayout laySelectPhoto;
+    ImageView btnTakePhoto, btnChooseExisting;
     Updater u;
     Integer photo_witch;
     String duration;
@@ -69,7 +77,9 @@ public class GroupChatItemActivity extends AppCompatActivity {
     private int REQUEST_CHOOSE_EXISTING = 2;
     private int REQUEST_CROP_IMAGE = 3;
     private static final int GALLERY_KITKAT_INTENT_CALLED = 4;
+    private TextView txtTitleActionBar;
     ImageView imageView;
+    String formattedDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,13 +89,20 @@ public class GroupChatItemActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.mipmap.back_from_chats);
+        txtTitleActionBar = (TextView) findViewById(R.id.txtTitleActionBar);
+        laySelectPhoto = (LinearLayout) findViewById(R.id.laySelectPhoto);
+        btnTakePhoto = (ImageView) findViewById(R.id.btnTakePhoto);
+        btnChooseExisting = (ImageView) findViewById(R.id.btnChooseExisting);
 
         Bundle b = getIntent().getExtras();
         if (b != null) {
             id_chat = b.getInt("chat_id");
             type_chat = b.getString("type");
         }
+
+        photo_witch = 0;
+
+        type_chat = "group";
 
         Log.e("CHAT_ID", id_chat.toString());
 
@@ -106,6 +123,7 @@ public class GroupChatItemActivity extends AppCompatActivity {
             int nameCollumn = c.getColumnIndex(SQLMessager.CHAT_NAME);
             int usersCollumn = c.getColumnIndex(SQLMessager.CHAT_JSON_INTERLOCUTOR);
             chat_name = c.getString(nameCollumn);
+            txtTitleActionBar.setText(chat_name);
             getSupportActionBar().setTitle(chat_name);
             json_users = c.getString(usersCollumn);
         }
@@ -136,10 +154,14 @@ public class GroupChatItemActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!textMessages.getText().toString().trim().equals("") || selected_bitmap != null) {
                     ContentValues cv_ms = new ContentValues();
+                    Calendar cal = Calendar.getInstance();
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    formattedDate = df.format(cal.getTime());
                     cv_ms.put(SQLMessager.MESSAGER_CHAT_ID, id_chat.toString());
                     cv_ms.put(SQLMessager.MESSAGER_FROM_ID, json_users);
                     cv_ms.put(SQLMessager.MESSAGER_TO_ID, HttpConnectRecive.getUserId(GroupChatItemActivity.this));
                     cv_ms.put(SQLMessager.MESSAGER_MESSAG, textMessages.getText().toString());
+                    cv_ms.put(SQLMessager.MESSAGER_CREATED, formattedDate);
                     cv_ms.put(SQLMessager.MESSAGER_SERVER, "1");
                     if (selected_bitmap != null) {
                         cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, filepath);
@@ -147,6 +169,19 @@ public class GroupChatItemActivity extends AppCompatActivity {
                     }
                     db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
                     new setGroupMessagerTask().execute();
+                    GroupMessagerInfo result_sql = new GroupMessagerInfo();
+                    result_sql.id_from = json_users;
+                    result_sql.id_to = HttpConnectRecive.getUserId(GroupChatItemActivity.this);
+                    result_sql.message = textMessages.getText().toString();
+                    result_sql.created = formattedDate;
+                    if (selected_bitmap != null) {
+                        result_sql.attachment = filepath;
+                        result_sql.duration = duration;
+                    }
+                    adapter.add(result_sql);
+                    textMessages.setText("");
+                    adapter.notifyDataSetChanged();
+                    scrollDown();
                 }
             }
         });
@@ -154,6 +189,44 @@ public class GroupChatItemActivity extends AppCompatActivity {
         u = new Updater();
 
         u.start();
+
+        btnTakePhoto.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                laySelectPhoto.setVisibility(View.GONE);
+                if (Build.VERSION.SDK_INT >= 19) {
+                    Intent intent = new Intent(
+                            MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+                } else {
+                    Intent intent = new Intent(
+                            "android.media.action.IMAGE_CAPTURE");
+                    startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+                }
+            }
+        });
+
+        btnChooseExisting.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                laySelectPhoto.setVisibility(View.GONE);
+                if (Build.VERSION.SDK_INT >= 19) {
+                    Intent intent1 = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    intent1.addCategory(Intent.CATEGORY_OPENABLE);
+                    intent1.setType("image/jpeg");
+                    startActivityForResult(intent1,
+                            GALLERY_KITKAT_INTENT_CALLED);
+                } else {
+                    Intent intent = new Intent();
+                    intent.setType("image/*");
+                    intent.setAction(Intent.ACTION_PICK);
+                    startActivityForResult(Intent.createChooser(intent,
+                            "Complete action using"), REQUEST_CHOOSE_EXISTING);
+                }
+            }
+        });
     }
 
     private class Updater extends Thread {
@@ -197,7 +270,16 @@ public class GroupChatItemActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.action_send_photo:
-                DialogPhoto();
+                if (laySelectPhoto.getVisibility() == View.GONE) {
+                    laySelectPhoto.setVisibility(View.VISIBLE);
+                    Animation anim = AnimationUtils.loadAnimation(GroupChatItemActivity.this, R.anim.menuplus);
+                    anim.reset();
+                    laySelectPhoto.clearAnimation();
+                    laySelectPhoto.startAnimation(anim);
+                }
+                else {
+                    laySelectPhoto.setVisibility(View.GONE);
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -217,6 +299,7 @@ public class GroupChatItemActivity extends AppCompatActivity {
             item_msg.message = textMessages.getText().toString();
             item_msg.type_chat = type_chat;
             item_msg.chat_name = chat_name;
+            item_msg.created = formattedDate;
             if (selected_bitmap != null) {
                 item_msg.attachment = filepath;
                 item_msg.duration = duration;
@@ -226,18 +309,7 @@ public class GroupChatItemActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(String result) {
-            GroupMessagerInfo result_sql = new GroupMessagerInfo();
-            result_sql.id_from = json_users;
-            result_sql.id_to = HttpConnectRecive.getUserId(GroupChatItemActivity.this);
-            result_sql.message = textMessages.getText().toString();
-            if (selected_bitmap != null) {
-                result_sql.attachment = filepath;
-                result_sql.duration = duration;
-            }
-            adapter.add(result_sql);
-            textMessages.setText("");
-            adapter.notifyDataSetChanged();
-            scrollDown();
+
 
             super.onPostExecute(result);
 
@@ -287,81 +359,11 @@ public class GroupChatItemActivity extends AppCompatActivity {
         listMeseges.setSelection(listMeseges.getCount() - 1);
     }
 
-    private void DialogPhoto() {
-
-        final Dialog dialog = new Dialog(GroupChatItemActivity.this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_add_photo);
-        Button btnCancel = (Button) dialog.findViewById(R.id.btnCancel);
-        Button btnTakePhoto = (Button) dialog
-                .findViewById(R.id.btnRegChat);
-        Button btnChooseExisting = (Button) dialog
-                .findViewById(R.id.btnSecChat);
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        btnTakePhoto.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                /*mUri = generateFileUri();
-                if (mUri == null) {
-                    Toast.makeText(ChatItemActivity.this, "SD card not available", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, mUri);
-                startActivityForResult(intent, REQUEST_TAKE_PHOTO);*/
-                if (Build.VERSION.SDK_INT >= 19) {
-                    Intent intent = new Intent(
-                            MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intent, REQUEST_TAKE_PHOTO);
-                } else {
-                    Intent intent = new Intent(
-                            "android.media.action.IMAGE_CAPTURE");
-                    startActivityForResult(intent, REQUEST_TAKE_PHOTO);
-                }
-            }
-        });
-
-        btnChooseExisting.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                /*Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/*");
-                startActivityForResult(intent, REQUEST_CHOOSE_EXISTING);*/
-                if (Build.VERSION.SDK_INT >= 19) {
-                    Intent intent1 = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    intent1.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent1.setType("image/jpeg");
-                    startActivityForResult(intent1,
-                            GALLERY_KITKAT_INTENT_CALLED);
-                } else {
-                    Intent intent = new Intent();
-                    intent.setType("image/*");
-                    intent.setAction(Intent.ACTION_PICK);
-                    startActivityForResult(Intent.createChooser(intent,
-                            "Complete action using"), REQUEST_CHOOSE_EXISTING);
-                }
-            }
-        });
-        dialog.show();
-    }
-
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @SuppressWarnings("ResourceType")
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //super.onActivityResult(requestCode, resultCode, data);
-        imageView.setVisibility(View.VISIBLE);
+        imageView.setVisibility(View.GONE);
         if(resultCode == Activity.RESULT_OK){
             if(requestCode == REQUEST_CHOOSE_EXISTING){
                 if (data != null) {
@@ -495,16 +497,34 @@ public class GroupChatItemActivity extends AppCompatActivity {
         dialog.setContentView(R.layout.dialog_duration);
 
         Button btnSaveDuration = (Button) dialog.findViewById(R.id.btnSaveDuration);
-        final NumberPicker np = (NumberPicker) dialog.findViewById(R.id.numberPicker);
-        np.setMinValue(0);
-        np.setMaxValue(60);
-        np.setWrapSelectorWheel(false);
+        final TextView txtSecondV = (TextView) dialog.findViewById(R.id.textView11);
+
+        final CircularSeekBar seekbar = (CircularSeekBar) dialog.findViewById(R.id.circularSeekBar1);
+        seekbar.setProgress(5);
+        txtSecondV.setText("5");
+        seekbar.setOnSeekBarChangeListener(new CircularSeekBar.OnCircularSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(CircularSeekBar circularSeekBar, int progress, boolean fromUser) {
+                txtSecondV.setText(circularSeekBar.getProgress() + "");
+            }
+
+            @Override
+            public void onStopTrackingTouch(CircularSeekBar seekBar) {
+                txtSecondV.setText(seekBar.getProgress() + "");
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(CircularSeekBar seekBar) {
+                txtSecondV.setText(seekBar.getProgress() + "");
+
+            }
+        });
 
         btnSaveDuration.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ///new AttacmentPhotoMessageTask().execute(np.getValue() + "");
-                duration = np.getValue() + "";
+                duration = txtSecondV.getText().toString();
                 photo_witch = 1;
                 dialog.dismiss();
             }

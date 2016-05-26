@@ -7,10 +7,9 @@
         <item name="colorPrimary">@color/background_splech</item>
         <item name="android:textColorPrimary">#fff</item>
         <item name="colorAccent">#ff1951a1</item>
-        <item name="actionOverflowButtonStyle">@style/OverFlow</item>
     </style>
 
-    <style name="ProgressBarStyle" parent="@android:style/Widget.ProgressBar.Horizontal"/>
+    <style name="ProgressBarStyle" parent="@android:style/Widget.ProgressBar.Horizontal" />
 
     <style name="TransparentProgressDialog" parent="android:Theme.Holo.Light.Dialog">
         <item name="android:windowFrame">@null</item>
@@ -28,8 +27,14 @@
         <item name="android:background">@drawable/backlogs</item>
     </style>
 
-    <style name="OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">
-        <item name="android:src">@mipmap/list</item>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
+
 
 </resources>

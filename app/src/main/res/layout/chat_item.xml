@@ -3,37 +3,66 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:paddingLeft="10dp"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
-    android:id="@+id/clickLayout">
-
-    <ImageView
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:id="@+id/imageView5"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:src="@mipmap/profile_min"
-        android:layout_weight="0.4" />
+    android:id="@+id/clickLayout"
+    android:orientation="horizontal"
+    android:background="#fff">
 
     <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:paddingLeft="10dp">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="5dp">
 
-        <TextView
+        <mobi.kolibri.messager.object.RoundImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/imageView5"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:src="@mipmap/profile_max"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imgStatusUser"
+            android:src="@mipmap/online"
+            android:layout_alignBottom="@+id/imageView5"
+            android:layout_alignRight="@+id/imageView5"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:paddingLeft="5dp"
+        android:paddingTop="13dp"
+        android:background="@drawable/custom_border_bottom"
+        android:layout_marginLeft="5dp">
+
+        <mobi.kolibri.messager.object.TextViewLite
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="New Text"
             android:id="@+id/textView3"
             android:textColor="#000"
             android:textSize="18dp"
-            android:textStyle="bold"
-            android:layout_centerVertical="true"
+            android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
+
+        <mobi.kolibri.messager.object.TextViewLite
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Text"
+            android:id="@+id/textView8"
+            android:layout_below="@+id/textView3"
+            android:layout_alignLeft="@+id/textView3"
+            android:layout_alignStart="@+id/textView3"
+            android:textColor="#000"
+            android:textSize="16dp"
+            android:maxLength="20" />
 
     </RelativeLayout>
 

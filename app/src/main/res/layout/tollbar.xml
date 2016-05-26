@@ -4,5 +4,16 @@
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     android:minHeight="?attr/actionBarSize"
-    android:background="@drawable/tolbat_gradient"
-    />
+    android:background="@color/background_status_bar">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <mobi.kolibri.messager.object.TextViewLite
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtTitleActionBar"
+            android:textColor="#fff"
+            android:textSize="20dp" />
+    </RelativeLayout>
+
+</android.support.v7.widget.Toolbar>

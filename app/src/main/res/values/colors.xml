@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="background_splech">#2196f3</color>
-    <color name="background_status_bar">#1976d2</color>
+    <color name="background_status_bar">#3f51b5</color>
+    <color name="background_unchek">#fff</color>
+    <color name="background_chek">#b4ffec</color>
 </resources>
