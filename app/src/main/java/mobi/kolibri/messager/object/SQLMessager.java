@@ -15,9 +15,10 @@ public class SQLMessager extends SQLiteOpenHelper {
     /* table api_key*/
     public static final String TABLE_APP_ID = "appid";
     public static final String APP_ID = "appid";
+    public static final String PLAYER_ID = "player_id";
     public static final String USER_ID = "user_id";
     public static final String CREATE_TABLE_APP_ID = "CREATE TABLE IF NOT EXISTS " + TABLE_APP_ID + " ( id integer primary key autoincrement, "
-            + APP_ID + " TEXT, " + USER_ID + " TEXT)";
+            + APP_ID + " TEXT, " + USER_ID + " TEXT, " + PLAYER_ID + " TEXT)";
 
     /* table contacts*/
     public static final String TABLE_CONTACTS = "contacts";
@@ -25,11 +26,12 @@ public class SQLMessager extends SQLiteOpenHelper {
     public static final String CONTACTS_NAME = "name";
     public static final String CONTACTS_PHONE = "phone";
     public static final String CONTACTS_PHOTO = "photo";
+    public static final String CONTACTS_PHOTO_SAVE = "photo_save";
     public static final String CONTACTS_SUMMARY = "summary";
     public static final String CONTACTS_SERV = "server";
     public static final String CONTACTS_STATUS = "status";
     public static final String CREATE_TABLE_CONTACTS = "CREATE TABLE IF NOT EXISTS " + TABLE_CONTACTS + " ( id integer primary key autoincrement, "
-            + CONTACTS_USER_ID + " TEXT, " + CONTACTS_NAME + " TEXT, " + CONTACTS_PHONE + " TEXT, " + CONTACTS_PHOTO + " TEXT, " + CONTACTS_SUMMARY +
+            + CONTACTS_USER_ID + " TEXT, " + CONTACTS_NAME + " TEXT, " + CONTACTS_PHONE + " TEXT, " + CONTACTS_PHOTO + " TEXT, " + CONTACTS_PHOTO_SAVE + " TEXT, " + CONTACTS_SUMMARY +
             " TEXT, " + CONTACTS_SERV + " TEXT, " + CONTACTS_STATUS + " TEXT)";
 
     /* table chat*/

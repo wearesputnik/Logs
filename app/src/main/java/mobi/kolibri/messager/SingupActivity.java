@@ -90,7 +90,7 @@ public class SingupActivity extends AppCompatActivity {
         }
         @SuppressWarnings("static-access")
         protected Integer doInBackground(String... params) {
-            Integer result = HttpConnectRecive.CreateAccaunt(edtEmail.getText().toString(), edtPassword.getText().toString(), edtPhone.getText().toString());
+            Integer result = HttpConnectRecive.getInstance().CreateAccaunt(edtEmail.getText().toString(), edtPassword.getText().toString(), edtPhone.getText().toString());
             return result;
         }
 

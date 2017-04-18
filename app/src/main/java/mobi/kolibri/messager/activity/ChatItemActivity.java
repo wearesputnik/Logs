@@ -1,5 +1,6 @@
 package mobi.kolibri.messager.activity;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
@@ -7,6 +8,7 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -18,6 +20,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -59,7 +65,7 @@ import mobi.kolibri.messager.http.HttpConnectRecive;
 import mobi.kolibri.messager.object.MessagInfo;
 import mobi.kolibri.messager.object.SQLMessager;
 
-public class ChatItemActivity extends AppCompatActivity {
+public class ChatItemActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
     Integer user_id_from;
     Integer chat_id;
     SQLMessager sqlMessager;
@@ -69,7 +75,7 @@ public class ChatItemActivity extends AppCompatActivity {
     SQLiteDatabase db;
     MessagerAdapter adapter;
     Integer photo_witch;
-    String duration;
+    String duration = "0";
     String type_chat;
     LinearLayout laySelectPhoto;
     ImageView btnTakePhoto, btnChooseExisting;
@@ -85,10 +91,20 @@ public class ChatItemActivity extends AppCompatActivity {
     ImageView imageView;
     String formattedDate;
 
+    String[] PermisionLocation = {
+            Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+    };
+    Integer RequestLocationId = 1;
+    private View mLayout;
+    private Integer photoButtom = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_item);
+        mLayout = (View) findViewById(R.id.main_layout);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -124,8 +140,7 @@ public class ChatItemActivity extends AppCompatActivity {
         if (c.moveToFirst()) {
             int nameCollumn = c.getColumnIndex(SQLMessager.CHAT_NAME);
             txtTitleActionBar.setText(c.getString(nameCollumn));
-        }
-        else {
+        } else {
             Cursor c_us = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE " + SQLMessager.CONTACTS_USER_ID + "=" + user_id_from, null);
             if (c_us.moveToFirst()) {
                 int nameCollumn = c_us.getColumnIndex(SQLMessager.CONTACTS_NAME);
@@ -136,18 +151,22 @@ public class ChatItemActivity extends AppCompatActivity {
 
         Cursor c_ch = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_MESSAGER + " WHERE " + SQLMessager.MESSAGER_CHAT_ID + "='" + chat_id + "'", null);
         if (c_ch.moveToFirst()) {
+            int idCollumn = c_ch.getColumnIndex("id");
             int idFromCollumn = c_ch.getColumnIndex(SQLMessager.MESSAGER_FROM_ID);
             int idToCollumn = c_ch.getColumnIndex(SQLMessager.MESSAGER_TO_ID);
             int idMessageCollumn = c_ch.getColumnIndex(SQLMessager.MESSAGER_MESSAG);
             int attacmentCollumn = c_ch.getColumnIndex(SQLMessager.MESSAGER_ATTACHMENT);
             int durationCollumn = c_ch.getColumnIndex(SQLMessager.MESSAGER_DURATION);
+            int createdCollumn = c_ch.getColumnIndex(SQLMessager.MESSAGER_CREATED);
             do {
                 MessagInfo result_sql = new MessagInfo();
+                result_sql.id_messege = c_ch.getInt(idCollumn);
                 result_sql.id_from = c_ch.getString(idFromCollumn);
                 result_sql.id_to = c_ch.getString(idToCollumn);
                 result_sql.message = c_ch.getString(idMessageCollumn);
                 result_sql.attachment = c_ch.getString(attacmentCollumn);
                 result_sql.duration = c_ch.getString(durationCollumn);
+                result_sql.created = c_ch.getString(createdCollumn);
                 adapter.add(result_sql);
             } while (c_ch.moveToNext());
 
@@ -173,14 +192,26 @@ public class ChatItemActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 laySelectPhoto.setVisibility(View.GONE);
-                if (Build.VERSION.SDK_INT >= 19) {
-                    Intent intent = new Intent(
-                            MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intent, REQUEST_TAKE_PHOTO);
-                } else {
-                    Intent intent = new Intent(
-                            "android.media.action.IMAGE_CAPTURE");
-                    startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+                photoButtom = 1;
+                mUri = generateFileUri();
+                if (mUri == null) {
+                    Toast.makeText(ChatItemActivity.this, "SD card not available", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if (Build.VERSION.SDK_INT >= 23) {
+                    if (ActivityCompat.checkSelfPermission(ChatItemActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                        ActivityCompat.checkSelfPermission(ChatItemActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                        ActivityCompat.checkSelfPermission(ChatItemActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                        requestCameraPermission();
+
+                    }
+                    else {
+                        PhotoTakePhoto();
+                    }
+                }
+                else {
+                    PhotoTakePhoto();
                 }
             }
         });
@@ -190,28 +221,81 @@ public class ChatItemActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 laySelectPhoto.setVisibility(View.GONE);
-                if (Build.VERSION.SDK_INT >= 19) {
-                    Intent intent1 = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    intent1.addCategory(Intent.CATEGORY_OPENABLE);
-                    intent1.setType("image/jpeg");
-                    startActivityForResult(intent1,
-                            GALLERY_KITKAT_INTENT_CALLED);
-                } else {
-                    Intent intent = new Intent();
-                    intent.setType("image/*");
-                    intent.setAction(Intent.ACTION_PICK);
-                    startActivityForResult(Intent.createChooser(intent,
-                            "Complete action using"), REQUEST_CHOOSE_EXISTING);
+                photoButtom = 2;
+                if (Build.VERSION.SDK_INT >= 23) {
+                    if (ActivityCompat.checkSelfPermission(ChatItemActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                            ActivityCompat.checkSelfPermission(ChatItemActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                            ActivityCompat.checkSelfPermission(ChatItemActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                        requestCameraPermission();
+
+                    }
+                    else {
+                        PhotoChooseExisting();
+                    }
+                }
+                else {
+                    PhotoChooseExisting();
                 }
             }
         });
+    }
 
+    private void PhotoTakePhoto() {
+        if (Build.VERSION.SDK_INT >= 19) {
+            Intent intent = new Intent(
+                    MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, mUri);
+            startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+        } else {
+            Intent intent = new Intent(
+                    "android.media.action.IMAGE_CAPTURE");
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, mUri);
+            startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+        }
+    }
+
+    private void PhotoChooseExisting() {
+        if (Build.VERSION.SDK_INT >= 19) {
+            Intent intent1 = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent1.addCategory(Intent.CATEGORY_OPENABLE);
+            intent1.setType("image/jpeg");
+            startActivityForResult(intent1,
+                    GALLERY_KITKAT_INTENT_CALLED);
+        } else {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_PICK);
+            startActivityForResult(Intent.createChooser(intent,
+                    "Complete action using"), REQUEST_CHOOSE_EXISTING);
+        }
+    }
+
+    private void requestCameraPermission() {
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA) ||
+            ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE) ||
+            ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+            Snackbar.make(mLayout, R.string.permission_camera_rationale,
+                    Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ActivityCompat.requestPermissions(ChatItemActivity.this, PermisionLocation, RequestLocationId);
+                        }
+                    })
+                    .show();
+        } else {
+            ActivityCompat.requestPermissions(this, PermisionLocation, RequestLocationId);
+        }
     }
 
     private void SendMessage() {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         formattedDate = df.format(cal.getTime());
+        long id = 0;
         if (!formattedDate.trim().toString().equals("")) {
             if (chat_id != 0) {
                 ContentValues cv_ms = new ContentValues();
@@ -225,7 +309,7 @@ public class ChatItemActivity extends AppCompatActivity {
                     cv_ms.put(SQLMessager.MESSAGER_DURATION, duration);
                 }
                 cv_ms.put(SQLMessager.MESSAGER_SERVER, "1");
-                db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
+                id = db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
             } else {
                 String title = null;
                 Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE " + SQLMessager.CONTACTS_USER_ID + "='" + user_id_from + "'", null);
@@ -238,7 +322,8 @@ public class ChatItemActivity extends AppCompatActivity {
                 JSONObject itemJs = new JSONObject();
                 try {
                     itemJs.put("user_id", user_id_from.toString());
-                } catch (JSONException e) {
+                }
+                catch (JSONException e) {
                     e.printStackTrace();
                 }
                 arrayUser.put(itemJs);
@@ -261,25 +346,28 @@ public class ChatItemActivity extends AppCompatActivity {
                         cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, filepath);
                         cv_ms.put(SQLMessager.MESSAGER_DURATION, duration);
                     }
-                    db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
+                    id = db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
                 }
             }
-            new setMessagerTask().execute();
             MessagInfo result_sql = new MessagInfo();
+            result_sql.id_messege = (int)id;
             result_sql.id_from = user_id_from.toString();
             result_sql.id_to = HttpConnectRecive.getUserId(ChatItemActivity.this);
             result_sql.message = textMessages.getText().toString();
+            result_sql.type_chat = type_chat;
             result_sql.created = formattedDate;
             if (selected_bitmap != null) {
                 result_sql.attachment = filepath;
                 result_sql.duration = duration;
             }
+            new setMessagerTask().execute(result_sql);
             adapter.add(result_sql);
             textMessages.setText("");
             adapter.notifyDataSetChanged();
             scrollDown();
             photo_witch = 0;
             selected_bitmap = null;
+            photoButtom = 0;
             imageView.setVisibility(View.GONE);
         }
     }
@@ -292,15 +380,15 @@ public class ChatItemActivity extends AppCompatActivity {
                 while (!stopped) {
                     // Активность списка
                     runOnUiThread(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                new getMessegTask().execute();
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    new getMessegTask().execute();
+                                }
                             }
-                        }
                     );
                     try {
-                        Thread.sleep(5000);
+                        Thread.sleep(1000);
                     } catch (Exception e) {
                     }
                 }
@@ -308,6 +396,7 @@ public class ChatItemActivity extends AppCompatActivity {
             }
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -336,8 +425,7 @@ public class ChatItemActivity extends AppCompatActivity {
                     anim.reset();
                     laySelectPhoto.clearAnimation();
                     laySelectPhoto.startAnimation(anim);
-                }
-                else {
+                } else {
                     laySelectPhoto.setVisibility(View.GONE);
                 }
                 break;
@@ -345,7 +433,7 @@ public class ChatItemActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    class setMessagerTask extends AsyncTask<String, String, MessagInfo> {
+    class setMessagerTask extends AsyncTask<MessagInfo, String, MessagInfo> {
 
         protected void onPreExecute() {
             super.onPreExecute();
@@ -353,17 +441,11 @@ public class ChatItemActivity extends AppCompatActivity {
         }
 
         @SuppressWarnings("static-access")
-        protected MessagInfo doInBackground(String... params) {
-            MessagInfo item_msg = new MessagInfo();
-            item_msg.id_from = user_id_from.toString();
-            item_msg.message = textMessages.getText().toString();
-            item_msg.type_chat = type_chat;
-            item_msg.created = formattedDate;
-            if (selected_bitmap != null) {
-                item_msg.attachment = filepath;
-                item_msg.duration = duration;
+        protected MessagInfo doInBackground(MessagInfo... params) {
+            MessagInfo result = null;
+            if (params != null) {
+                result = HttpConnectRecive.getInstance().setMessage(ChatItemActivity.this, params[0], photo_witch);
             }
-            MessagInfo result = HttpConnectRecive.setMessage(ChatItemActivity.this, item_msg, photo_witch);
             return result;
         }
 
@@ -382,7 +464,7 @@ public class ChatItemActivity extends AppCompatActivity {
 
         @SuppressWarnings("static-access")
         protected List<MessagInfo> doInBackground(String... params) {
-            List<MessagInfo> result = HttpConnectRecive.getMessage(ChatItemActivity.this, user_id_from.toString());
+            List<MessagInfo> result = HttpConnectRecive.getInstance().getMessage(ChatItemActivity.this, user_id_from.toString());
             return result;
         }
 
@@ -397,13 +479,16 @@ public class ChatItemActivity extends AppCompatActivity {
                     cv_ms.put(SQLMessager.MESSAGER_SERVER, "0");
                     cv_ms.put(SQLMessager.MESSAGER_ATTACHMENT, item.attachment);
                     cv_ms.put(SQLMessager.MESSAGER_DURATION, item.duration);
-                    db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
+                    cv_ms.put(SQLMessager.MESSAGER_CREATED, item.created);
+                    long id = db.insert(SQLMessager.TABLE_MESSAGER, null, cv_ms);
                     MessagInfo result_sql = new MessagInfo();
+                    result_sql.id_messege = (int)id;
                     result_sql.id_from = item.id_from;
                     result_sql.id_to = item.id_to;
                     result_sql.message = item.message;
                     result_sql.attachment = item.attachment;
                     result_sql.duration = item.duration;
+                    result_sql.created = item.created;
                     adapter.add(result_sql);
 
                 }
@@ -425,9 +510,9 @@ public class ChatItemActivity extends AppCompatActivity {
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
             return null;
 
-        File path = new File (Environment.getExternalStorageDirectory(), "LogsMesager");
-        if (! path.exists()){
-            if (! path.mkdirs()){
+        File path = new File(Environment.getExternalStorageDirectory(), "LogsMesager");
+        if (!path.exists()) {
+            if (!path.mkdirs()) {
                 return null;
             }
         }
@@ -437,14 +522,34 @@ public class ChatItemActivity extends AppCompatActivity {
         return Uri.fromFile(newFile);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == RequestLocationId) {
+            if (Utils.verifyPermissions(grantResults)) {
+                Snackbar.make(mLayout, R.string.permision_available_camera, Snackbar.LENGTH_SHORT).show();
+                if (photoButtom == 1) {
+                    PhotoTakePhoto();
+                }
+                else if (photoButtom == 2) {
+                    PhotoChooseExisting();
+                }
+            } else {
+                Snackbar.make(mLayout, R.string.permissions_not_granted, Snackbar.LENGTH_SHORT).show();
+            }
+        }
+        else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @SuppressWarnings("ResourceType")
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         //super.onActivityResult(requestCode, resultCode, data);
         imageView.setVisibility(View.GONE);
-        if(resultCode == Activity.RESULT_OK){
-            if(requestCode == REQUEST_CHOOSE_EXISTING){
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == REQUEST_CHOOSE_EXISTING) {
                 if (data != null) {
                     Uri selectedImage = data.getData();
                     filepath = Utils.getPath(getApplicationContext(), selectedImage);
@@ -460,7 +565,9 @@ public class ChatItemActivity extends AppCompatActivity {
                     if (selected_bitmap != null) {
                         Log.e("PHOTO PATCH: ", filepath + " " + selected_bitmap.toString());
                         imageView.setImageBitmap(selected_bitmap);
-                        DialogDuration();
+                        duration = "0";
+                        photo_witch = 1;
+                        SendMessage();
 
                     }
                 }
@@ -486,7 +593,9 @@ public class ChatItemActivity extends AppCompatActivity {
                     if (selected_bitmap != null) {
                         Log.e("PHOTO PATCH: ", filepath + " " + selected_bitmap.toString());
                         imageView.setImageBitmap(selected_bitmap);
-                        DialogDuration();
+                        duration = "0";
+                        photo_witch = 1;
+                        SendMessage();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -494,31 +603,29 @@ public class ChatItemActivity extends AppCompatActivity {
 
             }
 
-            if(requestCode == REQUEST_TAKE_PHOTO){
-                Bitmap imageData = (Bitmap) data.getExtras().get("data");
-                Uri selectedImage = getImageUri(ChatItemActivity.this,
-                        imageData);
-                filepath = Utils.getPath(getApplicationContext(),
-                        selectedImage);
-                /*if (Build.VERSION.SDK_INT < 19)
-                    performCrop(selectedImage);*/
-                selected_bitmap = (Bitmap) data.getExtras().get(
-                        "data");
+            if (requestCode == REQUEST_TAKE_PHOTO) {
+                filepath = mUri.getPath();
+
+                selected_bitmap = BitmapFactory.decodeFile(filepath);
                 if (selected_bitmap != null) {
                     Log.e("PHOTO PATCH: ", filepath + " " + selected_bitmap.toString());
                     imageView.setImageBitmap(selected_bitmap);
-                    DialogDuration();
+                    duration = "0";
+                    photo_witch = 1;
+                    SendMessage();
                 }
             }
 
-            if(requestCode == REQUEST_CROP_IMAGE){
+            if (requestCode == REQUEST_CROP_IMAGE) {
                 Bundle extras = data.getExtras();
                 Bitmap selectedBitmap = extras.getParcelable("data");
                 filepath = Environment.getExternalStorageDirectory() + filename;
                 Bitmap thumbnail = BitmapFactory.decodeFile(filepath);
                 selectedBitmap = thumbnail;
                 if (selectedBitmap != null) {
-                    DialogDuration();
+                    duration = "0";
+                    photo_witch = 1;
+                    SendMessage();
                 }
             }
 
@@ -570,7 +677,7 @@ public class ChatItemActivity extends AppCompatActivity {
         }
     }
 
-    private void DialogDuration () {
+    /*private void DialogDuration() {
         final Dialog dialog = new Dialog(ChatItemActivity.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_duration);
@@ -584,7 +691,8 @@ public class ChatItemActivity extends AppCompatActivity {
         seekbar.setOnSeekBarChangeListener(new CircularSeekBar.OnCircularSeekBarChangeListener() {
             @Override
             public void onProgressChanged(CircularSeekBar circularSeekBar, int progress, boolean fromUser) {
-                txtSecondV.setText(circularSeekBar.getProgress() + "");            }
+                txtSecondV.setText(circularSeekBar.getProgress() + "");
+            }
 
             @Override
             public void onStopTrackingTouch(CircularSeekBar seekBar) {
@@ -610,6 +718,6 @@ public class ChatItemActivity extends AppCompatActivity {
         });
 
         dialog.show();
-    }
+    }*/
 
 }

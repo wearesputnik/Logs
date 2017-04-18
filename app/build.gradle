@@ -1,15 +1,23 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
-
+    compileSdkVersion 23
+    buildToolsVersion '23.0.2'
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/LICENSE.txt'
+    }
     defaultConfig {
         applicationId "mobi.kolibri.messager"
         minSdkVersion 15
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        manifestPlaceholders = [onesignal_app_id               : "8760fba4-edf2-44b4-bf2c-24de6e706078",
+                                onesignal_google_project_number: "1049540626607"]
     }
     buildTypes {
         release {
@@ -17,15 +25,29 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+    }
+}
+
+repositories {
+    maven { url 'http://clojars.org/repo' }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile files('libs/httpmime-4.2.5.jar')
     compile project(':universalimageloader')
     compile project(':cropimage')
-    compile fileTree(dir: 'libs', include: 'Parse-*.jar')
-    compile 'com.android.support:appcompat-v7:22.2.1'
-    compile 'com.parse.bolts:bolts-android:1.+'
-    compile 'com.android.support:design:22.2.1'
+    compile files('libs/httpmime-4.3.5.jar')
+    compile files('libs/httpcore-4.3.2.jar')
+    compile files('libs/httpclient-4.3.5.jar')
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:design:23.4.0'
+    compile 'com.pusher:pusher-java-client:1.0.0'
+    compile 'com.google.code.gson:gson:2.2.4'
+    compile 'com.onesignal:OneSignal:3.+@aar'
+    compile 'com.google.android.gms:play-services-gcm:9.4.0'
+    compile 'com.google.android.gms:play-services-location:9.4.0'
 }
+
+
+apply plugin: 'com.google.gms.google-services'

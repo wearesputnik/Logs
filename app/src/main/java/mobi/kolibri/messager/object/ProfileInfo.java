@@ -11,6 +11,7 @@ public class ProfileInfo {
     public String phone;
     public String photo;
     public String summary;
+    public String user_id;
 
     public static ProfileInfo parseJson(JSONObject json) {
         ProfileInfo result = new ProfileInfo();
@@ -20,6 +21,7 @@ public class ProfileInfo {
             result.phone = json.getString("phone");
             result.photo = json.getString("photo");
             result.summary = json.getString("summary");
+            result.user_id = json.getString("user_id");
             return result;
         }
         catch(Exception e) {

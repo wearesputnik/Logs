@@ -94,6 +94,7 @@ public class CircleItemActivity extends AppCompatActivity {
                 Cursor c_con = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE id=" + c.getInt(idcontCollumn), null);
                 if (c_con.moveToFirst()) {
                     int ideCollumn = c_con.getColumnIndex("id");
+                    int userideCollumn = c_con.getColumnIndex(SQLMessager.CONTACTS_USER_ID);
                     int nameCollumn = c_con.getColumnIndex(SQLMessager.CONTACTS_NAME);
                     int phoneCollumn = c_con.getColumnIndex(SQLMessager.CONTACTS_PHONE);
                     int photoCollumn = c_con.getColumnIndex(SQLMessager.CONTACTS_PHOTO);
@@ -101,6 +102,7 @@ public class CircleItemActivity extends AppCompatActivity {
 
                     ContactInfo result_sql = new ContactInfo();
                     result_sql.id_db = c_con.getInt(ideCollumn);
+                    result_sql.user_id = c_con.getInt(userideCollumn);
                     result_sql.name = c_con.getString(nameCollumn);
                     result_sql.phone = c_con.getString(phoneCollumn);
                     result_sql.photo = c_con.getString(photoCollumn);
@@ -141,6 +143,7 @@ public class CircleItemActivity extends AppCompatActivity {
                 Cursor c_con = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE id=" + c.getInt(idcontCollumn), null);
                 if (c_con.moveToFirst()) {
                     int ideCollumn = c_con.getColumnIndex("id");
+                    int userideCollumn = c_con.getColumnIndex(SQLMessager.CONTACTS_USER_ID);
                     int nameCollumn = c_con.getColumnIndex(SQLMessager.CONTACTS_NAME);
                     int phoneCollumn = c_con.getColumnIndex(SQLMessager.CONTACTS_PHONE);
                     int photoCollumn = c_con.getColumnIndex(SQLMessager.CONTACTS_PHOTO);
@@ -148,6 +151,7 @@ public class CircleItemActivity extends AppCompatActivity {
 
                     ContactInfo result_sql = new ContactInfo();
                     result_sql.id_db = c_con.getInt(ideCollumn);
+                    result_sql.user_id = c_con.getInt(userideCollumn);
                     result_sql.name = c_con.getString(nameCollumn);
                     result_sql.phone = c_con.getString(phoneCollumn);
                     result_sql.photo = c_con.getString(photoCollumn);
@@ -330,6 +334,7 @@ public class CircleItemActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         Intent i = new Intent(CircleItemActivity.this, ContactProfileActivity.class);
                         i.putExtra("user_id", item.id_db);
+                        i.putExtra("server", "1");
                         startActivity(i);
                     }
                 });

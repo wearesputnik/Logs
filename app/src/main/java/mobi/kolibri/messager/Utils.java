@@ -3,6 +3,7 @@ package mobi.kolibri.messager;
 import android.annotation.TargetApi;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -162,5 +163,19 @@ public class Utils {
                 .openInputStream(uri), null, o2);
     }
 
+    public static boolean verifyPermissions(int[] grantResults) {
+        // At least one result must be checked.
+        if(grantResults.length < 1){
+            return false;
+        }
+
+        // Verify that each required permission has been granted, otherwise return false.
+        for (int result : grantResults) {
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 }

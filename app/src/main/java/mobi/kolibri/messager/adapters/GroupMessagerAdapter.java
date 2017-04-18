@@ -1,11 +1,19 @@
 package mobi.kolibri.messager.adapters;
 
+import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.CountDownTimer;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -17,12 +25,15 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingProgressListener;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import mobi.kolibri.messager.R;
 import mobi.kolibri.messager.http.HttpConnectRecive;
 import mobi.kolibri.messager.object.GroupMessagerInfo;
+import mobi.kolibri.messager.object.SQLMessager;
 
 /**
  * Created by root on 23.09.15.
@@ -31,7 +42,11 @@ public class GroupMessagerAdapter extends ArrayAdapter<GroupMessagerInfo> {
     List<GroupMessagerInfo> listItem;
     Context contV;
     String user_id;
+    Bitmap m_currentBitmap;
+    SQLMessager sqlMessager;
+    SQLiteDatabase db;
     private DisplayImageOptions options;
+    private HashMap<TextView,CountDownTimer> counters;
 
     public GroupMessagerAdapter (Context context, String user_id_A) {
         super(context, 0);
@@ -47,6 +62,9 @@ public class GroupMessagerAdapter extends ArrayAdapter<GroupMessagerInfo> {
                 .considerExifParams(true)
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
+        this.counters = new HashMap<TextView, CountDownTimer>();
+        sqlMessager = new SQLMessager(context);
+        db = sqlMessager.getWritableDatabase();
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -60,8 +78,12 @@ public class GroupMessagerAdapter extends ArrayAdapter<GroupMessagerInfo> {
             ViewHolder holder = new ViewHolder();
             holder.rlToMessager = (RelativeLayout) v.findViewById(R.id.rlToMessager);
             holder.rlFromMesseger = (RelativeLayout) v.findViewById(R.id.rlFromMesseger);
+            holder.relativeLayoutName = (RelativeLayout) v.findViewById(R.id.relativeLayoutName);
+            holder.textViewName = (TextView) v.findViewById(R.id.textViewName);
             holder.textToMessager = (TextView) v.findViewById(R.id.textToMessager);
             holder.textFromMessager = (TextView) v.findViewById(R.id.textFromMessager);
+            holder.textViewTimeTo = (TextView) v.findViewById(R.id.textViewTimeTo);
+            holder.textViewTimeFrom = (TextView) v.findViewById(R.id.textViewTimeFrom);
             holder.messagePhoto1 = (ImageView) v.findViewById(R.id.messagePhoto1);
             holder.messagePhoto2 = (ImageView) v.findViewById(R.id.messagePhoto2);
             v.setTag(holder);
@@ -71,12 +93,19 @@ public class GroupMessagerAdapter extends ArrayAdapter<GroupMessagerInfo> {
 
         if (item.id_from.equals(user_id)) {
             holder.rlToMessager.setVisibility(View.VISIBLE);
+            holder.relativeLayoutName.setVisibility(View.VISIBLE);
             holder.rlFromMesseger.setVisibility(View.GONE);
             holder.textToMessager.setText(item.message);
+            holder.textViewTimeTo.setText(item.created);
             holder.messagePhoto2.setVisibility(View.GONE);
+            Cursor c_ch = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE " + SQLMessager.CONTACTS_USER_ID + "='" + item.id_to + "'", null);
+            if (c_ch.moveToFirst()) {
+                int nameCollumn = c_ch.getColumnIndex(SQLMessager.CONTACTS_NAME);
+                holder.textViewName.setText(c_ch.getString(nameCollumn));
+            }
             if (item.attachment != null) {
                 holder.messagePhoto2.setVisibility(View.VISIBLE);
-                ///holder.messagePhoto1.setImageBitmap(BitmapFactory.decodeFile(item.attachment));
+
                 String url_img = HttpConnectRecive.URLP + item.attachment;
                 ImageLoader.getInstance()
                         .displayImage(url_img, holder.messagePhoto2, options, new SimpleImageLoadingListener() {
@@ -92,7 +121,14 @@ public class GroupMessagerAdapter extends ArrayAdapter<GroupMessagerInfo> {
 
                             @Override
                             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-
+                                if (!item.duration.equals("5")) {
+                                    if (getImageUri(contV, loadedImage) != null) {
+                                        item.duration = "5";
+                                        ContentValues cv_ms = new ContentValues();
+                                        cv_ms.put(SQLMessager.MESSAGER_DURATION, "5");
+                                        db.update(SQLMessager.TABLE_MESSAGER, cv_ms, "id=?", new String[]{"" + item.id_messege});
+                                    }
+                                }
                             }
                         }, new ImageLoadingProgressListener() {
                             @Override
@@ -100,28 +136,169 @@ public class GroupMessagerAdapter extends ArrayAdapter<GroupMessagerInfo> {
 
                             }
                         });
+                holder.messagePhoto2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final Dialog dialog = new Dialog(contV);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        dialog.setContentView(R.layout.dialog_chat_photo);
+                        final ImageView imgPhotoChat = (ImageView) dialog.findViewById(R.id.imageView7);
+
+                        if (item.attachment != null) {
+                            String url_img = HttpConnectRecive.URLP + item.attachment;
+                            ImageLoader.getInstance()
+                                    .displayImage(url_img, imgPhotoChat, options, new SimpleImageLoadingListener() {
+                                        @Override
+                                        public void onLoadingStarted(String imageUri, View view) {
+
+                                        }
+
+                                        @Override
+                                        public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+
+                                        }
+
+                                        @Override
+                                        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+
+
+                                        }
+                                    }, new ImageLoadingProgressListener() {
+                                        @Override
+                                        public void onProgressUpdate(String imageUri, View view, int current, int total) {
+
+                                        }
+                                    });
+                        }
+                        else {
+                            dialog.dismiss();
+                        }
+
+                        imgPhotoChat.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                imgPhotoChat.setImageBitmap(null);
+                                notifyDataSetChanged();
+                                dialog.dismiss();
+                            }
+                        });
+                        dialog.show();
+                    }
+                });
             }
 
         }
         else {
             holder.rlToMessager.setVisibility(View.GONE);
+            holder.relativeLayoutName.setVisibility(View.GONE);
             holder.rlFromMesseger.setVisibility(View.VISIBLE);
             holder.textFromMessager.setText(item.message);
+            holder.textViewTimeFrom.setText(item.created);
             holder.messagePhoto1.setVisibility(View.GONE);
             if (item.attachment != null) {
                 holder.messagePhoto1.setVisibility(View.VISIBLE);
-                holder.messagePhoto1.setImageBitmap(BitmapFactory.decodeFile(item.attachment));
+                holder.messagePhoto1.setImageBitmap(LoadBitmap(item.attachment, m_currentBitmap, 800, 350));
+                holder.messagePhoto1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final Dialog dialog = new Dialog(contV);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        dialog.setContentView(R.layout.dialog_chat_photo);
+                        final ImageView imgPhotoChat = (ImageView) dialog.findViewById(R.id.imageView7);
+
+                        if (item.attachment != null) {
+                            imgPhotoChat.setImageBitmap(LoadBitmapFull(item.attachment, m_currentBitmap));
+                        }
+                        else {
+                            dialog.dismiss();
+                        }
+
+                        imgPhotoChat.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                imgPhotoChat.setImageURI(null);
+                                dialog.dismiss();
+                            }
+                        });
+                        dialog.show();
+                    }
+                });
             }
         }
 
         return v;
     }
 
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(),
+                inImage, "LogsMesager", null);
+        return Uri.parse(path);
+    }
+
+    private static Bitmap LoadBitmapFull(String localPath, Bitmap bitmapToReuse)
+    {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(localPath, options);
+
+        options.inJustDecodeBounds = false;
+        options.inMutable = true;
+        options.inBitmap = bitmapToReuse;
+
+        Bitmap newBitmap = BitmapFactory.decodeFile(localPath, options);
+
+        return newBitmap;
+    }
+
+    private static Bitmap LoadBitmap(String localPath, Bitmap bitmapToReuse, int width, int height)
+    {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(localPath, options);
+
+        options.inSampleSize = CalculateInSampleSize(options, width, height);
+        options.inJustDecodeBounds = false;
+        options.inMutable = true;
+        options.inBitmap = bitmapToReuse;
+
+        Bitmap newBitmap = BitmapFactory.decodeFile(localPath, options);
+
+       /* if (bitmapToReuse != null && bitmapToReuse.handle != IntPtr.Zero && !bitmapToReuse.isRecycled && bitmapToReuse != newBitmap)
+        {
+            bitmapToReuse.recycle();
+            bitmapToReuse.dispose();
+            bitmapToReuse = null;
+        }*/
+
+        return newBitmap;
+    }
+
+    private static int CalculateInSampleSize(BitmapFactory.Options options, int maxWidth, int maxHeight)
+    {
+        int actualHeight = options.outHeight;
+        int actualWidth = options.outWidth;
+        int inSampleSize = 1;
+
+        if (actualHeight > maxHeight || actualWidth > maxWidth)
+        {
+            while ((actualHeight / inSampleSize) > maxHeight && (actualWidth / inSampleSize) > maxWidth)
+                inSampleSize *= 2;
+        }
+
+        return inSampleSize;
+    }
+
     class ViewHolder {
         RelativeLayout rlToMessager;
         RelativeLayout rlFromMesseger;
+        RelativeLayout relativeLayoutName;
+        TextView textViewName;
         TextView textToMessager;
         TextView textFromMessager;
+        TextView textViewTimeTo;
+        TextView textViewTimeFrom;
         ImageView messagePhoto1;
         ImageView messagePhoto2;
     }

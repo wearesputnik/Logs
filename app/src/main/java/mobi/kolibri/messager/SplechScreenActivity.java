@@ -6,10 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
-import mobi.kolibri.messager.helper.ParseUtils;
-import mobi.kolibri.messager.helper.PrefManager;
 import mobi.kolibri.messager.http.HttpConnectRecive;
 import mobi.kolibri.messager.object.SQLMessager;
 
@@ -31,8 +28,6 @@ public class SplechScreenActivity extends AppCompatActivity {
             final int useridColIndex = ca.getColumnIndex(sqlMessager.USER_ID);
 
             HttpConnectRecive.api_key = ca.getString(appidColIndex);
-
-            ParseUtils.verifyParseConfiguration(this);
 
             new Handler().postDelayed(new Runnable() {
                 @Override

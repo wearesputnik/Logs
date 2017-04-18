@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     tools:context="mobi.kolibri.messager.activity.ChatItemActivity"
-    android:background="#ebe4ec">
+    android:background="#ebe4ec"
+    android:id="@+id/main_layout">
 
     <include layout="@layout/tollbar"
         android:id="@+id/toolbar"/>
@@ -72,14 +73,14 @@
             android:paddingRight="40dp"
             android:paddingTop="40dp"
             android:paddingBottom="40dp"
-            android:id="@+id/linearLayout4"
-            android:visibility="gone" >
+            android:id="@+id/laySelectPhoto"
+            android:visibility="gone">
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="40dp" >
+                android:layout_marginRight="40dp">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -92,7 +93,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Galery"
-                    android:id="@+id/textView14"
+                    android:id="@+id/textView12"
                     android:layout_marginTop="10dp"
                     android:textColor="#000"
                     android:textSize="16dp"
@@ -102,7 +103,7 @@
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -115,12 +116,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Photo"
-                    android:id="@+id/textView15"
+                    android:id="@+id/textView13"
                     android:layout_marginTop="10dp"
                     android:textColor="#000"
                     android:textSize="16dp"
                     android:layout_gravity="center_horizontal" />
             </LinearLayout>
+
         </LinearLayout>
 
     </RelativeLayout>

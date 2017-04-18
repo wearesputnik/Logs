@@ -99,7 +99,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         @SuppressWarnings("static-access")
         protected ProfileInfo doInBackground(String... params) {
-            ProfileInfo result = HttpConnectRecive.getProfile(ProfileActivity.this);
+            ProfileInfo result = HttpConnectRecive.getInstance().getProfile(ProfileActivity.this);
             return result;
         }
 

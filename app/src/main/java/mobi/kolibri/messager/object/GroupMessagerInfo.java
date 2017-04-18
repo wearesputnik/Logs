@@ -6,6 +6,7 @@ import org.json.JSONObject;
  * Created by root on 23.09.15.
  */
 public class GroupMessagerInfo {
+    public Integer id_messege;
     public String id_from;
     public String id_to;
     public String name_to;
@@ -16,6 +17,7 @@ public class GroupMessagerInfo {
     public String attachment;
     public String duration;
     public String created;
+    public String server;
 
     public static GroupMessagerInfo parseJson(JSONObject json) {
         GroupMessagerInfo result = new GroupMessagerInfo();

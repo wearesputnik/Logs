@@ -9,13 +9,17 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -31,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import mobi.kolibri.messager.UILApplication;
 import mobi.kolibri.messager.Utils;
 import mobi.kolibri.messager.object.ContactInfo;
 import mobi.kolibri.messager.object.GroupMessagerInfo;
@@ -39,8 +44,8 @@ import mobi.kolibri.messager.object.ProfileInfo;
 import mobi.kolibri.messager.object.SQLMessager;
 
 public class HttpConnectRecive {
-    public static final String URL = "http://kolibri.mobi/messager/index.php/api/";
-    public static final String URLP = "http://kolibri.mobi/messager";
+    public static final String URL = "http://www.wearesputnik.com/messager/index.php/api/";
+    public static final String URLP = "http://www.wearesputnik.com/messager";
     public static final String REGISTRATION = "create_account";
     public static final String LOGIN = "account_login";
     public static final String ACTIVATION = "activate";
@@ -53,10 +58,29 @@ public class HttpConnectRecive {
     public static final String SET_GROUP_MESSAGER = "set_group_messeger";
     public static final String GET_GROUP_MESSAGER = "get_group_messager";
     public static final String STATUS_USERS = "online_users";
+    public static final String GET_GLOBAL_SEARCH = "get_global_search";
+    public static final String GET_PROFILE_SERVER = "get_profile_server";
     public static HttpClient http;
     public static String api_key = null;
 
     public static SQLMessager sqlMessager;
+
+    private HttpConnectRecive() {
+        http = new DefaultHttpClient();
+        ClientConnectionManager mgr = http.getConnectionManager();
+        HttpParams params = http.getParams();
+        http = new DefaultHttpClient(new ThreadSafeClientConnManager(params,
+                mgr.getSchemeRegistry()), params);
+    }
+
+    public static HttpConnectRecive getInstance() {
+        synchronized (HttpConnectRecive.class) {
+            if (UILApplication.restInstance == null) {
+                UILApplication.restInstance = new HttpConnectRecive();
+            }
+        }
+        return UILApplication.restInstance;
+    }
 
     public static String getApiKey(Context c) {
         String result = "";
@@ -67,6 +91,19 @@ public class HttpConnectRecive {
         if (ca.moveToFirst()) {
             int appidColIndex = ca.getColumnIndex(sqlMessager.APP_ID);
             result = ca.getString(appidColIndex);
+        }
+        return result;
+    }
+
+    public static String getPlayerId(Context c) {
+        String result = "";
+        sqlMessager = new SQLMessager(c);
+
+        SQLiteDatabase db = sqlMessager.getWritableDatabase();
+        Cursor ca = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_APP_ID, null);
+        if (ca.moveToFirst()) {
+            int playeridColIndex = ca.getColumnIndex(sqlMessager.PLAYER_ID);
+            result = ca.getString(playeridColIndex);
         }
         return result;
     }
@@ -86,11 +123,6 @@ public class HttpConnectRecive {
 
     public static Integer CreateAccaunt(String email, String password, String phone) {
         Integer user_id = 0;
-
-        http = new DefaultHttpClient();
-        ClientConnectionManager mgr = http.getConnectionManager();
-        HttpParams params = http.getParams();
-        http = new DefaultHttpClient(new ThreadSafeClientConnManager(params, mgr.getSchemeRegistry()), params);
         HttpPost request = new HttpPost(URL + REGISTRATION);
 
         List<BasicNameValuePair> parameters = Arrays.asList(
@@ -121,13 +153,12 @@ public class HttpConnectRecive {
 
     public static String Activation(Integer id, String key) {
         String result = "";
-
-        ServiceHandler sh = new ServiceHandler();
-
-        String jsonStr = sh.makeServiceCall(URL + ACTIVATION + "?id=" + id + "&key=" + key, ServiceHandler.GET);
-        Log.e("ACTIVATION: ", "=> " + jsonStr);
+        HttpGet request = new HttpGet(URL + ACTIVATION + "?id=" + id + "&key=" + key);
 
         try {
+            HttpResponse response = http.execute(request);
+            String jsonStr = Utils.streamToString(response.getEntity().getContent());
+            Log.e("ACTIVATION: ", "=> " + jsonStr);
             JSONObject json = new JSONObject(jsonStr);
             JSONObject result_json = json.getJSONObject("result");
             result = result_json.getString("app_key");
@@ -143,10 +174,6 @@ public class HttpConnectRecive {
     public static String Login(String login, String password, Context context) {
         String result = "";
 
-        http = new DefaultHttpClient();
-        ClientConnectionManager mgr = http.getConnectionManager();
-        HttpParams params = http.getParams();
-        http = new DefaultHttpClient(new ThreadSafeClientConnManager(params, mgr.getSchemeRegistry()), params);
         HttpPost request = new HttpPost(URL + LOGIN);
 
         List<BasicNameValuePair> parameters = Arrays.asList(
@@ -159,8 +186,7 @@ public class HttpConnectRecive {
                     "UTF-8");
             request.setEntity(form);
             HttpResponse response = http.execute(request);
-            String jsonStr = Utils.streamToString(response
-                    .getEntity().getContent());
+            String jsonStr = Utils.streamToString(response.getEntity().getContent());
             Log.e("LOGIN_ACCAUNT", jsonStr);
             JSONObject json = new JSONObject(jsonStr);
             Integer status = json.getInt("status");
@@ -173,7 +199,6 @@ public class HttpConnectRecive {
                 cv.put(SQLMessager.APP_ID, result_json.getString("app_key"));
                 cv.put(SQLMessager.USER_ID, result_json.getString("user_id"));
                 db.insert(SQLMessager.TABLE_APP_ID, null, cv);
-
             }
             else {
                 return null;
@@ -190,17 +215,14 @@ public class HttpConnectRecive {
     public static ProfileInfo getProfile(Context c) {
         ProfileInfo result = new ProfileInfo();
 
-        ServiceHandler sh = new ServiceHandler();
-
-        String jsonStr = sh.makeServiceCall(URL + GET_PROFILE + "?app_key=" + getApiKey(c), ServiceHandler.GET);
-        Log.e("GET_PROFILE ", "=> " + jsonStr);
-        Log.e("URL ", URL + GET_PROFILE + "?app_key=" + getApiKey(c));
-
+        HttpGet request = new HttpGet(URL + GET_PROFILE + "?app_key=" + getApiKey(c) + "&playerId=" + getPlayerId(c));
+        Log.e("LOGIN_ACCAUNT", URL + GET_PROFILE + "?app_key=" + getApiKey(c) + "&playerId=" + getPlayerId(c));
         try {
+            HttpResponse response = http.execute(request);
+            String jsonStr = Utils.streamToString(response.getEntity().getContent());
+            Log.e("LOGIN_ACCAUNT", jsonStr);
             JSONObject json = new JSONObject(jsonStr);
-
             result = ProfileInfo.parseJson(json.getJSONObject("result"));
-
             return result;
         }
         catch (Exception e) {
@@ -211,13 +233,9 @@ public class HttpConnectRecive {
 
     public static ProfileInfo setProfile(Context c, Integer id, ProfileInfo item_form, Integer photo_witch) {
         ProfileInfo result = new ProfileInfo();
-        http = new DefaultHttpClient();
-        ClientConnectionManager mgr = http.getConnectionManager();
-        HttpParams params = http.getParams();
-        http = new DefaultHttpClient(new ThreadSafeClientConnManager(params,
-                mgr.getSchemeRegistry()), params);
-        HttpPost request = new HttpPost(URL + SET_PROFILE + "?user_id=" + id + "&app_key=" + getApiKey(c));
 
+        HttpPost request = new HttpPost(URL + SET_PROFILE + "?user_id=" + getUserId(c) + "&app_key=" + getApiKey(c));
+        //Log.e("SET_PROFILE", URL + SET_PROFILE + "?user_id=" + getUserId(c) + "&app_key=" + getApiKey(c));
         Charset charset = Charset.forName("UTF-8");
         MultipartEntity form = new MultipartEntity(HttpMultipartMode.STRICT);
 
@@ -237,12 +255,12 @@ public class HttpConnectRecive {
 
             request.setEntity(form);
             HttpResponse response = http.execute(request);
+
             String jsonStr = Utils.streamToString(response.getEntity().getContent());
             Log.e("SET_PROFILE", jsonStr);
             JSONObject json = new JSONObject(jsonStr);
 
             result = ProfileInfo.parseJson(json.getJSONObject("result"));
-
 
             return result;
         }
@@ -257,12 +275,12 @@ public class HttpConnectRecive {
 
         sqlMessager = new SQLMessager(c);
 
-        ServiceHandler sh = new ServiceHandler();
-
-        String jsonStr = sh.makeServiceCall(URL + NEW_APPKEY + "?id=" + id, ServiceHandler.GET);
-        Log.e("ACTIVATION ", "=> " + jsonStr);
-
+        HttpGet request = new HttpGet(URL + NEW_APPKEY + "?id=" + id + "&playerId=" + getPlayerId(c));
         try {
+            HttpResponse response = http.execute(request);
+            String jsonStr = Utils.streamToString(response
+                    .getEntity().getContent());
+
             JSONObject json = new JSONObject(jsonStr);
             JSONObject result_json = json.getJSONObject("result");
             result = result_json.getString("app_key");
@@ -270,7 +288,6 @@ public class HttpConnectRecive {
             ContentValues cv = new ContentValues();
             SQLiteDatabase db = sqlMessager.getWritableDatabase();
             cv.put(SQLMessager.APP_ID, result_json.getString("app_key"));
-            //cv.put("id", 1);
             db.update(SQLMessager.TABLE_APP_ID, cv, "id=?", new String[] {"1"});
 
 
@@ -289,10 +306,6 @@ public class HttpConnectRecive {
         ContentValues cv = new ContentValues();
         SQLiteDatabase db = sqlMessager.getWritableDatabase();
 
-        http = new DefaultHttpClient();
-        ClientConnectionManager mgr = http.getConnectionManager();
-        HttpParams params = http.getParams();
-        http = new DefaultHttpClient(new ThreadSafeClientConnManager(params, mgr.getSchemeRegistry()), params);
         HttpPost request = new HttpPost(URL + CONTACT_SERVER + "?app_key=" + getApiKey(c));
 
         List<BasicNameValuePair> parameters = Arrays.asList(
@@ -337,11 +350,6 @@ public class HttpConnectRecive {
     public static MessagInfo setMessage(Context c, MessagInfo item_msg, Integer photo_witch) {
         MessagInfo result = new MessagInfo();
 
-        http = new DefaultHttpClient();
-        ClientConnectionManager mgr = http.getConnectionManager();
-        HttpParams params = http.getParams();
-        http = new DefaultHttpClient(new ThreadSafeClientConnManager(params,
-                mgr.getSchemeRegistry()), params);
         HttpPost request = new HttpPost(URL + SET_MESSAGER + "?app_key=" + getApiKey(c));
 
         Charset charset = Charset.forName("UTF-8");
@@ -352,7 +360,6 @@ public class HttpConnectRecive {
             form.addPart("message", new StringBody(item_msg.message, charset));
             form.addPart("type_chat", new StringBody(item_msg.type_chat, charset));
             form.addPart("created", new StringBody(item_msg.created, charset));
-
 
             if (photo_witch == 1) {
                 form.addPart("photo_witch", new StringBody("" + photo_witch, charset));
@@ -379,7 +386,6 @@ public class HttpConnectRecive {
     public static List<MessagInfo> getMessage(Context c, String user_from) {
         List<MessagInfo> result = new ArrayList<>();
 
-        ServiceHandler sh = new ServiceHandler();
         String jsonStr = "";
         String urlStr = "";
 
@@ -389,11 +395,12 @@ public class HttpConnectRecive {
         else {
             urlStr = URL + GET_MESSAGER + "?user_from=" + user_from + "&app_key=" + getApiKey(c);
         }
-        jsonStr = sh.makeServiceCall(urlStr, ServiceHandler.GET);
-        //Log.e("GET_MESSAGER", urlStr);
-      ///  Log.e("GET_MESSAGER", jsonStr);
+        HttpGet request = new HttpGet(urlStr);;
 
         try {
+            HttpResponse response = http.execute(request);
+            jsonStr = Utils.streamToString(response
+                    .getEntity().getContent());
             if (!jsonStr.equals("")) {
                 JSONObject jsonObject = new JSONObject(jsonStr);
                 JSONArray jsonArray = jsonObject.getJSONArray("result");
@@ -423,10 +430,6 @@ public class HttpConnectRecive {
     public static String setGroupMessage(Context c, GroupMessagerInfo item_msg, Integer photo_witch) {
         String result = null;
 
-        http = new DefaultHttpClient();
-        ClientConnectionManager mgr = http.getConnectionManager();
-        HttpParams params = http.getParams();
-        http = new DefaultHttpClient(new ThreadSafeClientConnManager(params, mgr.getSchemeRegistry()), params);
         HttpPost request = new HttpPost(URL + SET_GROUP_MESSAGER + "?app_key=" + getApiKey(c));
 
         Charset charset = Charset.forName("UTF-8");
@@ -438,6 +441,7 @@ public class HttpConnectRecive {
             form.addPart("chat_name", new StringBody(item_msg.chat_name, charset));
             form.addPart("type_chat", new StringBody(item_msg.type_chat, charset));
             form.addPart("created", new StringBody(item_msg.created, charset));
+            form.addPart("id_db", new StringBody(item_msg.id_messege.toString(), charset));
 
 
             if (photo_witch == 1) {
@@ -454,6 +458,7 @@ public class HttpConnectRecive {
             String jsonStr = Utils.streamToString(response
                     .getEntity().getContent());
             Log.e("SET_GROUP_MESSAGER", jsonStr);
+            result = jsonStr;
 
             return result;
         }
@@ -466,17 +471,17 @@ public class HttpConnectRecive {
     public static List<GroupMessagerInfo> getGroupMessager(Context c) {
         List<GroupMessagerInfo> result = new ArrayList<>();
 
-        ServiceHandler sh = new ServiceHandler();
         String jsonStr = "";
         String urlStr = "";
 
         urlStr = URL + GET_GROUP_MESSAGER + "?app_key=" + getApiKey(c);
 
-        jsonStr = sh.makeServiceCall(urlStr, ServiceHandler.GET);
-        Log.e("GET_GROUP_MESSAGER", urlStr);
-///        Log.e("GET_GROUP_MESSAGER", jsonStr);
+        HttpGet request = new HttpGet(urlStr);
 
         try {
+            HttpResponse response = http.execute(request);
+            jsonStr = Utils.streamToString(response
+                    .getEntity().getContent());
             if (!jsonStr.equals("")) {
                 JSONObject jsonObject = new JSONObject(jsonStr);
                 JSONArray jsonArray = jsonObject.getJSONArray("result");
@@ -506,10 +511,6 @@ public class HttpConnectRecive {
     public static List<GroupMessagerInfo> postGroupMessager(Context c, String json_user) {
         List<GroupMessagerInfo> result = new ArrayList<>();
 
-        http = new DefaultHttpClient();
-        ClientConnectionManager mgr = http.getConnectionManager();
-        HttpParams params = http.getParams();
-        http = new DefaultHttpClient(new ThreadSafeClientConnManager(params, mgr.getSchemeRegistry()), params);
         HttpPost request = new HttpPost(URL + GET_GROUP_MESSAGER + "?app_key=" + getApiKey(c));
 
         List<BasicNameValuePair> parameters = Arrays.asList(
@@ -549,30 +550,6 @@ public class HttpConnectRecive {
         }
     }
 
-    public static String AttacmentPhotoMessage(Context c) {
-        String result = null;
-
-        http = new DefaultHttpClient();
-        ClientConnectionManager mgr = http.getConnectionManager();
-        HttpParams params = http.getParams();
-        http = new DefaultHttpClient(new ThreadSafeClientConnManager(params,
-                mgr.getSchemeRegistry()), params);
-        HttpPost request = new HttpPost(URL + SET_PROFILE + "?user_id=" + "&app_key=" + getApiKey(c));
-
-        Charset charset = Charset.forName("UTF-8");
-        MultipartEntity form = new MultipartEntity(HttpMultipartMode.STRICT);
-
-        try {
-
-
-            return result;
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public static ContactInfo statusContact (Context c, String json_str) {
         ContactInfo result = new ContactInfo();
 
@@ -580,10 +557,6 @@ public class HttpConnectRecive {
         ContentValues cv = new ContentValues();
         SQLiteDatabase db = sqlMessager.getWritableDatabase();
 
-        http = new DefaultHttpClient();
-        ClientConnectionManager mgr = http.getConnectionManager();
-        HttpParams params = http.getParams();
-        http = new DefaultHttpClient(new ThreadSafeClientConnManager(params, mgr.getSchemeRegistry()), params);
         HttpPost request = new HttpPost(URL + STATUS_USERS + "?app_key=" + getApiKey(c));
 
         List<BasicNameValuePair> parameters = Arrays.asList(
@@ -608,6 +581,73 @@ public class HttpConnectRecive {
 
                     db.update(SQLMessager.TABLE_CONTACTS, cv, "id=?", new String[]{result.id_db + ""});
                 }
+            }
+
+            return result;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static List<ContactInfo> getGlobalSearh(String name, Context c) {
+        List<ContactInfo> result = new ArrayList<>();
+
+        HttpPost request = new HttpPost(URL + GET_GLOBAL_SEARCH + "?app_key=" + getApiKey(c));
+
+        List<BasicNameValuePair> parameters = Arrays.asList(
+                new BasicNameValuePair("name", name));
+
+        try {
+            UrlEncodedFormEntity form = new UrlEncodedFormEntity(parameters,
+                    "UTF-8");
+            request.setEntity(form);
+            HttpResponse response = http.execute(request);
+            String jsonStr = Utils.streamToString(response.getEntity().getContent());
+            Log.e("GET_GLOBAL_SEARCH", jsonStr);
+            if (!jsonStr.equals("")) {
+                JSONObject jsonObject = new JSONObject(jsonStr);
+                JSONArray jsonArray = jsonObject.getJSONArray("result");
+                if (jsonArray.length() > 0) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        ContactInfo item = ContactInfo.parseJson(jsonArray.getJSONObject(i));
+                        if (item != null) {
+                            result.add(item);
+                        }
+                    }
+                } else {
+                    return null;
+                }
+            }
+            else {
+                return null;
+            }
+
+            return result;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static ProfileInfo getUserServerProfile(String user_id, Context c) {
+        ProfileInfo result = new ProfileInfo();
+        String jsonStr = "";
+
+        HttpGet request = new HttpGet(URL + GET_PROFILE_SERVER + "?app_key=" + getApiKey(c) + "&user_id=" + user_id);
+        try {
+            HttpResponse response = http.execute(request);
+            jsonStr = Utils.streamToString(response
+                    .getEntity().getContent());
+            if (!jsonStr.equals("")) {
+                JSONObject jsonObject = new JSONObject(jsonStr);
+                JSONObject jsonArray = jsonObject.getJSONObject("result");
+                result = ProfileInfo.parseJson(jsonArray);
+            }
+            else {
+                return null;
             }
 
             return result;

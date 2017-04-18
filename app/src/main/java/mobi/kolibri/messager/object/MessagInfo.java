@@ -6,6 +6,7 @@ import org.json.JSONObject;
  * Created by root on 31.08.15.
  */
 public class MessagInfo {
+    public Integer id_messege;
     public String id_from;
     public String id_to;
     public String name_to;

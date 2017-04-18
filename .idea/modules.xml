@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Messager.iml" filepath="$PROJECT_DIR$/Messager.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/cropimage/cropimage.iml" filepath="$PROJECT_DIR$/cropimage/cropimage.iml" />
-      <module fileurl="file://$PROJECT_DIR$/mth/mth.iml" filepath="$PROJECT_DIR$/mth/mth.iml" />
-      <module fileurl="file://$PROJECT_DIR$/universalimageloader/universalimageloader.iml" filepath="$PROJECT_DIR$/universalimageloader/universalimageloader.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Logs.iml" filepath="$PROJECT_DIR$/Logs.iml" />
     </modules>
   </component>
 </project>

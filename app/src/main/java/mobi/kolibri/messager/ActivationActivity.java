@@ -67,7 +67,7 @@ public class ActivationActivity extends AppCompatActivity {
         }
         @SuppressWarnings("static-access")
         protected String doInBackground(String... params) {
-            String result = HttpConnectRecive.Activation(user_id, edtKeyActivete.getText().toString());
+            String result = HttpConnectRecive.getInstance().Activation(user_id, edtKeyActivete.getText().toString());
             return result;
         }
 

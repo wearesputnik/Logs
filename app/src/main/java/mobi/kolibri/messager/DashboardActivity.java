@@ -1,21 +1,30 @@
 package mobi.kolibri.messager;
 
+import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.ContentValues;
-import android.content.Intent;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +33,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.onesignal.OneSignal;
+import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -35,29 +46,25 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.acl.Group;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-import mobi.kolibri.messager.activity.ProfileActivity;
 import mobi.kolibri.messager.fragment.ChatFragment;
 import mobi.kolibri.messager.fragment.CirclesFragment;
 import mobi.kolibri.messager.fragment.PeopleFragment;
 import mobi.kolibri.messager.fragment.SettingFragment;
-import mobi.kolibri.messager.helper.ParseUtils;
 import mobi.kolibri.messager.helper.PrefManager;
 import mobi.kolibri.messager.http.HttpConnectRecive;
-import mobi.kolibri.messager.object.CiclesInfo;
 import mobi.kolibri.messager.object.ContactInfo;
 import mobi.kolibri.messager.object.GroupMessagerInfo;
 import mobi.kolibri.messager.object.MessagInfo;
 import mobi.kolibri.messager.object.ProfileInfo;
 import mobi.kolibri.messager.object.SQLMessager;
-import mobi.kolibri.messager.R;
+import mobi.kolibri.messager.helper.ExampleNotificationOpenedHandler;
 
 
-public class DashboardActivity extends AppCompatActivity {
+public class DashboardActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback{
     Integer user_id;
     SQLMessager sqlMessager;
     List<ContactInfo> listContacts;
@@ -72,6 +79,20 @@ public class DashboardActivity extends AppCompatActivity {
     private CirclesFragment mCirclesFragment = null;
     private DisplayImageOptions options;
 
+    String[] PermisionLocation = {
+        Manifest.permission.READ_CONTACTS,
+        Manifest.permission.SEND_SMS,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        Manifest.permission.READ_EXTERNAL_STORAGE
+    };
+    String[] PermisionStorage = {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+    };
+    Integer RequestContactId = 1;
+    Integer RequestStorageId = 2;
+    private View mLayout;
+
     private FragmentManager.OnBackStackChangedListener
             mOnBackStackChangedListener = new FragmentManager.OnBackStackChangedListener() {
         @Override
@@ -85,6 +106,15 @@ public class DashboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+        mLayout = (View) findViewById(R.id.main_layout);
+
+        sqlMessager = new SQLMessager(DashboardActivity.this);
+        db = sqlMessager.getWritableDatabase();
+
+        OneSignal.startInit(this)
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)// to hide dialog
+                //.setNotificationOpenedHandler(new ExampleNotificationOpenedHandler())
+                .init();
 
         options = new DisplayImageOptions.Builder()
                 .displayer(new RoundedBitmapDisplayer(1000))
@@ -101,13 +131,12 @@ public class DashboardActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         txtTitleActionBar = (TextView) findViewById(R.id.txtTitleActionBar);
-        txtTitleActionBar.setText("");
+        txtTitleActionBar.setText("Logs");
 
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.mipmap.ic_menu_white);
-
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.root_screen_drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(
@@ -138,29 +167,51 @@ public class DashboardActivity extends AppCompatActivity {
         initButtonsPartHome();
 
         listContacts = new ArrayList<>();
-        sqlMessager = new SQLMessager(DashboardActivity.this);
-        db = sqlMessager.getWritableDatabase();
-
 
         Bundle b = getIntent().getExtras();
         if (b != null) {
             user_id = b.getInt("user_id");
         }
 
+        OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {
+            @Override
+            public void idsAvailable(String userId, String registrationId) {
+                ContentValues cv_ms = new ContentValues();
+                cv_ms.put(SQLMessager.PLAYER_ID, userId);
+                db.update(SQLMessager.TABLE_APP_ID, cv_ms, "id=?", new String[] {"1"});
+                Log.e("debug", "User:" + userId + " " + user_id);
+                if (registrationId != null)
+                    Log.e("debug", "registrationId:" + registrationId);
+            }
+        });
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setElevation(0);
         }
 
-        pref = new PrefManager(getApplicationContext());
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ActivityCompat.checkSelfPermission(DashboardActivity.this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED ||
+                    ActivityCompat.checkSelfPermission(DashboardActivity.this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
 
-        Intent intent = getIntent();
+                requestContactsPermission();
 
-        String email = intent.getStringExtra("email");
-
-        if (email != null) {
-            ParseUtils.subscribeWithEmail(pref.getEmail());
+            }
+            else {
+                loadContacts();
+            }
+            if (ActivityCompat.checkSelfPermission(DashboardActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                    ActivityCompat.checkSelfPermission(DashboardActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestStoragePermission();
+            }
+        }
+        else {
+            Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS, null);
+            loadContacts();
         }
 
+    }
+
+    private void loadContacts() {
         Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS, null);
         if (!c.moveToFirst()) {
             Cursor cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER}, null, null, null);
@@ -175,13 +226,78 @@ public class DashboardActivity extends AppCompatActivity {
                         cv.put(SQLMessager.CONTACTS_SERV, "0");
                         db.insert(SQLMessager.TABLE_CONTACTS, null, cv);
                     }
-
                 }
             }
         }
-
         new NewAppKeyTask().execute();
+    }
 
+    private void requestStoragePermission() {
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE) ||
+                ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+            Snackbar.make(mLayout, R.string.permission_storage_rationale,
+                    Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ActivityCompat.requestPermissions(DashboardActivity.this, PermisionStorage, RequestStorageId);
+                        }
+                    })
+                    .show();
+
+        } else {
+            ActivityCompat.requestPermissions(this, PermisionStorage, RequestStorageId);
+        }
+    }
+
+    private void requestContactsPermission() {
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_CONTACTS) ||
+                ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)) {
+
+            Snackbar.make(mLayout, R.string.permission_contacts_rationale,
+                    Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ActivityCompat.requestPermissions(DashboardActivity.this, PermisionLocation, RequestContactId);
+                        }
+                    })
+                    .show();
+            if (ActivityCompat.checkSelfPermission(DashboardActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                    ActivityCompat.checkSelfPermission(DashboardActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestStoragePermission();
+            }
+        } else {
+            ActivityCompat.requestPermissions(DashboardActivity.this, PermisionLocation, RequestContactId);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == RequestContactId) {
+            if (Utils.verifyPermissions(grantResults)) {
+                Snackbar.make(mLayout, R.string.permision_available_contacts,
+                        Snackbar.LENGTH_SHORT)
+                        .show();
+                loadContacts();
+            }
+            else {
+                Snackbar.make(mLayout, R.string.permissions_not_granted,
+                        Snackbar.LENGTH_SHORT)
+                        .show();
+            }
+        }
+        else if (requestCode == RequestStorageId) {
+            if (Utils.verifyPermissions(grantResults)) {
+                Snackbar.make(mLayout, R.string.permision_available_storage, Snackbar.LENGTH_SHORT).show();
+            }
+        }
+        else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     @Override
@@ -191,11 +307,6 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private void replaceAnimatedFragment(Fragment fragment) {
-        /*FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.fragment_animation_pop_enter, R.anim.fragment_animation_pop_exit,
-                R.anim.fragment_animation_enter, R.anim.fragment_animation_exit);
-        transaction.replace(R.id.container, fragment);
-        transaction.commit();*/
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, fragment)
                 .commit();
@@ -231,10 +342,17 @@ public class DashboardActivity extends AppCompatActivity {
         layProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDrawerLayout.closeDrawers();
+                /*mDrawerLayout.closeDrawers();
                 Intent i = new Intent(DashboardActivity.this, ProfileActivity.class);
                 i.putExtra("user_id", user_id);
-                startActivity(i);
+                startActivity(i);*/
+                mDrawerLayout.closeDrawers();
+                closeAllFragments();
+                replaceAnimatedFragment(new SettingFragment());
+                btnSetting.setBackgroundResource(R.drawable.custom_active_part);
+                btnPeople.setBackgroundResource(R.drawable.custom_buttom_part);
+                btnChat.setBackgroundResource(R.drawable.custom_buttom_part);
+                btnCircle.setBackgroundResource(R.drawable.custom_buttom_part);
             }
         });
         btnPeople.setOnClickListener(new View.OnClickListener() {
@@ -301,7 +419,7 @@ public class DashboardActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
             String result = null;
             if (HttpConnectRecive.isOnline(DashboardActivity.this)) {
-                result = HttpConnectRecive.newAppKey(DashboardActivity.this, user_id);
+                result = HttpConnectRecive.getInstance().newAppKey(DashboardActivity.this, user_id);
             }
             return result;
         }
@@ -347,12 +465,13 @@ public class DashboardActivity extends AppCompatActivity {
                                         new getGroupMessegAllTask().execute();
                                         new statusContact().execute();
                                         new ProfileTask().execute();
+                                        new ContactServerTask().execute();
                                     }
                                 }
                             }
                     );
                     try {
-                        Thread.sleep(10000);
+                        Thread.sleep(5000);
                     } catch (Exception e) {
                     }
                 }
@@ -370,7 +489,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         @SuppressWarnings("static-access")
         protected ContactInfo doInBackground(String... params) {
-            ContactInfo result = HttpConnectRecive.ContactServer(DashboardActivity.this, ContactInfo.stringJson(listContacts));
+            ContactInfo result = HttpConnectRecive.getInstance().ContactServer(DashboardActivity.this, ContactInfo.stringJson(listContacts));
             return result;
         }
 
@@ -391,7 +510,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         @SuppressWarnings("static-access")
         protected List<MessagInfo> doInBackground(String... params) {
-            List<MessagInfo> result = HttpConnectRecive.getMessage(DashboardActivity.this, "0");
+            List<MessagInfo> result = HttpConnectRecive.getInstance().getMessage(DashboardActivity.this, "0");
             return result;
         }
 
@@ -456,7 +575,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         @SuppressWarnings("static-access")
         protected List<GroupMessagerInfo> doInBackground(String... params) {
-            List<GroupMessagerInfo> result = HttpConnectRecive.getGroupMessager(DashboardActivity.this);
+            List<GroupMessagerInfo> result = HttpConnectRecive.getInstance().getGroupMessager(DashboardActivity.this);
             return result;
         }
 
@@ -516,7 +635,7 @@ public class DashboardActivity extends AppCompatActivity {
         protected ContactInfo doInBackground(String... params) {
             ContactInfo result = null;
             if (HttpConnectRecive.isOnline(DashboardActivity.this)) {
-                result = HttpConnectRecive.statusContact(DashboardActivity.this, ServerContact());
+                result = HttpConnectRecive.getInstance().statusContact(DashboardActivity.this, ServerContact());
             }
             return result;
         }
@@ -565,7 +684,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         @SuppressWarnings("static-access")
         protected ProfileInfo doInBackground(String... params) {
-            ProfileInfo result = HttpConnectRecive.getProfile(DashboardActivity.this);
+            ProfileInfo result = HttpConnectRecive.getInstance().getProfile(DashboardActivity.this);
             return result;
         }
 
@@ -604,5 +723,11 @@ public class DashboardActivity extends AppCompatActivity {
 
     public final static boolean isValidPhone(CharSequence target) {
         return !TextUtils.isEmpty(target) && Patterns.PHONE.matcher(target).matches();
+    }
+
+    public class Message {
+        public String message;
+        public String name;
+        public long time;
     }
 }

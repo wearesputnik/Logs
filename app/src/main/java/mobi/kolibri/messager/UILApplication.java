@@ -10,17 +10,13 @@ import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
-import com.parse.Parse;
-import com.parse.ParseACL;
-import com.parse.ParseUser;
-import com.parse.PushService;
 
-import mobi.kolibri.messager.helper.ParseUtils;
-import mobi.kolibri.messager.http.AppConfig;
+import mobi.kolibri.messager.http.HttpConnectRecive;
 import mobi.kolibri.messager.object.SQLMessager;
 
 public class UILApplication extends Application {
 	private static UILApplication mInstance;
+	public static HttpConnectRecive restInstance = null;
 	SQLMessager sqlMessager;
 	SQLiteDatabase db;
 
@@ -36,14 +32,6 @@ public class UILApplication extends Application {
 		db.execSQL(SQLMessager.CREATE_TABLE_MESSAGER);
 		db.execSQL(SQLMessager.CREATE_TABLE_CIRCLES);
 		db.execSQL(SQLMessager.CREATE_TABLE_CIRCLES_CONTACT);
-
-		SQLiteDatabase db = sqlMessager.getWritableDatabase();
-		Cursor ca = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_APP_ID, null);
-		if (ca.moveToFirst()) {
-			int useridColIndex = ca.getColumnIndex(sqlMessager.USER_ID);
-
-			ParseUtils.registerParse(this, "users_" + ca.getString(useridColIndex));
-		}
 
 		initImageLoader(getApplicationContext());
 

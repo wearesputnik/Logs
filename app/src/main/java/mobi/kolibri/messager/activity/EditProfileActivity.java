@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -38,17 +39,10 @@ import mobi.kolibri.messager.object.ProfileInfo;
 public class EditProfileActivity extends AppCompatActivity {
     Integer user_id;
     EditText edtEditFirstname, edtEditLastname, edtEditPhone, edtEditSummary;
-    Button btnEditSave;
     ProfileInfo item_result;
-    ImageView imgEditProfile;
-    private Uri mUri;
-    private String appAddPhoto = "";
     private Integer photo_witch;
     private DisplayImageOptions options;
-
-    private int REQUEST_TAKE_PHOTO = 1;
-    private int REQUEST_CHOOSE_EXISTING = 2;
-    private int REQUEST_CROP_IMAGE = 3;
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +60,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         photo_witch = 0;
 
-
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         edtEditFirstname = (EditText) findViewById(R.id.edtEditFirstname);
         edtEditLastname = (EditText) findViewById(R.id.edtEditLastname);
         edtEditPhone = (EditText) findViewById(R.id.edtEditPhone);
@@ -87,22 +81,17 @@ public class EditProfileActivity extends AppCompatActivity {
 
         new ProfileTask().execute();
 
-//        btnEditSave.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                item_result.lastname = edtEditLastname.getText().toString();
-//                item_result.firstname = edtEditFirstname.getText().toString();
-//                item_result.phone = edtEditPhone.getText().toString();
-//                item_result.summary = edtEditSummary.getText().toString();
-//
-//                if (!appAddPhoto.equals("")) {
-//                    item_result.photo = appAddPhoto;
-//                    photo_witch = 1;
-//                }
-//
-//                new EditProfileTask().execute();
-//            }
-//        });
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                item_result.lastname = edtEditLastname.getText().toString();
+                item_result.firstname = edtEditFirstname.getText().toString();
+                item_result.phone = edtEditPhone.getText().toString();
+                item_result.summary = edtEditSummary.getText().toString();
+
+                new EditProfileTask().execute();
+            }
+        });
     }
 
     @Override
@@ -164,15 +153,13 @@ public class EditProfileActivity extends AppCompatActivity {
 
         @SuppressWarnings("static-access")
         protected ProfileInfo doInBackground(String... params) {
-            ProfileInfo result = HttpConnectRecive.setProfile(EditProfileActivity.this, user_id, item_result, photo_witch);
+            ProfileInfo result = HttpConnectRecive.getInstance().setProfile(EditProfileActivity.this, user_id, item_result, photo_witch);
             return result;
         }
 
         protected void onPostExecute(ProfileInfo result) {
             dialog.dismiss();
-
             super.onPostExecute(result);
-
         }
     }
 }

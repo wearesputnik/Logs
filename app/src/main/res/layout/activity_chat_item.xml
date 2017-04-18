@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     tools:context="mobi.kolibri.messager.activity.ChatItemActivity"
-    android:background="#ebe4ec">
+    android:background="#ebe4ec"
+    android:id="@+id/main_layout">
 
     <include layout="@layout/tollbar"
         android:id="@+id/toolbar"/>
@@ -17,7 +18,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/listChatMessages"
             android:layout_centerHorizontal="true"
-            android:layout_above="@+id/imageView4" />
+            android:layout_above="@+id/imageView4"
+            android:layout_alignParentTop="true" />
 
         <ImageView
             android:layout_width="50dp"

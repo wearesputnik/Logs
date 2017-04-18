@@ -49,9 +49,6 @@ public class ChatAdapter extends ArrayAdapter<ChatInfo>{
         contV = context;
         db = sqlMessager.getWritableDatabase();
         options = new DisplayImageOptions.Builder()
-                //.showImageOnLoading(R.mipmap.profile_min)
-               // .showImageForEmptyUri(R.mipmap.profile_min)
-               // .showImageOnFail(R.mipmap.profile_min)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .considerExifParams(true)
@@ -91,11 +88,13 @@ public class ChatAdapter extends ArrayAdapter<ChatInfo>{
             e.printStackTrace();
         }
 
-        if (item.is_viseble) {
-            holder.chkDeleteChat.setVisibility(View.VISIBLE);
+
+
+        if (!item.cheked) {
+            v.setBackgroundResource(R.color.background_unchek);
         }
         else {
-            holder.chkDeleteChat.setVisibility(View.GONE);
+            v.setBackgroundResource(R.color.background_chek);
         }
 
         if (item.type_chat.trim().equals("group")) {
@@ -112,13 +111,13 @@ public class ChatAdapter extends ArrayAdapter<ChatInfo>{
                         contV.startActivity(i);
                     }
                     else {
-                        if (holder.chkDeleteChat.isChecked()) {
-                            holder.chkDeleteChat.setChecked(false);
-                            item.cheked = false;
+                        if (!item.cheked) {
+                            v.setBackgroundResource(R.color.background_chek);
+                            item.cheked = true;
                         }
                         else {
-                            holder.chkDeleteChat.setChecked(true);
-                            item.cheked = true;
+                            v.setBackgroundResource(R.color.background_unchek);
+                            item.cheked = false;
                         }
                     }
                 }
@@ -142,6 +141,7 @@ public class ChatAdapter extends ArrayAdapter<ChatInfo>{
             final Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE " + SQLMessager.CONTACTS_USER_ID + "='" + user_id_from + "'", null);
             if (c.moveToFirst()) {
                 final int idCollumn = c.getColumnIndex("id");
+                final int useridCollumn = c.getColumnIndex(SQLMessager.CONTACTS_USER_ID);
                 int photoCollumn = c.getColumnIndex(SQLMessager.CONTACTS_PHOTO);
                 int statusCollumn = c.getColumnIndex(SQLMessager.CONTACTS_STATUS);
                 if (c.getString(photoCollumn) != null) {
@@ -177,6 +177,7 @@ public class ChatAdapter extends ArrayAdapter<ChatInfo>{
                     public void onClick(View v) {
                         Intent i = new Intent(contV, ContactProfileActivity.class);
                         i.putExtra("user_id", c.getInt(idCollumn));
+                        i.putExtra("server", "1");
                         contV.startActivity(i);
                     }
                 });
@@ -214,13 +215,13 @@ public class ChatAdapter extends ArrayAdapter<ChatInfo>{
                         contV.startActivity(i);
                     }
                     else {
-                        if (holder.chkDeleteChat.isChecked()) {
-                            holder.chkDeleteChat.setChecked(false);
-                            item.cheked = false;
+                        if (!item.cheked) {
+                            v.setBackgroundResource(R.color.background_chek);
+                            item.cheked = true;
                         }
                         else {
-                            holder.chkDeleteChat.setChecked(true);
-                            item.cheked = true;
+                            v.setBackgroundResource(R.color.background_unchek);
+                            item.cheked = false;
                         }
                     }
                 }

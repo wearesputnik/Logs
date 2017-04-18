@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
@@ -13,22 +14,33 @@
         android:id="@+id/rlToMessager">
 
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/mess_in_yes"
-            android:layout_alignParentTop="true"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:paddingLeft="22dp"
-            android:paddingRight="10dp">
+            android:layout_alignParentTop="false"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/relativeLayoutName"
+            android:layout_marginBottom="5dp"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/textToMessager"
-                android:textColor="#000"
-                android:layout_below="@+id/messagePhoto2"
-                android:layout_centerVertical="true" />
+                android:id="@+id/textViewName"
+                android:textColor="@color/background_status_bar"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/mess_in_yes"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingLeft="22dp"
+            android:paddingRight="10dp"
+            android:layout_below="@id/relativeLayoutName"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -40,9 +52,25 @@
                 android:src="@mipmap/add_file"
                 android:visibility="gone" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textToMessager"
+                android:textColor="#000"
+                android:layout_below="@+id/messagePhoto2" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textViewTimeTo"
+                android:layout_below="@+id/textToMessager"
+                android:textColor="#6e6e6e"
+                android:textSize="10dp" />
+
         </RelativeLayout>
 
     </RelativeLayout>
+
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -79,9 +107,18 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/textFromMessager"
                 android:textColor="#000"
-                android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                android:textSize="16dp"
+                android:layout_below="@+id/messagePhoto1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textViewTimeFrom"
+                android:textSize="10dp"
+                android:textColor="#6e6e6e"
+                android:layout_below="@+id/textFromMessager" />
 
         </RelativeLayout>
 

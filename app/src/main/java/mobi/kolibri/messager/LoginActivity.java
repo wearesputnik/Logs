@@ -14,8 +14,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import mobi.kolibri.messager.helper.ParseUtils;
-import mobi.kolibri.messager.helper.PrefManager;
+import com.pusher.client.Pusher;
+
 import mobi.kolibri.messager.http.HttpConnectRecive;
 import mobi.kolibri.messager.object.Typefaces;
 
@@ -24,7 +24,7 @@ public class LoginActivity extends AppCompatActivity {
     TextView txtSingUp;
     Button btnLogin;
     EditText edtLoginEmail, edtLoginPass;
-    private PrefManager pref;
+    //private PrefManager pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,10 +39,6 @@ public class LoginActivity extends AppCompatActivity {
         edtLoginPass = (EditText) findViewById(R.id.edtLoginPass);
         edtLoginPass.setTypeface(Typefaces.get(LoginActivity.this, LoginActivity.this.getText(R.string.font_helvetica_lite).toString()));
 
-
-        ParseUtils.verifyParseConfiguration(this);
-
-        pref = new PrefManager(getApplicationContext());
 
 
         txtSingUp.setOnClickListener(new View.OnClickListener() {
@@ -96,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
         }
         @SuppressWarnings("static-access")
         protected String doInBackground(String... params) {
-            String result = HttpConnectRecive.Login(edtLoginEmail.getText().toString(), edtLoginPass.getText().toString(), LoginActivity.this);
+            String result = HttpConnectRecive.getInstance().Login(edtLoginEmail.getText().toString(), edtLoginPass.getText().toString(), LoginActivity.this);
             return result;
         }
 
@@ -104,9 +100,9 @@ public class LoginActivity extends AppCompatActivity {
             dialog.dismiss();
             if (result != null) {
 
-                ParseUtils.registerParse(LoginActivity.this, "users_" + result);
+                /*ParseUtils.registerParse(LoginActivity.this, "users_" + result);
 
-                pref.createLoginSession("users_" + result);
+                pref.createLoginSession("users_" + result);*/
 
                 Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
                 i.putExtra("user_id", Integer.parseInt(result));

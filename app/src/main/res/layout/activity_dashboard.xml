@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="mobi.kolibri.messager.DashboardActivity"
-    android:background="#fff">
+    android:background="#fff"
+    android:id="@+id/main_layout">
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/root_screen_drawer_layout"
         android:layout_width="match_parent"

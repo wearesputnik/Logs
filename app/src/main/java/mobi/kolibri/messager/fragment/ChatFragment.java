@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,11 +46,12 @@ public class ChatFragment extends Fragment {
     ListView listChatView;
     SQLMessager sqlMessager;
     ChatAdapter adapter;
-    Button btnDeleteChat, btnGroupChat, btnSecretChat, btnChat;
+    Button btnGroupChat, btnSecretChat, btnChat;
+    FloatingActionButton btnDeleteChat;
     boolean isVisibleClear;
     List<ChatInfo> listChat;
     SQLiteDatabase db;
-    private ImageView plus, imgAddChat, imgRemoveChat;
+    private ImageView plus, imgAddChat, imgRemoveChat, imageViewStopper;
     private RelativeLayout plus_count, relLayoutChat, relLayoutNewChat;
     private LinearLayout btnNewChatLayout;
 
@@ -61,7 +63,7 @@ public class ChatFragment extends Fragment {
         listChatView.setDividerHeight(0);
         adapter = new ChatAdapter(getActivity());
         listChatView.setAdapter(adapter);
-        btnDeleteChat = (Button) rootView.findViewById(R.id.btnDeleteChat);
+        btnDeleteChat = (FloatingActionButton) rootView.findViewById(R.id.fab);
         btnGroupChat = (Button) rootView.findViewById(R.id.btnGroupChat);
         btnSecretChat = (Button) rootView.findViewById(R.id.btnSecretChat);
         btnChat = (Button) rootView.findViewById(R.id.btnChat);
@@ -71,6 +73,7 @@ public class ChatFragment extends Fragment {
         relLayoutChat = (RelativeLayout) rootView.findViewById(R.id.relLayoutChat);
         relLayoutNewChat = (RelativeLayout) rootView.findViewById(R.id.relLayoutNewChat);
         btnNewChatLayout = (LinearLayout) rootView.findViewById(R.id.btnNewChatLayout);
+        imageViewStopper = (ImageView) rootView.findViewById(R.id.imageViewStopper);
 
         sqlMessager = new SQLMessager(getActivity());
         db = sqlMessager.getWritableDatabase();
@@ -93,10 +96,6 @@ public class ChatFragment extends Fragment {
                    // v.setBackgroundResource(R.mipmap.fab_ic_add_up);
                     transition.startTransition(500);
 
-                    /*Animation animc = AnimationUtils.loadAnimation(getActivity(), R.anim.menupluscount);
-                    animc.reset();
-                    count_plus_menu.clearAnimation();
-                    count_plus_menu.startAnimation(animc);*/
                 } else {
                     relLayoutChat.setVisibility(View.GONE);
                     plus_count.setVisibility(View.GONE);
@@ -162,18 +161,18 @@ public class ChatFragment extends Fragment {
         imgRemoveChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                isVisibleClear = true;
-//                onResume();
+
                 plus_count.setVisibility(View.GONE);
                 relLayoutChat.setVisibility(View.GONE);
                 TransitionDrawable transition = (TransitionDrawable) plus.getBackground();
                 transition.reverseTransition(500);
+                isVisibleClear = true;
+                onResume();
             }
         });
         relLayoutChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("Click", "click layout");
                 if (plus_count.getVisibility() == View.VISIBLE) {
                     relLayoutChat.setVisibility(View.GONE);
                     TransitionDrawable transition = (TransitionDrawable) plus.getBackground();
@@ -208,6 +207,10 @@ public class ChatFragment extends Fragment {
             }
         }
         adapter.notifyDataSetChanged();
+
+        if (adapter.getCount() != 0) {
+            imageViewStopper.setVisibility(View.GONE);
+        }
 
         Updater u = new Updater();
         u.start();
@@ -251,9 +254,14 @@ public class ChatFragment extends Fragment {
 
         if (isVisibleClear) {
             btnDeleteChat.setVisibility(View.VISIBLE);
+            plus.setVisibility(View.GONE);
         }
         else {
             btnDeleteChat.setVisibility(View.GONE);
+            plus.setVisibility(View.VISIBLE);
+        }
+        if (adapter.getCount() != 0) {
+            imageViewStopper.setVisibility(View.GONE);
         }
 
     }
@@ -287,7 +295,7 @@ public class ChatFragment extends Fragment {
             Log.e("LOG HOURS", "" + days + " date_b " + formattedDateB + " date_e " + formattedDate);
             if (days >= 1) {
                 db.delete(SQLMessager.TABLE_MESSAGER, SQLMessager.MESSAGER_CHAT_ID + "=?", new String[]{chat_id.toString()});
-                db.delete(SQLMessager.TABLE_CHAT, "id=?", new String[]{chat_id.toString()});
+               /// db.delete(SQLMessager.TABLE_CHAT, "id=?", new String[]{chat_id.toString()});
                 return true;
             }
         }

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1049540626607",
+    "firebase_url": "https://logs-messager.firebaseio.com",
+    "project_id": "logs-messager",
+    "storage_bucket": "logs-messager.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1049540626607:android:3308fded6253acaa",
+        "android_client_info": {
+          "package_name": "mobi.kolibri.messager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1049540626607-2eqbfs8vtfsekpmprpb02cf3h99mqi90.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mobi.kolibri.messager",
+            "certificate_hash": "3f9985d57d7e9ac8738a30f0586d53eec32eac5b"
+          }
+        },
+        {
+          "client_id": "1049540626607-277qqld67u21ssr7bon9dqk5j2rg6lc6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtRNYaLa8tvsUe8xXWZm65etOJzNVjISQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1049540626607-277qqld67u21ssr7bon9dqk5j2rg6lc6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

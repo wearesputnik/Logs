@@ -2,6 +2,7 @@ package mobi.kolibri.messager.adapters;
 
 import android.app.Dialog;
 import android.app.PendingIntent;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -86,7 +87,7 @@ public class ContactAdapter extends ArrayAdapter<ContactInfo> {
             holder.send_sms.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PendingIntent pi= PendingIntent.getActivity(contV, 0,
+                    PendingIntent pi = PendingIntent.getActivity(contV, 0,
                             new Intent(contV, DashboardActivity.class), 0);
                     SmsManager sms = SmsManager.getDefault();
                     sms.sendTextMessage(item.phone, null, "Hello install Logs messager", pi, null);
@@ -117,8 +118,7 @@ public class ContactAdapter extends ArrayAdapter<ContactInfo> {
 
                         }
                     });
-        }
-        else {
+        } else {
             holder.image.setImageResource(R.mipmap.profile_max);
         }
 
@@ -136,6 +136,7 @@ public class ContactAdapter extends ArrayAdapter<ContactInfo> {
                 public void onClick(View v) {
                     Intent i = new Intent(contV, ContactProfileActivity.class);
                     i.putExtra("user_id", item.id_db);
+                    i.putExtra("server", "1");
                     contV.startActivity(i);
                 }
             });
@@ -164,6 +165,62 @@ public class ContactAdapter extends ArrayAdapter<ContactInfo> {
                             i.putExtra("chat_id", 0);
                             i.putExtra("type", "regular");
                             contV.startActivity(i);
+                        }
+                    }
+                }
+            });
+        }
+        if (item.server.equals("2")) {
+            holder.image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(contV, ContactProfileActivity.class);
+                    i.putExtra("user_id", item.user_id);
+                    i.putExtra("server", "2");
+                    contV.startActivity(i);
+                }
+            });
+            holder.rltChatUserSelect.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    SQLMessager sqlMessager;
+                    SQLiteDatabase db;
+                    sqlMessager = new SQLMessager(contV);
+                    db = sqlMessager.getWritableDatabase();
+
+                    Cursor c_chat = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CHAT + " WHERE " + SQLMessager.CHAT_JSON_INTERLOCUTOR + "='[{\"user_id\":\"" + item.user_id + "\"}]' and " + SQLMessager.CHAT_TYPE + "='regular'", null);
+                    if (c_chat.moveToFirst()) {
+                        int chatidCollumn = c_chat.getColumnIndex("id");
+                        int typeCollumn = c_chat.getColumnIndex(SQLMessager.CHAT_TYPE);
+                        Intent i = new Intent(contV, ChatItemActivity.class);
+                        i.putExtra("user_id_from", item.user_id);
+                        i.putExtra("chat_id", c_chat.getInt(chatidCollumn));
+                        i.putExtra("type", c_chat.getString(typeCollumn));
+                        contV.startActivity(i);
+                    } else {
+                        final Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE user_id=" + item.user_id, null);
+                        if (c.moveToFirst()) {
+                            Intent i = new Intent(contV, ChatItemActivity.class);
+                            i.putExtra("user_id_from", item.user_id);
+                            i.putExtra("chat_id", 0);
+                            i.putExtra("type", "regular");
+                            contV.startActivity(i);
+                        }
+                        else {
+                            ContentValues cv = new ContentValues();
+                            cv.put(SQLMessager.CONTACTS_NAME, item.name);
+                            cv.put(SQLMessager.CONTACTS_PHONE, item.phone);
+                            cv.put(SQLMessager.CONTACTS_PHOTO, item.photo);
+                            cv.put(SQLMessager.CONTACTS_USER_ID, item.user_id);
+                            cv.put(SQLMessager.CONTACTS_SERV, "1");
+                            long id_db = db.insert(SQLMessager.TABLE_CONTACTS, null, cv);
+                            if (id_db != 0) {
+                                Intent i = new Intent(contV, ChatItemActivity.class);
+                                i.putExtra("user_id_from", item.user_id);
+                                i.putExtra("chat_id", 0);
+                                i.putExtra("type", "regular");
+                                contV.startActivity(i);
+                            }
                         }
                     }
                 }
