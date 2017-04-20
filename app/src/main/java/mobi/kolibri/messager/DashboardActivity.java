@@ -111,11 +111,6 @@ public class DashboardActivity extends AppCompatActivity implements ActivityComp
         sqlMessager = new SQLMessager(DashboardActivity.this);
         db = sqlMessager.getWritableDatabase();
 
-        OneSignal.startInit(this)
-                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)// to hide dialog
-                //.setNotificationOpenedHandler(new ExampleNotificationOpenedHandler())
-                .init();
-
         options = new DisplayImageOptions.Builder()
                 .displayer(new RoundedBitmapDisplayer(1000))
                 .showImageOnLoading(R.mipmap.profile_max)

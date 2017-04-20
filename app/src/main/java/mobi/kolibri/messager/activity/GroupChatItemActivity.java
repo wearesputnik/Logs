@@ -365,7 +365,7 @@ public class GroupChatItemActivity extends AppCompatActivity implements Activity
         protected String doInBackground(GroupMessagerInfo... params) {
             String result = "";
             if (params != null) {
-                result = HttpConnectRecive.getInstance().setGroupMessage(GroupChatItemActivity.this, params[0], photo_witch);
+                result = HttpConnectRecive.getInstance().setGroupMessage(GroupChatItemActivity.this, params[0]);
             }
 
             return result;

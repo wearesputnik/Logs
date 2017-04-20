@@ -3,7 +3,6 @@ package mobi.kolibri.messager.activity;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
@@ -23,27 +22,21 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.devadvance.circularseekbar.CircularSeekBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,6 +59,7 @@ import mobi.kolibri.messager.object.MessagInfo;
 import mobi.kolibri.messager.object.SQLMessager;
 
 public class ChatItemActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+
     Integer user_id_from;
     Integer chat_id;
     SQLMessager sqlMessager;
@@ -104,11 +98,13 @@ public class ChatItemActivity extends AppCompatActivity implements ActivityCompa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_item);
+
         mLayout = (View) findViewById(R.id.main_layout);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         txtTitleActionBar = (TextView) findViewById(R.id.txtTitleActionBar);
         laySelectPhoto = (LinearLayout) findViewById(R.id.laySelectPhoto);
         btnTakePhoto = (ImageView) findViewById(R.id.btnTakePhoto);
@@ -186,7 +182,11 @@ public class ChatItemActivity extends AppCompatActivity implements ActivityCompa
         u = new Updater();
 
         u.start();
+        CameraChooseButtonInit();
 
+    }
+
+    private void CameraChooseButtonInit () {
         btnTakePhoto.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -200,8 +200,8 @@ public class ChatItemActivity extends AppCompatActivity implements ActivityCompa
                 }
                 if (Build.VERSION.SDK_INT >= 23) {
                     if (ActivityCompat.checkSelfPermission(ChatItemActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                        ActivityCompat.checkSelfPermission(ChatItemActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
-                        ActivityCompat.checkSelfPermission(ChatItemActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.checkSelfPermission(ChatItemActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                            ActivityCompat.checkSelfPermission(ChatItemActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
                         requestCameraPermission();
 
@@ -444,7 +444,7 @@ public class ChatItemActivity extends AppCompatActivity implements ActivityCompa
         protected MessagInfo doInBackground(MessagInfo... params) {
             MessagInfo result = null;
             if (params != null) {
-                result = HttpConnectRecive.getInstance().setMessage(ChatItemActivity.this, params[0], photo_witch);
+                result = HttpConnectRecive.getInstance().setMessage(ChatItemActivity.this, params[0]);
             }
             return result;
         }

@@ -347,7 +347,7 @@ public class HttpConnectRecive {
         }
     }
 
-    public static MessagInfo setMessage(Context c, MessagInfo item_msg, Integer photo_witch) {
+    public static MessagInfo setMessage(Context c, MessagInfo item_msg) {
         MessagInfo result = new MessagInfo();
 
         HttpPost request = new HttpPost(URL + SET_MESSAGER + "?app_key=" + getApiKey(c));
@@ -361,13 +361,13 @@ public class HttpConnectRecive {
             form.addPart("type_chat", new StringBody(item_msg.type_chat, charset));
             form.addPart("created", new StringBody(item_msg.created, charset));
 
-            if (photo_witch == 1) {
-                form.addPart("photo_witch", new StringBody("" + photo_witch, charset));
+            if (item_msg.attachment != null) {
+                form.addPart("photo_witch", new StringBody("1", charset));
                 form.addPart("duration", new StringBody(item_msg.duration, charset));
                 form.addPart("photo", new FileBody(new File(item_msg.attachment)));
             }
             else {
-                form.addPart("photo_witch", new StringBody("" + photo_witch, charset));
+                form.addPart("photo_witch", new StringBody("0", charset));
             }
 
             request.setEntity(form);
@@ -395,7 +395,7 @@ public class HttpConnectRecive {
         else {
             urlStr = URL + GET_MESSAGER + "?user_from=" + user_from + "&app_key=" + getApiKey(c);
         }
-        HttpGet request = new HttpGet(urlStr);;
+        HttpGet request = new HttpGet(urlStr);
 
         try {
             HttpResponse response = http.execute(request);
@@ -427,7 +427,7 @@ public class HttpConnectRecive {
         }
     }
 
-    public static String setGroupMessage(Context c, GroupMessagerInfo item_msg, Integer photo_witch) {
+    public static String setGroupMessage(Context c, GroupMessagerInfo item_msg) {
         String result = null;
 
         HttpPost request = new HttpPost(URL + SET_GROUP_MESSAGER + "?app_key=" + getApiKey(c));
@@ -444,13 +444,13 @@ public class HttpConnectRecive {
             form.addPart("id_db", new StringBody(item_msg.id_messege.toString(), charset));
 
 
-            if (photo_witch == 1) {
-                form.addPart("photo_witch", new StringBody("" + photo_witch, charset));
+            if (item_msg.attachment != null) {
+                form.addPart("photo_witch", new StringBody("1", charset));
                 form.addPart("duration", new StringBody(item_msg.duration, charset));
                 form.addPart("photo", new FileBody(new File(item_msg.attachment)));
             }
             else {
-                form.addPart("photo_witch", new StringBody("" + photo_witch, charset));
+                form.addPart("photo_witch", new StringBody("0", charset));
             }
 
             request.setEntity(form);
@@ -518,11 +518,11 @@ public class HttpConnectRecive {
 
         try {
             UrlEncodedFormEntity form = new UrlEncodedFormEntity(parameters,
-                    "UTF-8");
+                "UTF-8");
             request.setEntity(form);
             HttpResponse response = http.execute(request);
             String jsonStr = Utils.streamToString(response
-                    .getEntity().getContent());
+                .getEntity().getContent());
             Log.e("GET_GROUP_MESSAGER", jsonStr);
             if (!jsonStr.equals("")) {
                 JSONObject jsonObject = new JSONObject(jsonStr);
