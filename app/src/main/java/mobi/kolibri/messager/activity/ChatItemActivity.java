@@ -52,6 +52,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import mobi.kolibri.messager.R;
+import mobi.kolibri.messager.UILApplication;
 import mobi.kolibri.messager.Utils;
 import mobi.kolibri.messager.adapters.MessagerAdapter;
 import mobi.kolibri.messager.http.HttpConnectRecive;
@@ -123,7 +124,7 @@ public class ChatItemActivity extends AppCompatActivity implements ActivityCompa
 
         listMeseges = (ListView) findViewById(R.id.listChatMessages);
         listMeseges.setDividerHeight(0);
-        adapter = new MessagerAdapter(ChatItemActivity.this, HttpConnectRecive.getUserId(ChatItemActivity.this));
+        adapter = new MessagerAdapter(ChatItemActivity.this, UILApplication.UserID);
         listMeseges.setAdapter(adapter);
         textMessages = (EditText) findViewById(R.id.edtChatMessages);
         sendMessages = (ImageButton) findViewById(R.id.btnChatSend);
@@ -301,7 +302,7 @@ public class ChatItemActivity extends AppCompatActivity implements ActivityCompa
                 ContentValues cv_ms = new ContentValues();
                 cv_ms.put(SQLMessager.MESSAGER_CHAT_ID, chat_id.toString());
                 cv_ms.put(SQLMessager.MESSAGER_FROM_ID, user_id_from.toString());
-                cv_ms.put(SQLMessager.MESSAGER_TO_ID, HttpConnectRecive.getUserId(ChatItemActivity.this));
+                cv_ms.put(SQLMessager.MESSAGER_TO_ID, UILApplication.UserID);
                 cv_ms.put(SQLMessager.MESSAGER_MESSAG, textMessages.getText().toString());
                 cv_ms.put(SQLMessager.MESSAGER_CREATED, formattedDate);
                 if (selected_bitmap != null) {
@@ -338,7 +339,7 @@ public class ChatItemActivity extends AppCompatActivity implements ActivityCompa
                     ContentValues cv_ms = new ContentValues();
                     cv_ms.put(SQLMessager.MESSAGER_CHAT_ID, chat_id_db);
                     cv_ms.put(SQLMessager.MESSAGER_FROM_ID, user_id_from.toString());
-                    cv_ms.put(SQLMessager.MESSAGER_TO_ID, HttpConnectRecive.getUserId(ChatItemActivity.this));
+                    cv_ms.put(SQLMessager.MESSAGER_TO_ID, UILApplication.UserID);
                     cv_ms.put(SQLMessager.MESSAGER_MESSAG, textMessages.getText().toString());
                     cv_ms.put(SQLMessager.MESSAGER_SERVER, "1");
                     cv_ms.put(SQLMessager.MESSAGER_CREATED, formattedDate);
@@ -352,7 +353,7 @@ public class ChatItemActivity extends AppCompatActivity implements ActivityCompa
             MessagInfo result_sql = new MessagInfo();
             result_sql.id_messege = (int)id;
             result_sql.id_from = user_id_from.toString();
-            result_sql.id_to = HttpConnectRecive.getUserId(ChatItemActivity.this);
+            result_sql.id_to = UILApplication.UserID;
             result_sql.message = textMessages.getText().toString();
             result_sql.type_chat = type_chat;
             result_sql.created = formattedDate;
@@ -388,7 +389,7 @@ public class ChatItemActivity extends AppCompatActivity implements ActivityCompa
                             }
                     );
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(500);
                     } catch (Exception e) {
                     }
                 }
@@ -473,7 +474,7 @@ public class ChatItemActivity extends AppCompatActivity implements ActivityCompa
                 for (MessagInfo item : result) {
                     ContentValues cv_ms = new ContentValues();
                     cv_ms.put(SQLMessager.MESSAGER_CHAT_ID, chat_id);
-                    cv_ms.put(SQLMessager.MESSAGER_FROM_ID, HttpConnectRecive.getUserId(ChatItemActivity.this));
+                    cv_ms.put(SQLMessager.MESSAGER_FROM_ID, UILApplication.UserID);
                     cv_ms.put(SQLMessager.MESSAGER_TO_ID, item.id_to);
                     cv_ms.put(SQLMessager.MESSAGER_MESSAG, item.message);
                     cv_ms.put(SQLMessager.MESSAGER_SERVER, "0");

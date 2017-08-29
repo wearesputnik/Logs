@@ -153,7 +153,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         @SuppressWarnings("static-access")
         protected ProfileInfo doInBackground(String... params) {
-            ProfileInfo result = HttpConnectRecive.getInstance().setProfile(EditProfileActivity.this, user_id, item_result, photo_witch);
+            ProfileInfo result = HttpConnectRecive.getInstance().setProfile(item_result, photo_witch);
             return result;
         }
 

@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import mobi.kolibri.messager.R;
+import mobi.kolibri.messager.UILApplication;
 import mobi.kolibri.messager.activity.ChatItemActivity;
 import mobi.kolibri.messager.adapters.ContactAdapter;
 import mobi.kolibri.messager.http.HttpConnectRecive;
@@ -58,7 +59,7 @@ public class PeopleFragment extends Fragment {
         sqlMessager = new SQLMessager(getActivity());
 
         db = sqlMessager.getWritableDatabase();
-        Cursor c_serv = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE server='1' and " + SQLMessager.CONTACTS_USER_ID + "<>" + HttpConnectRecive.getUserId(getActivity()), null);
+        Cursor c_serv = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE server='1' and " + SQLMessager.CONTACTS_USER_ID + "<>" + UILApplication.UserID, null);
         if (c_serv.moveToFirst()) {
             int ideCollumn = c_serv.getColumnIndex("id");
             int nameCollumn = c_serv.getColumnIndex(SQLMessager.CONTACTS_NAME);
@@ -167,7 +168,7 @@ public class PeopleFragment extends Fragment {
         super.onResume();
         contactInfoListAll.clear();
         contactInfoList.clear();
-        Cursor c_serv = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE server='1' and " + SQLMessager.CONTACTS_USER_ID + "<>" + HttpConnectRecive.getUserId(getActivity()), null);
+        Cursor c_serv = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE server='1' and " + SQLMessager.CONTACTS_USER_ID + "<>" + UILApplication.UserID, null);
         if (c_serv.moveToFirst()) {
             int ideCollumn = c_serv.getColumnIndex("id");
             int nameCollumn = c_serv.getColumnIndex(SQLMessager.CONTACTS_NAME);

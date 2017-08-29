@@ -54,6 +54,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import mobi.kolibri.messager.R;
+import mobi.kolibri.messager.UILApplication;
 import mobi.kolibri.messager.Utils;
 import mobi.kolibri.messager.adapters.GroupMessagerAdapter;
 import mobi.kolibri.messager.http.HttpConnectRecive;
@@ -127,7 +128,7 @@ public class GroupChatItemActivity extends AppCompatActivity implements Activity
         sendMessages = (ImageButton) findViewById(R.id.btnChatSend);
         listMeseges = (ListView) findViewById(R.id.listChatMessages);
         listMeseges.setDividerHeight(0);
-        adapter = new GroupMessagerAdapter(GroupChatItemActivity.this, HttpConnectRecive.getUserId(GroupChatItemActivity.this));
+        adapter = new GroupMessagerAdapter(GroupChatItemActivity.this, UILApplication.UserID);
         listMeseges.setAdapter(adapter);
         imageView = (ImageView) findViewById(R.id.imageView4);
 
@@ -294,31 +295,15 @@ public class GroupChatItemActivity extends AppCompatActivity implements Activity
                                 @Override
                                 public void run() {
                                     new getGroupMessegTask().execute();
-                                    ImageDeleteAdapter();
                                 }
                             }
                     );
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(500);
                     } catch (Exception e) {
                     }
                 }
             } catch (Exception e) {
-            }
-        }
-    }
-
-    private void ImageDeleteAdapter() {
-        if (adapter.getCount() != 0) {
-            for (int i = 0; i < adapter.getCount(); i++) {
-                GroupMessagerInfo item = adapter.getItem(i);
-                if (item.attachment != null) {
-                    Cursor c_ch = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_MESSAGER + " WHERE id='" + item.id_messege + "'", null);
-                    if (!c_ch.moveToFirst()) {
-                        adapter.remove(item);
-                        adapter.notifyDataSetChanged();
-                    }
-                }
             }
         }
     }
@@ -401,7 +386,7 @@ public class GroupChatItemActivity extends AppCompatActivity implements Activity
                 for (GroupMessagerInfo item : result) {
                     ContentValues cv_ms = new ContentValues();
                     cv_ms.put(SQLMessager.MESSAGER_CHAT_ID, id_chat);
-                    cv_ms.put(SQLMessager.MESSAGER_FROM_ID, HttpConnectRecive.getUserId(GroupChatItemActivity.this));
+                    cv_ms.put(SQLMessager.MESSAGER_FROM_ID, UILApplication.UserID);
                     cv_ms.put(SQLMessager.MESSAGER_TO_ID, item.id_to);
                     cv_ms.put(SQLMessager.MESSAGER_MESSAG, item.message);
                     cv_ms.put(SQLMessager.MESSAGER_SERVER, "0");
@@ -604,49 +589,6 @@ public class GroupChatItemActivity extends AppCompatActivity implements Activity
         return Uri.fromFile(newFile);
     }
 
-    /*private void DialogDuration () {
-        final Dialog dialog = new Dialog(GroupChatItemActivity.this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_duration);
-
-        Button btnSaveDuration = (Button) dialog.findViewById(R.id.btnSaveDuration);
-        final TextView txtSecondV = (TextView) dialog.findViewById(R.id.textView11);
-
-        final CircularSeekBar seekbar = (CircularSeekBar) dialog.findViewById(R.id.circularSeekBar1);
-        seekbar.setProgress(5);
-        txtSecondV.setText("5");
-        seekbar.setOnSeekBarChangeListener(new CircularSeekBar.OnCircularSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(CircularSeekBar circularSeekBar, int progress, boolean fromUser) {
-                txtSecondV.setText(circularSeekBar.getProgress() + "");
-            }
-
-            @Override
-            public void onStopTrackingTouch(CircularSeekBar seekBar) {
-                txtSecondV.setText(seekBar.getProgress() + "");
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(CircularSeekBar seekBar) {
-                txtSecondV.setText(seekBar.getProgress() + "");
-
-            }
-        });
-
-        btnSaveDuration.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                duration = txtSecondV.getText().toString();
-                photo_witch = 1;
-                SendMessage();
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
-    }*/
-
     private void SendMessage() {
         if (!textMessages.getText().toString().trim().equals("") || selected_bitmap != null) {
             ContentValues cv_ms = new ContentValues();
@@ -655,7 +597,7 @@ public class GroupChatItemActivity extends AppCompatActivity implements Activity
             formattedDate = df.format(cal.getTime());
             cv_ms.put(SQLMessager.MESSAGER_CHAT_ID, id_chat.toString());
             cv_ms.put(SQLMessager.MESSAGER_FROM_ID, json_users);
-            cv_ms.put(SQLMessager.MESSAGER_TO_ID, HttpConnectRecive.getUserId(GroupChatItemActivity.this));
+            cv_ms.put(SQLMessager.MESSAGER_TO_ID, UILApplication.UserID);
             cv_ms.put(SQLMessager.MESSAGER_MESSAG, textMessages.getText().toString());
             cv_ms.put(SQLMessager.MESSAGER_CREATED, formattedDate);
             cv_ms.put(SQLMessager.MESSAGER_SERVER, "0");
@@ -670,7 +612,7 @@ public class GroupChatItemActivity extends AppCompatActivity implements Activity
             result_sql.json_users = json_users;
             result_sql.chat_name = chat_name;
             result_sql.type_chat = type_chat;
-            result_sql.id_to = HttpConnectRecive.getUserId(GroupChatItemActivity.this);
+            result_sql.id_to = UILApplication.UserID;
             result_sql.message = textMessages.getText().toString();
             result_sql.created = formattedDate;
             result_sql.server = "0";

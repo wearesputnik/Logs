@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.List;
 
 import mobi.kolibri.messager.R;
+import mobi.kolibri.messager.UILApplication;
 import mobi.kolibri.messager.http.HttpConnectRecive;
 import mobi.kolibri.messager.object.ContactInfo;
 import mobi.kolibri.messager.object.SQLMessager;
@@ -73,7 +74,7 @@ public class AddUsersCircleActivity extends AppCompatActivity {
         sqlMessager = new SQLMessager(AddUsersCircleActivity.this);
 
         db = sqlMessager.getWritableDatabase();
-        Cursor c_serv = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE server='1' and " + SQLMessager.CONTACTS_USER_ID + "<>" + HttpConnectRecive.getUserId(AddUsersCircleActivity.this), null);
+        Cursor c_serv = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE server='1' and " + SQLMessager.CONTACTS_USER_ID + "<>" + UILApplication.UserID, null);
         if (c_serv.moveToFirst()) {
             int ideCollumn = c_serv.getColumnIndex("id");
             int nameCollumn = c_serv.getColumnIndex(SQLMessager.CONTACTS_NAME);

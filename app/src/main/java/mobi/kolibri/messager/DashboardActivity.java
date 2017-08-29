@@ -3,12 +3,15 @@ package mobi.kolibri.messager;
 import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,8 +36,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.onesignal.OSNotification;
 import com.onesignal.OneSignal;
-import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -61,7 +64,6 @@ import mobi.kolibri.messager.object.GroupMessagerInfo;
 import mobi.kolibri.messager.object.MessagInfo;
 import mobi.kolibri.messager.object.ProfileInfo;
 import mobi.kolibri.messager.object.SQLMessager;
-import mobi.kolibri.messager.helper.ExampleNotificationOpenedHandler;
 
 
 public class DashboardActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback{
@@ -167,6 +169,11 @@ public class DashboardActivity extends AppCompatActivity implements ActivityComp
         if (b != null) {
             user_id = b.getInt("user_id");
         }
+        OneSignal.startInit(this)
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)// to hide dialog
+                .autoPromptLocation(true)
+                .setNotificationReceivedHandler(new ExampleNotificationReceivedHandler())
+                .init();
 
         OneSignal.idsAvailable(new OneSignal.IdsAvailableHandler() {
             @Override
@@ -179,6 +186,7 @@ public class DashboardActivity extends AppCompatActivity implements ActivityComp
                     Log.e("debug", "registrationId:" + registrationId);
             }
         });
+
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setElevation(0);
@@ -204,6 +212,14 @@ public class DashboardActivity extends AppCompatActivity implements ActivityComp
             loadContacts();
         }
 
+    }
+
+    private class ExampleNotificationReceivedHandler implements OneSignal.NotificationReceivedHandler {
+        @Override
+        public void notificationReceived(OSNotification notification) {
+            new getMessegAllTask().execute();
+            new getGroupMessegAllTask().execute();
+        }
     }
 
     private void loadContacts() {

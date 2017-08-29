@@ -45,6 +45,7 @@ import java.io.FileNotFoundException;
 
 import mobi.kolibri.messager.LoginActivity;
 import mobi.kolibri.messager.R;
+import mobi.kolibri.messager.UILApplication;
 import mobi.kolibri.messager.Utils;
 import mobi.kolibri.messager.activity.ChatItemActivity;
 import mobi.kolibri.messager.activity.EditProfileActivity;
@@ -108,7 +109,7 @@ public class SettingFragment extends Fragment implements ActivityCompat.OnReques
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getActivity(), EditProfileActivity.class);
-                i.putExtra("user_id", HttpConnectRecive.getUserId(getActivity()));
+                i.putExtra("user_id", UILApplication.UserID);
                 startActivity(i);
             }
         });
@@ -456,7 +457,7 @@ public class SettingFragment extends Fragment implements ActivityCompat.OnReques
         @SuppressWarnings("static-access")
         protected ProfileInfo doInBackground(String... params) {
             profileInfo.photo = filepath;
-            ProfileInfo result = HttpConnectRecive.setProfile(getActivity(), Integer.parseInt(profileInfo.user_id), profileInfo, photo_witch);
+            ProfileInfo result = HttpConnectRecive.setProfile(profileInfo, photo_witch);
             return result;
         }
 

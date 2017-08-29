@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -54,9 +55,8 @@ public class GroupMessagerAdapter extends ArrayAdapter<GroupMessagerInfo> {
         contV = context;
         user_id = user_id_A;
         options = new DisplayImageOptions.Builder()
-                //.showImageOnLoading(R.mipmap.profile_min)
-                // .showImageForEmptyUri(R.mipmap.profile_min)
-                // .showImageOnFail(R.mipmap.profile_min)
+                .showImageOnLoading(R.mipmap.screen_stopper)
+                .resetViewBeforeLoading(true)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .considerExifParams(true)
@@ -86,6 +86,7 @@ public class GroupMessagerAdapter extends ArrayAdapter<GroupMessagerInfo> {
             holder.textViewTimeFrom = (TextView) v.findViewById(R.id.textViewTimeFrom);
             holder.messagePhoto1 = (ImageView) v.findViewById(R.id.messagePhoto1);
             holder.messagePhoto2 = (ImageView) v.findViewById(R.id.messagePhoto2);
+            holder.progressBar = (ProgressBar) v.findViewById(R.id.progressBar);
             v.setTag(holder);
         }
 
@@ -98,12 +99,14 @@ public class GroupMessagerAdapter extends ArrayAdapter<GroupMessagerInfo> {
             holder.textToMessager.setText(item.message);
             holder.textViewTimeTo.setText(item.created);
             holder.messagePhoto2.setVisibility(View.GONE);
+            holder.progressBar.setVisibility(View.GONE);
             Cursor c_ch = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE " + SQLMessager.CONTACTS_USER_ID + "='" + item.id_to + "'", null);
             if (c_ch.moveToFirst()) {
                 int nameCollumn = c_ch.getColumnIndex(SQLMessager.CONTACTS_NAME);
                 holder.textViewName.setText(c_ch.getString(nameCollumn));
             }
-            if (item.attachment != null) {
+            if (!item.attachment.equals("")) {
+                holder.progressBar.setVisibility(View.VISIBLE);
                 holder.messagePhoto2.setVisibility(View.VISIBLE);
 
                 String url_img = HttpConnectRecive.URLP + item.attachment;
@@ -121,6 +124,7 @@ public class GroupMessagerAdapter extends ArrayAdapter<GroupMessagerInfo> {
 
                             @Override
                             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                                holder.progressBar.setVisibility(View.GONE);
                                 if (!item.duration.equals("5")) {
                                     if (getImageUri(contV, loadedImage) != null) {
                                         item.duration = "5";
@@ -301,5 +305,6 @@ public class GroupMessagerAdapter extends ArrayAdapter<GroupMessagerInfo> {
         TextView textViewTimeFrom;
         ImageView messagePhoto1;
         ImageView messagePhoto2;
+        ProgressBar progressBar;
     }
 }

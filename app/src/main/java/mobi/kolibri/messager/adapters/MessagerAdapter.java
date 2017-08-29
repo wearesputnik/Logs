@@ -19,6 +19,7 @@ import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -50,7 +51,6 @@ public class MessagerAdapter extends ArrayAdapter<MessagInfo>{
     SQLMessager sqlMessager;
     SQLiteDatabase db;
     private DisplayImageOptions options;
-    private HashMap<TextView,CountDownTimer> counters;
 
     public MessagerAdapter (Context context, String user_id_A) {
         super(context, 0);
@@ -58,15 +58,13 @@ public class MessagerAdapter extends ArrayAdapter<MessagInfo>{
         contV = context;
         user_id = user_id_A;
         options = new DisplayImageOptions.Builder()
-                //.showImageOnLoading(R.mipmap.profile_min)
-                // .showImageForEmptyUri(R.mipmap.profile_min)
-                // .showImageOnFail(R.mipmap.profile_min)
+                .showImageOnLoading(R.mipmap.screen_stopper)
+                .resetViewBeforeLoading(true)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .considerExifParams(true)
                 .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
-        this.counters = new HashMap<TextView, CountDownTimer>();
         sqlMessager = new SQLMessager(context);
         db = sqlMessager.getWritableDatabase();
     }
@@ -88,6 +86,7 @@ public class MessagerAdapter extends ArrayAdapter<MessagInfo>{
             holder.textViewTimeFrom = (TextView) v.findViewById(R.id.textViewTimeFrom);
             holder.messagePhoto1 = (ImageView) v.findViewById(R.id.messagePhoto1);
             holder.messagePhoto2 = (ImageView) v.findViewById(R.id.messagePhoto2);
+            holder.progressBar = (ProgressBar) v.findViewById(R.id.progressBar);
             v.setTag(holder);
         }
 
@@ -100,8 +99,9 @@ public class MessagerAdapter extends ArrayAdapter<MessagInfo>{
             holder.textToMessager.setVisibility(View.VISIBLE);
             holder.textViewTimeTo.setText(item.created + " " + item.duration);
             holder.messagePhoto2.setVisibility(View.GONE);
+            holder.progressBar.setVisibility(View.GONE);
             if (!item.attachment.equals("")) {
-                //holder.textToMessager.setVisibility(View.GONE);
+                holder.progressBar.setVisibility(View.VISIBLE);
                 holder.messagePhoto2.setVisibility(View.VISIBLE);
                 String url_img = HttpConnectRecive.URLP + item.attachment;
                 ImageLoader.getInstance()
@@ -118,6 +118,7 @@ public class MessagerAdapter extends ArrayAdapter<MessagInfo>{
 
                         @Override
                         public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                            holder.progressBar.setVisibility(View.GONE);
                             if (!item.duration.equals("5")) {
                                 if (getImageUri(contV, loadedImage) != null) {
                                     item.duration = "5";
@@ -292,6 +293,7 @@ public class MessagerAdapter extends ArrayAdapter<MessagInfo>{
         TextView textViewTimeFrom;
         ImageView messagePhoto1;
         ImageView messagePhoto2;
+        ProgressBar progressBar;
     }
 
 }

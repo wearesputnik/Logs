@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Set;
 
 import mobi.kolibri.messager.R;
+import mobi.kolibri.messager.UILApplication;
 import mobi.kolibri.messager.http.HttpConnectRecive;
 import mobi.kolibri.messager.object.ContactInfo;
 import mobi.kolibri.messager.object.SQLMessager;
@@ -65,7 +66,7 @@ public class NewChatActivity extends AppCompatActivity {
         sqlMessager = new SQLMessager(NewChatActivity.this);
 
         SQLiteDatabase db = sqlMessager.getWritableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE " + SQLMessager.CONTACTS_SERV + "='1' and " + SQLMessager.CONTACTS_USER_ID + "<>" + HttpConnectRecive.getUserId(NewChatActivity.this), null);
+        Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE " + SQLMessager.CONTACTS_SERV + "='1' and " + SQLMessager.CONTACTS_USER_ID + "<>" + UILApplication.UserID, null);
         if (c.moveToFirst()) {
             int nameCollumn = c.getColumnIndex(SQLMessager.CONTACTS_NAME);
             int phoneCollumn = c.getColumnIndex(SQLMessager.CONTACTS_PHONE);

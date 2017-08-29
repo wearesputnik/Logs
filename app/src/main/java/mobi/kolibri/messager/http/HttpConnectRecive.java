@@ -82,19 +82,6 @@ public class HttpConnectRecive {
         return UILApplication.restInstance;
     }
 
-    public static String getApiKey(Context c) {
-        String result = "";
-        sqlMessager = new SQLMessager(c);
-
-        SQLiteDatabase db = sqlMessager.getWritableDatabase();
-        Cursor ca = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_APP_ID, null);
-        if (ca.moveToFirst()) {
-            int appidColIndex = ca.getColumnIndex(sqlMessager.APP_ID);
-            result = ca.getString(appidColIndex);
-        }
-        return result;
-    }
-
     public static String getPlayerId(Context c) {
         String result = "";
         sqlMessager = new SQLMessager(c);
@@ -108,7 +95,7 @@ public class HttpConnectRecive {
         return result;
     }
 
-    public static String getUserId(Context c) {
+    /*public static String getUserId(Context c) {
         String result = "";
         sqlMessager = new SQLMessager(c);
 
@@ -119,7 +106,7 @@ public class HttpConnectRecive {
             result = ca.getString(useridColIndex);
         }
         return result;
-    }
+    }*/
 
     public static Integer CreateAccaunt(String email, String password, String phone) {
         Integer user_id = 0;
@@ -194,6 +181,8 @@ public class HttpConnectRecive {
                 JSONObject result_json = json.getJSONObject("result");
                 result = result_json.getString("user_id");
 
+                UILApplication.UserID = result;
+
                 ContentValues cv = new ContentValues();
                 SQLiteDatabase db = sqlMessager.getWritableDatabase();
                 cv.put(SQLMessager.APP_ID, result_json.getString("app_key"));
@@ -215,8 +204,8 @@ public class HttpConnectRecive {
     public static ProfileInfo getProfile(Context c) {
         ProfileInfo result = new ProfileInfo();
 
-        HttpGet request = new HttpGet(URL + GET_PROFILE + "?app_key=" + getApiKey(c) + "&playerId=" + getPlayerId(c));
-        Log.e("LOGIN_ACCAUNT", URL + GET_PROFILE + "?app_key=" + getApiKey(c) + "&playerId=" + getPlayerId(c));
+        HttpGet request = new HttpGet(URL + GET_PROFILE + "?app_key=" + UILApplication.AppIDkey + "&playerId=" + getPlayerId(c));
+        Log.e("LOGIN_ACCAUNT", URL + GET_PROFILE + "?app_key=" + UILApplication.AppIDkey + "&playerId=" + getPlayerId(c));
         try {
             HttpResponse response = http.execute(request);
             String jsonStr = Utils.streamToString(response.getEntity().getContent());
@@ -231,10 +220,10 @@ public class HttpConnectRecive {
         }
     }
 
-    public static ProfileInfo setProfile(Context c, Integer id, ProfileInfo item_form, Integer photo_witch) {
+    public static ProfileInfo setProfile(ProfileInfo item_form, Integer photo_witch) {
         ProfileInfo result = new ProfileInfo();
 
-        HttpPost request = new HttpPost(URL + SET_PROFILE + "?user_id=" + getUserId(c) + "&app_key=" + getApiKey(c));
+        HttpPost request = new HttpPost(URL + SET_PROFILE + "?user_id=" + UILApplication.UserID + "&app_key=" + UILApplication.AppIDkey);
         //Log.e("SET_PROFILE", URL + SET_PROFILE + "?user_id=" + getUserId(c) + "&app_key=" + getApiKey(c));
         Charset charset = Charset.forName("UTF-8");
         MultipartEntity form = new MultipartEntity(HttpMultipartMode.STRICT);
@@ -289,6 +278,8 @@ public class HttpConnectRecive {
             SQLiteDatabase db = sqlMessager.getWritableDatabase();
             cv.put(SQLMessager.APP_ID, result_json.getString("app_key"));
             db.update(SQLMessager.TABLE_APP_ID, cv, "id=?", new String[] {"1"});
+            UILApplication.AppIDkey = result_json.getString("app_key");
+            UILApplication.UserID = id.toString();
 
 
             return result;
@@ -306,7 +297,7 @@ public class HttpConnectRecive {
         ContentValues cv = new ContentValues();
         SQLiteDatabase db = sqlMessager.getWritableDatabase();
 
-        HttpPost request = new HttpPost(URL + CONTACT_SERVER + "?app_key=" + getApiKey(c));
+        HttpPost request = new HttpPost(URL + CONTACT_SERVER + "?app_key=" + UILApplication.AppIDkey);
 
         List<BasicNameValuePair> parameters = Arrays.asList(
                 new BasicNameValuePair("contacts", json));
@@ -350,7 +341,7 @@ public class HttpConnectRecive {
     public static MessagInfo setMessage(Context c, MessagInfo item_msg) {
         MessagInfo result = new MessagInfo();
 
-        HttpPost request = new HttpPost(URL + SET_MESSAGER + "?app_key=" + getApiKey(c));
+        HttpPost request = new HttpPost(URL + SET_MESSAGER + "?app_key=" + UILApplication.AppIDkey);
 
         Charset charset = Charset.forName("UTF-8");
         MultipartEntity form = new MultipartEntity(HttpMultipartMode.STRICT);
@@ -390,10 +381,10 @@ public class HttpConnectRecive {
         String urlStr = "";
 
         if (user_from.equals("0")) {
-            urlStr = URL + GET_MESSAGER + "?app_key=" + getApiKey(c);
+            urlStr = URL + GET_MESSAGER + "?app_key=" + UILApplication.AppIDkey;
         }
         else {
-            urlStr = URL + GET_MESSAGER + "?user_from=" + user_from + "&app_key=" + getApiKey(c);
+            urlStr = URL + GET_MESSAGER + "?user_from=" + user_from + "&app_key=" + UILApplication.AppIDkey;
         }
         HttpGet request = new HttpGet(urlStr);
 
@@ -430,7 +421,7 @@ public class HttpConnectRecive {
     public static String setGroupMessage(Context c, GroupMessagerInfo item_msg) {
         String result = null;
 
-        HttpPost request = new HttpPost(URL + SET_GROUP_MESSAGER + "?app_key=" + getApiKey(c));
+        HttpPost request = new HttpPost(URL + SET_GROUP_MESSAGER + "?app_key=" + UILApplication.AppIDkey);
 
         Charset charset = Charset.forName("UTF-8");
         MultipartEntity form = new MultipartEntity(HttpMultipartMode.STRICT);
@@ -474,7 +465,7 @@ public class HttpConnectRecive {
         String jsonStr = "";
         String urlStr = "";
 
-        urlStr = URL + GET_GROUP_MESSAGER + "?app_key=" + getApiKey(c);
+        urlStr = URL + GET_GROUP_MESSAGER + "?app_key=" + UILApplication.AppIDkey;
 
         HttpGet request = new HttpGet(urlStr);
 
@@ -511,7 +502,7 @@ public class HttpConnectRecive {
     public static List<GroupMessagerInfo> postGroupMessager(Context c, String json_user) {
         List<GroupMessagerInfo> result = new ArrayList<>();
 
-        HttpPost request = new HttpPost(URL + GET_GROUP_MESSAGER + "?app_key=" + getApiKey(c));
+        HttpPost request = new HttpPost(URL + GET_GROUP_MESSAGER + "?app_key=" + UILApplication.AppIDkey);
 
         List<BasicNameValuePair> parameters = Arrays.asList(
                 new BasicNameValuePair("json_users", json_user));
@@ -557,12 +548,12 @@ public class HttpConnectRecive {
         ContentValues cv = new ContentValues();
         SQLiteDatabase db = sqlMessager.getWritableDatabase();
 
-        HttpPost request = new HttpPost(URL + STATUS_USERS + "?app_key=" + getApiKey(c));
+        HttpPost request = new HttpPost(URL + STATUS_USERS + "?app_key=" + UILApplication.AppIDkey);
 
         List<BasicNameValuePair> parameters = Arrays.asList(
                 new BasicNameValuePair("contacts", json_str));
 //        Log.e("STATUS_USERS", json_str);
-//        Log.e("STATUS_USERS", URL + STATUS_USERS + "?app_key=" + getApiKey(c));
+        Log.e("STATUS_USERS", URL + STATUS_USERS + "?app_key=" + UILApplication.AppIDkey);
         try {
             UrlEncodedFormEntity form = new UrlEncodedFormEntity(parameters,
                     "UTF-8");
@@ -594,7 +585,7 @@ public class HttpConnectRecive {
     public static List<ContactInfo> getGlobalSearh(String name, Context c) {
         List<ContactInfo> result = new ArrayList<>();
 
-        HttpPost request = new HttpPost(URL + GET_GLOBAL_SEARCH + "?app_key=" + getApiKey(c));
+        HttpPost request = new HttpPost(URL + GET_GLOBAL_SEARCH + "?app_key=" + UILApplication.AppIDkey);
 
         List<BasicNameValuePair> parameters = Arrays.asList(
                 new BasicNameValuePair("name", name));
@@ -636,7 +627,7 @@ public class HttpConnectRecive {
         ProfileInfo result = new ProfileInfo();
         String jsonStr = "";
 
-        HttpGet request = new HttpGet(URL + GET_PROFILE_SERVER + "?app_key=" + getApiKey(c) + "&user_id=" + user_id);
+        HttpGet request = new HttpGet(URL + GET_PROFILE_SERVER + "?app_key=" + UILApplication.AppIDkey + "&user_id=" + user_id);
         try {
             HttpResponse response = http.execute(request);
             jsonStr = Utils.streamToString(response

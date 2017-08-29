@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mobi.kolibri.messager.R;
+import mobi.kolibri.messager.UILApplication;
 import mobi.kolibri.messager.http.HttpConnectRecive;
 import mobi.kolibri.messager.object.CiclesInfo;
 import mobi.kolibri.messager.object.ContactInfo;
@@ -114,7 +115,7 @@ public class NewGroupChatActivity extends AppCompatActivity {
             btnPeopleChat.setBackgroundResource(R.drawable.custom_active_part);
             btnCirclesChat.setBackgroundResource(R.drawable.custom_buttom_part);
 
-            Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE " + SQLMessager.CONTACTS_SERV + "='1' and " + SQLMessager.CONTACTS_USER_ID + "<>" + HttpConnectRecive.getUserId(NewGroupChatActivity.this), null);
+            Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE " + SQLMessager.CONTACTS_SERV + "='1' and " + SQLMessager.CONTACTS_USER_ID + "<>" + UILApplication.UserID, null);
             if (c.moveToFirst()) {
                 int nameCollumn = c.getColumnIndex(SQLMessager.CONTACTS_NAME);
                 int phoneCollumn = c.getColumnIndex(SQLMessager.CONTACTS_PHONE);
@@ -185,7 +186,7 @@ public class NewGroupChatActivity extends AppCompatActivity {
                 }
                 JSONObject itemJsUs = new JSONObject();
                 try {
-                    itemJsUs.put("user_id", HttpConnectRecive.getUserId(NewGroupChatActivity.this));
+                    itemJsUs.put("user_id", UILApplication.UserID);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -210,7 +211,7 @@ public class NewGroupChatActivity extends AppCompatActivity {
             listContact.setAdapter(adapter);
             btnPeopleChat.setBackgroundResource(R.drawable.custom_active_part);
             btnCirclesChat.setBackgroundResource(R.drawable.custom_buttom_part);
-            Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE " + SQLMessager.CONTACTS_SERV + "='1' and " + SQLMessager.CONTACTS_USER_ID + "<>" + HttpConnectRecive.getUserId(NewGroupChatActivity.this), null);
+            Cursor c = db.rawQuery("SELECT * FROM " + SQLMessager.TABLE_CONTACTS + " WHERE " + SQLMessager.CONTACTS_SERV + "='1' and " + SQLMessager.CONTACTS_USER_ID + "<>" + UILApplication.UserID, null);
             if (c.moveToFirst()) {
                 int nameCollumn = c.getColumnIndex(SQLMessager.CONTACTS_NAME);
                 int phoneCollumn = c.getColumnIndex(SQLMessager.CONTACTS_PHONE);
@@ -420,7 +421,7 @@ public class NewGroupChatActivity extends AppCompatActivity {
                     }
                     JSONObject itemJsUs = new JSONObject();
                     try {
-                        itemJsUs.put("user_id", HttpConnectRecive.getUserId(NewGroupChatActivity.this));
+                        itemJsUs.put("user_id", UILApplication.UserID);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
